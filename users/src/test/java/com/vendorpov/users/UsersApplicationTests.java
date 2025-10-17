@@ -1,4 +1,4 @@
-package com.vendorpov.app.ws.users;
+package com.vendorpov.users;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

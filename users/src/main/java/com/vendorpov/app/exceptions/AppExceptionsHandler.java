@@ -1,4 +1,4 @@
-package com.vendorpov.app.ws.users.exceptions;
+package com.vendorpov.app.exceptions;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.vendorpov.app.ws.users.models.response.ErrorMessage;
+import com.vendorpov.app.models.response.ErrorMessage;
 
 @ControllerAdvice
 public class AppExceptionsHandler extends ResponseEntityExceptionHandler {

@@ -1,4 +1,4 @@
-package com.vendorpov.app.ws.users.models.request;
+package com.vendorpov.app.models.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

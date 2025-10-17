@@ -1,4 +1,4 @@
-package com.vendorpov.app.ws.users.exceptions;
+package com.vendorpov.app.exceptions;
 
 public class UserServiceException extends RuntimeException {
 

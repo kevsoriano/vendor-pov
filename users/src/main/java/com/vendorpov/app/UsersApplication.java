@@ -1,4 +1,4 @@
-package com.vendorpov.app.ws.users;
+package com.vendorpov.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

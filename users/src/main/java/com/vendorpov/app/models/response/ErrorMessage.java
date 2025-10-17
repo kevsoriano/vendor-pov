@@ -1,4 +1,4 @@
-package com.vendorpov.app.ws.users.models.response;
+package com.vendorpov.app.models.response;
 
 import java.util.Date;
 
