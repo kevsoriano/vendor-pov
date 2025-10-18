@@ -1,4 +1,4 @@
-package com.vendorpov.app.models.response;
+package com.vendorpov.users.models.response;
 
 public class UserRest {
 	private String firstName;

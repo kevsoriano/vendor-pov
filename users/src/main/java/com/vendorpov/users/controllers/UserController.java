@@ -1,4 +1,4 @@
-package com.vendorpov.app.controllers;
+package com.vendorpov.users.controllers;
 
 import java.util.Map;
 
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vendorpov.app.models.request.UpdateUserDetailsRequestModel;
-import com.vendorpov.app.models.request.UserDetailsRequestModel;
-import com.vendorpov.app.models.response.UserRest;
-import com.vendorpov.app.services.UserService;
+import com.vendorpov.users.models.request.UpdateUserDetailsRequestModel;
+import com.vendorpov.users.models.request.UserDetailsRequestModel;
+import com.vendorpov.users.models.response.UserRest;
+import com.vendorpov.users.services.UserService;
 
 import jakarta.validation.Valid;
 

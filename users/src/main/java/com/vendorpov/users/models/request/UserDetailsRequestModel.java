@@ -1,4 +1,4 @@
-package com.vendorpov.app.models.request;
+package com.vendorpov.users.models.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

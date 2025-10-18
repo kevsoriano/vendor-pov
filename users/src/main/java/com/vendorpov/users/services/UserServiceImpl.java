@@ -1,4 +1,4 @@
-package com.vendorpov.app.services;
+package com.vendorpov.users.services;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,9 +6,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.vendorpov.app.models.request.UserDetailsRequestModel;
-import com.vendorpov.app.models.response.UserRest;
-import com.vendorpov.app.shared.Utils;
+import com.vendorpov.users.models.request.UserDetailsRequestModel;
+import com.vendorpov.users.models.response.UserRest;
+import com.vendorpov.users.shared.Utils;
 
 @Service
 public class UserServiceImpl implements UserService {

@@ -1,4 +1,4 @@
-package com.vendorpov.app.shared;
+package com.vendorpov.users.shared;
 
 import java.util.UUID;
 
