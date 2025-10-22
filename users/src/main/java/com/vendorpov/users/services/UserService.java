@@ -1,8 +1,10 @@
 package com.vendorpov.users.services;
 
-import com.vendorpov.users.models.request.UserDetailsRequestModel;
-import com.vendorpov.users.models.response.UserRest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService {
-	UserRest createUser(UserDetailsRequestModel userDetails);
+import com.vendorpov.users.shared.UserDto;
+
+public interface UserService extends UserDetailsService {
+	UserDto createUser(UserDto userDetails);
+	UserDto getUserDetailsByEmail(String email);
 }

@@ -2,6 +2,8 @@ package com.vendorpov.users.controllers;
 
 import java.util.Map;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,19 +20,34 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vendorpov.users.models.request.UpdateUserDetailsRequestModel;
 import com.vendorpov.users.models.request.UserDetailsRequestModel;
-import com.vendorpov.users.models.response.UserRest;
+import com.vendorpov.users.models.response.CreateUserResponseModel;
 import com.vendorpov.users.services.UserService;
+import com.vendorpov.users.shared.UserDto;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("users")
 public class UserController {
-	Map<String, UserRest> users;
+	Map<String, CreateUserResponseModel> users;
 	
 	@Autowired
 	UserService userService;
 
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<CreateUserResponseModel> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
+		
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		
+		UserDto userDto = modelMapper.map(userDetails, UserDto.class);
+		UserDto createdUser = userService.createUser(userDto);
+		
+		CreateUserResponseModel returnValue = modelMapper.map(createdUser, CreateUserResponseModel.class);
+		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+	}
+	
 	@GetMapping
 	public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "limit", defaultValue = "50") int limit,
@@ -39,7 +56,7 @@ public class UserController {
 	}
 
 	@GetMapping(path = "/{userId}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
+	public ResponseEntity<CreateUserResponseModel> getUser(@PathVariable String userId) {
 //		if (true)
 //			throw new UserServiceException("A UserServiceException is thrown.");
 
@@ -50,24 +67,19 @@ public class UserController {
 		}
 	}
 
-	@PostMapping(consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
-		UserRest returnValue = userService.createUser(userDetails);
-		return new ResponseEntity<UserRest>(returnValue, HttpStatus.OK);
-	}
+
 
 	@PutMapping(path = "/{userId}", consumes = { MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<UserRest> updateUser(@PathVariable String userId,
+	public ResponseEntity<CreateUserResponseModel> updateUser(@PathVariable String userId,
 			@Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
-		UserRest storedUserDetails = users.get(userId);
+		CreateUserResponseModel storedUserDetails = users.get(userId);
 		storedUserDetails.setFirstName(userDetails.getFirstName());
 		storedUserDetails.setLastName(userDetails.getLastName());
 
 		users.put(userId, storedUserDetails);
-		return new ResponseEntity<UserRest>(storedUserDetails, HttpStatus.OK);
+		return new ResponseEntity<CreateUserResponseModel>(storedUserDetails, HttpStatus.OK);
 	}
 
 	@DeleteMapping(path = "/{userId}")

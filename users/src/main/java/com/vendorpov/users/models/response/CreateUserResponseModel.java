@@ -1,6 +1,6 @@
 package com.vendorpov.users.models.response;
 
-public class UserRest {
+public class CreateUserResponseModel {
 	private String firstName;
 	private String lastName;
 	private String email;
