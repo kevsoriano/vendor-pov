@@ -112,3 +112,20 @@ To stop a running node:
 ```
 brew services stop rabbitmq
 ```
+
+### Access RabbitMQ Dashboard 
+URL: http://localhost:15672/
+
+For initial login:
+username: guest
+password: guest
+
+To change password, Admin page > Add User or Click on User > Update User
+
+### application.properties (Add to all microservices that need to refresh its configuration automatically)
+```
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=<username>
+spring.rabbitmq.password=<password>
+```
