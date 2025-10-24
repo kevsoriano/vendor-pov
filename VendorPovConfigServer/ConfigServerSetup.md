@@ -94,25 +94,21 @@ brew info rabbitmq
 ```
 
 Starting the Server
-Starting a Node In the Foreground
+
 To start a node in the foreground, run:
 ```
 CONF_ENV_FILE="/opt/homebrew/etc/rabbitmq/rabbitmq-env.conf" /opt/homebrew/opt/rabbitmq/sbin/rabbitmq-server
-```
-
-After starting a node, we recommend enabling all feature flags on it:
-```
+# After starting a node, it is recommended to enable all feature flags on it:
 /opt/homebrew/sbin/rabbitmqctl enable_feature_flag all
 ```
-Starting a Node In the Background
-To start a node in the background, use brew services start:
+
+To start a node in the background:
 ```
 brew services start rabbitmq
 /opt/homebrew/sbin/rabbitmqctl enable_feature_flag all
 ```
 
-Stopping the Server
-To stop a running node, use:
+To stop a running node:
 ```
 brew services stop rabbitmq
 ```
