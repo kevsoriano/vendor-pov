@@ -140,6 +140,7 @@ spring.cloud.config.server.git.default-label=main
 
 ### File System backend
 create application.properties file
+For microservice specific properties, spring.cloud.config.name must match with name of property file
 
 spring.profiles.active=native
-spring.cloud.config.server.native.search-locations=file:///Users/kevsoriano/Documents/Dev/vendor-pov-app/vendor-pov-local-configuration
+spring.cloud.config.server.native.search-locations=file://${user.home}/Documents/Dev/vendor-pov-app/vendor-pov-local-configuration
