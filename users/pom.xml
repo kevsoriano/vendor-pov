@@ -115,8 +115,10 @@
 		</dependency>
 		<dependency>
 		    <groupId>org.springframework.cloud</groupId>
-		    <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		    <version>4.0.1</version>
 		</dependency>
+		
 	</dependencies>
 
 	<build>
