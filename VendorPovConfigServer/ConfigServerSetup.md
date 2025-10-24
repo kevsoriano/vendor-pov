@@ -51,3 +51,68 @@ Where:
 
 ### application.properties File
 spring.config.import=configserver:http://localhost:<port number of config server>
+
+## Configure Config Server for Automatic Configuration Refresh
+### Overview
+* Spring Cloud Bus - Exposes 1 URL endpoint for us to refresh application configuration data. Dependency also needs to be added to microservices that needs to refresh its configuration.
+
+* Spring Cloud Actuator - includes additional features that helps us to monitor and manage applications while it's running.
+
+* RabbigMQ - RabbitMQ is a message broker that provides a reliable, common platform for applications to send, receive, and safely store messages until they're processed.
+
+### Maven Dependencies
+```
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+</dependency>
+ 
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+### Enable the /busrefresh URL endpoint
+Add to application.properties
+```
+management.endpoints.web.exposure.include=busrefresh
+```
+
+### Setup RabbitMQ
+Download and Install RabbitMQ - https://www.rabbitmq.com/docs/download
+
+For Mac:
+```
+brew update
+brew install rabbitmq
+```
+
+To find out locations for your installation, use:
+```
+brew info rabbitmq
+```
+
+Starting the Server
+Starting a Node In the Foreground
+To start a node in the foreground, run:
+```
+CONF_ENV_FILE="/opt/homebrew/etc/rabbitmq/rabbitmq-env.conf" /opt/homebrew/opt/rabbitmq/sbin/rabbitmq-server
+```
+
+After starting a node, we recommend enabling all feature flags on it:
+```
+/opt/homebrew/sbin/rabbitmqctl enable_feature_flag all
+```
+Starting a Node In the Background
+To start a node in the background, use brew services start:
+```
+brew services start rabbitmq
+/opt/homebrew/sbin/rabbitmqctl enable_feature_flag all
+```
+
+Stopping the Server
+To stop a running node, use:
+```
+brew services stop rabbitmq
+```
