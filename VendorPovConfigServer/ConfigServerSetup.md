@@ -225,3 +225,78 @@ Sample:
 [2m2025-10-25T10:52:06.740+08:00[0;39m [32m INFO[0;39m [35m74472[0;39m [2m--- [users] [  restartedMain] [0;39m[36mc.c.c.ConfigServicePropertySourceLocator[0;39m [2m:[0;39m Located environment: name=users, profiles=[default], label=null, version=null, state=null
 [2m2025-10-25T10:52:06.740+08:00[0;39m [32m INFO[0;39m [35m74472[0;39m [2m--- [users] [  restartedMain] [0;39m[36mb.c.PropertySourceBootstrapConfiguration[0;39m [2m:[0;39m Located property source: [BootstrapPropertySource {name='bootstrapProperties-configClient'}, BootstrapPropertySource {name='bootstrapProperties-file:/Users/kevsoriano/Documents/Dev/vendor-pov-app/vendor-pov-local-configuration/users.properties'}, BootstrapPropertySource {name='bootstrapProperties-file:/Users/kevsoriano/Documents/Dev/vendor-pov-app/vendor-pov-local-configuration/application.properties'}]
 ```
+
+### Restrict /actuator/busrefresh endpoint to ADMIN role
+Add in application.properties
+```
+spring.security.user.roles=ADMIN
+```
+
+Configure auth object in authorizeHttpRequests in SecurityConfig class
+```
+.requestMatchers(HttpMethod.POST,"actuator/busrefresh").hasRole("ADMIN")
+```
+Create ADMIN User
+```
+	@Bean
+	InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+		UserDetails admin = User
+				.withUsername(env.getProperty("spring.security.user.name"))
+				.password(passwordEncoder.encode(env.getProperty("spring.security.user.password")))
+				.roles(env.getProperty("spring.security.user.role"))
+				.build();
+		return new InMemoryUserDetailsManager(admin);
+	}
+	
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+```
+
+### Restrict configuration properties to CLIENT role
+
+application.properties
+```
+client-spring.security.user.name=client
+client-spring.security.user.password=client
+client-spring.security.user.roles=CLIENT
+```
+SecurityConfig.class
+```
+.requestMatchers(HttpMethod.GET,"/**").hasRole("CLIENT")
+```
+```
+UserDetails client = User
+				.withUsername(env.getProperty("client-spring.security.user.name"))
+				.password(passwordEncoder.encode(env.getProperty("client-spring.security.user.password")))
+				.roles(env.getProperty("client-spring.security.user.role"))
+				.build();
+return new InMemoryUserDetailsManager(admin,client);
+```
+
+### Configure client microservices to use new access credentials
+* Right click on project 
+* Click "Run as"
+* Click "Run Configurations"
+* Click on project in left panel then select Environment tab
+* Click Edit then modify key-value credentials to use new credentials
+
+### Allow "/encrypt","/decrypt"
+add the following configuration:
+```
+.requestMatchers(HttpMethod.POST, "/encrypt").hasRole("ADMIN")
+.requestMatchers(HttpMethod.POST, "/decrypt").hasRole("ADMIN")
+```
+
+Also, update the CSRF configuration as follows:
+```
+.csrf(csrf->csrf.ignoringRequestMatchers("/actuator/busrefresh","/encrypt","/decrypt"))
+```
+
+### Basic Auth Is Not Encryption
+Basic Auth uses Base64 encoding. It only hides the username and password. It doesn’t protect them.
+
+If someone intercepts the HTTP request, they can decode the Authorization header. They will see the username and password in plain text.
+
+To protect that data, always use SSL between Spring Cloud Config Server and the client Microservices.
