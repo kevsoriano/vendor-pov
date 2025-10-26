@@ -37,3 +37,27 @@ public HttpExchangeRepository httpTraceRepository() {
     return new InMemoryHttpExchangeRepository();
 }
 ```
+
+## PostgreSQL
+
+### Maven Dependency
+```
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+### application.properties
+```
+spring.datasource.username=your-username
+spring.datasource.password=your-password
+spring.datasource.url=jdbc:postgresql://localhost:5432/your-database-name
+spring.datasource.driverClassName=org.postgresql.Driver
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+```
+
+### Access H2 Console to Access PostgreSQL Database
+Navigate to http://localhost:<api gateway port>/<microservice app name>/h2-console
