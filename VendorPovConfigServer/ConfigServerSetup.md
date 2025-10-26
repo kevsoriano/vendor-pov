@@ -282,6 +282,25 @@ return new InMemoryUserDetailsManager(admin,client);
 * Click on project in left panel then select Environment tab
 * Click Edit then modify key-value credentials to use new credentials
 
+### Basic Auth Is Not Encryption
+Basic Auth uses Base64 encoding. It only hides the username and password. It doesn’t protect them.
+
+If someone intercepts the HTTP request, they can decode the Authorization header. They will see the username and password in plain text.
+
+To protect that data, always use SSL between Spring Cloud Config Server and the client Microservices.
+
+## Encryption and Decryption of configuration properties
+### Encryption types
+* Symmetric Encryption (Shared)
+* Asymmetric Encryption (RSA Keypair)
+
+### Maven
+```
+<dependency>			
+    <groupId>org.springframework.cloud</groupId>			
+    <artifactId>spring-cloud-starter-bootstrap</artifactId>		
+</dependency>
+```
 ### Allow "/encrypt","/decrypt"
 add the following configuration:
 ```
@@ -294,9 +313,27 @@ Also, update the CSRF configuration as follows:
 .csrf(csrf->csrf.ignoringRequestMatchers("/actuator/busrefresh","/encrypt","/decrypt"))
 ```
 
-### Basic Auth Is Not Encryption
-Basic Auth uses Base64 encoding. It only hides the username and password. It doesn’t protect them.
+### Symmetric Encryption
+bootstrap.properties
+```
+encrypt.key=Jt8tWTIZrMeMsLH0rmaflXKeLpuZ25KctMgx3Emn
+```
+SecurityConfig.class
+```
+spring.datasource.password={cipher}1a80115ccdc2176cd20140c14861bd7fa42dd889c3ad412b6d181c71cfb6dcf7
+```
 
-If someone intercepts the HTTP request, they can decode the Authorization header. They will see the username and password in plain text.
-
-To protect that data, always use SSL between Spring Cloud Config Server and the client Microservices.
+### Asymmetric Encryption
+* Creating a Keystore
+```
+keytool -genkeypair -alias apiEncryptionKey -keyalg RSA \
+-dname "CN=Kevin Soriano,OU=API Development,O=vendor-pov.com,L=Cavite,C=PH" \
+-keypass l9ieNX8iIAg3Bo -keystore apiEncryptionKey.jks -storepass l9ieNX8iIAg3Bo
+```
+* application.properties
+```
+encrypt.key-store.location=file://${user.home}/Documents/Dev/vendor-pov-app/apiEncryptionKey.jks
+encrypt.key-store.password=l9ieNX8iIAg3Bo
+encrypt.key-store.alias=apiEncryptionKey
+```
+* Encrypt values and update configuration properties to use updated encrypted value
