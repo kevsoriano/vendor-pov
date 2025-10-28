@@ -1,3 +1,8 @@
+## Microservices communication
+Communication Types
+* Synchronous HTTP communication - wait until it receives a response.
+* Asynchronous HTTP communication - Message is placed in queue. Microservice doesn't have to wait for message to get processed. Another microservice called "consumer" consumes the message from the queue.
+
 ## Spring Boot Actuator
 Sample features
 * /health - Health check. Can be used to check health of individual instances of microservices to determine which are ready and able to serve requests.

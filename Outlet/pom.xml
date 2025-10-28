@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
+		<version>3.5.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.kevingil.app.ws</groupId>
-	<artifactId>products</artifactId>
+	<groupId>com.vendorpov</groupId>
+	<artifactId>Outlet</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>products</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Outlet</name>
+	<description>Outlet Microservice</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -35,6 +35,12 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
