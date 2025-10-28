@@ -1,7 +1,7 @@
 ## Microservices communication
 Communication Types
 * Synchronous HTTP communication - wait until it receives a response.
-* Asynchronous HTTP communication - Message is placed in queue. Microservice doesn't have to wait for message to get processed. Another microservice called "consumer" consumes the message from the queue.
+* Asynchronous HTTP communication - Message is placed in queue. Microservice doesn't have to wait for message to get processed. Another microservice called "consumer" consumes the message from the queue.`
 
 ## Spring Boot Actuator
 Sample features
