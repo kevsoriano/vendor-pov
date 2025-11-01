@@ -1,11 +1,15 @@
 package com.vendorpov.User.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,6 +57,62 @@ public class UserServiceImpl implements UserService {
 		UserEntity userEntity = userRepository.findByEmail(email);
 		if(userEntity==null) throw new UsernameNotFoundException(email);
 		return new ModelMapper().map(userEntity, UserDto.class);
+	}
+
+	@Override
+	public UserDto getUserByUserId(String userId) throws UsernameNotFoundException {
+		UserEntity userEntity = userRepository.findByUserId(userId);
+		if(userEntity==null) throw new UsernameNotFoundException(userId);
+		return new ModelMapper().map(userEntity, UserDto.class);
+	}
+
+	@Override
+	public List<UserDto> getUsers(int page, int limit) {
+		List<UserDto> returnValue = new ArrayList<>();
+		Pageable pageRequest = PageRequest.of(page, limit);
+		Page<UserEntity> userPage = userRepository.findAll(pageRequest);
+		List<UserEntity> users = userPage.getContent();
+		for(UserEntity user: users) {
+			ModelMapper modelMapper = new ModelMapper();
+			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+			UserDto userDto = modelMapper.map(user, UserDto.class);
+			returnValue.add(userDto);
+		}
+		return returnValue;
+	}
+
+	@Override
+	public UserDto updateUser(String userId, UserDto userDetails) {
+//		List<AddressDto> addresses = new ArrayList<>();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		UserEntity userEntity = userRepository.findByUserId(userId);
+
+		UserDto userDto = modelMapper.map(userEntity, UserDto.class);
+		userDto.setFirstName(userDetails.getFirstName());
+		userDto.setLastName(userDetails.getLastName());
+//		for(int i = 0; i<userDetails.getAddresses().size();i++) {
+//			AddressDto address = userDetails.getAddresses().get(i);
+//			address.setAddressId(userEntity.getAddresses().get(i).getAddressId());
+//			address.setId(userEntity.getAddresses().get(i).getId());
+//			address.setUserDetails(userDto.getAddresses().get(i).getUserDetails());
+//			addresses.add(address);
+//		}
+//		userDto.setAddresses(addresses);
+
+		UserEntity user = modelMapper.map(userDto, UserEntity.class);
+		UserEntity updatedUser = userRepository.save(user);
+
+		UserDto returnValue = modelMapper.map(updatedUser, UserDto.class);
+		return returnValue;
+	}
+
+	@Override
+	public void deleteUser(String userId) {
+		UserEntity userEntity = userRepository.findByUserId(userId);
+		userRepository.delete(userEntity);
 	}
 
 }

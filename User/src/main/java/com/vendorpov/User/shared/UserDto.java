@@ -5,12 +5,21 @@ import java.io.Serializable;
 public class UserDto implements Serializable {
 
 	private static final long serialVersionUID = -2004330410565240800L;
+	private long id;
 	private String userId;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;
 	private String encryptedPassword;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getUserId() {
 		return userId;
