@@ -49,6 +49,7 @@ public class WebSecurity {
 				.requestMatchers("/actuator/**").permitAll()
 //				.requestMatchers("/users/**").access(new WebExpressionAuthorizationManager("hasIpAddress('"+env.getProperty("gateway.ip")+"')"))
 				.requestMatchers("/h2-console/**").permitAll())
+		.addFilter(new AuthorizationFilter(authenticationManager, env))
 		.addFilter(authenticationFilter)
 		.authenticationManager(authenticationManager)
 		.sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

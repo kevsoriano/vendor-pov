@@ -1,5 +1,8 @@
 package com.vendorpov.User.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +10,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +30,7 @@ import com.vendorpov.User.shared.UserDto;
 
 import jakarta.validation.Valid;
 
+@EnableMethodSecurity(prePostEnabled=true)
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -48,13 +54,26 @@ public class UserController {
 	}
 	
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
+	public ResponseEntity<List<UserResponseModel>> getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestParam(required = false) String sort) {
-		return "GetUsers() was called "+ env.getProperty("token.secret");
+		List<UserResponseModel> returnValue = new ArrayList<>();
+		List<UserDto> users = userService.getUsers(page, limit);
+
+		for(UserDto user: users) {
+			ModelMapper modelMapper = new ModelMapper();
+			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+			UserResponseModel userDetails = modelMapper.map(user, UserResponseModel.class);
+			returnValue.add(userDetails);
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@GetMapping(value="/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+//	@PreAuthorize("principal==#userId")
+	@PostAuthorize("principal==returnObject.body.userId")
 	public ResponseEntity<UserResponseModel> getUser(@PathVariable String userId) {
 		UserDto userDto = userService.getUserByUserId(userId);
 		UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);
