@@ -63,3 +63,32 @@ You may also use the above config in Spring Tool Suite by applying runtime confi
 * Click "Run Configurations"
 * Click on project in left panel then select Environment tab
 * Click Add then add key-value credentials
+
+## Update
+* 
+@EnableEurekaServer
+* Create property files for specific profiles (e.g. application-peer1.properties,application-peer2.properties)
+server.port=8761
+eureka.instance.hostname=peer1
+eureka.client.service-url.defaultZone=http://peer2:8762/eureka,http://peer3:8763/eureka
+* Edit hosts file
+```
+sudo vi /etc/hosts
+```
+* Add 
+```
+127.0.0.1 peer1
+127.0.0.1 peer2
+127.0.0.1 peer3
+```
+* validate
+```
+ping peer1
+ping peer2
+ping peer3
+```
+* run
+cd /Users/kevsoriano/Documents/Dev/vendor-pov-app/vendor-pov/EurekaServerCluster
+mvn spring-boot:run -Dspring-boot.run.profiles=peer1
+mvn spring-boot:run -Dspring-boot.run.profiles=peer2
+mvn spring-boot:run -Dspring-boot.run.profiles=peer3

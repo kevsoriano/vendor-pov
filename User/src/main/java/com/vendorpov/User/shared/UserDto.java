@@ -1,6 +1,7 @@
 package com.vendorpov.User.shared;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UserDto implements Serializable {
 
@@ -12,6 +13,8 @@ public class UserDto implements Serializable {
 	private String email;
 	private String password;
 	private String encryptedPassword;
+	private List<AddressDto> addresses;
+	private List<RoleDto> roles;
 
 	public long getId() {
 		return id;
@@ -67,6 +70,22 @@ public class UserDto implements Serializable {
 
 	public void setEncryptedPassword(String encryptedPassword) {
 		this.encryptedPassword = encryptedPassword;
+	}
+
+	public List<AddressDto> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<AddressDto> addresses) {
+		this.addresses = addresses;
+	}
+
+	public List<RoleDto> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<RoleDto> roles) {
+		this.roles = roles;
 	}
 
 }

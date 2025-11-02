@@ -1,3 +1,26 @@
+# Setup a new microservice
+
+## Create a project
+
+## Configure microservice to work with ...
+* Spring Cloud Config Server
+* Spring Cloud Eureka Client
+* API Gateway
+
+## Configure Role-based Access Control
+* Enable Spring Security
+* Add dependency to parse JWT
+* Implement Authorization Filter
+* Configure HTTP Security
+* Add Spring Security Annotations
+
+
+
+
+
+
+
+
 ## Create a project
 https://start.spring.io/
 

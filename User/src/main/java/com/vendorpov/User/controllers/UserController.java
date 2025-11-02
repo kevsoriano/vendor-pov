@@ -10,8 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +29,6 @@ import com.vendorpov.User.shared.UserDto;
 
 import jakarta.validation.Valid;
 
-@EnableMethodSecurity(prePostEnabled=true)
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -73,7 +71,8 @@ public class UserController {
 	
 	@GetMapping(value="/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 //	@PreAuthorize("principal==#userId")
-	@PostAuthorize("principal==returnObject.body.userId")
+//	@PostAuthorize("principal==returnObject.body.userId")
+	@PreAuthorize("hasRole('ADMIN') or principal==#userId")
 	public ResponseEntity<UserResponseModel> getUser(@PathVariable String userId) {
 		UserDto userDto = userService.getUserByUserId(userId);
 		UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);
@@ -95,6 +94,7 @@ public class UserController {
 	}
 	
 	@DeleteMapping(value = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	@PreAuthorize("hasAuthority('PROFILE_DELETE') or hasRole('ADMIN') or principal == #userId")
 	public HttpStatus deleteUser(@PathVariable String userId) {
 		userService.deleteUser(userId);
 		return HttpStatus.OK;
