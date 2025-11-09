@@ -14,3 +14,43 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## ESLint & Prettier
+npm i -D prettier eslint eslint-config-prettier eslint-plugin-prettier
+
+### How to run
+* Add it to package.json and run it via writing the npm run command to the terminal.
+```
+"lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
+"lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
+"format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json,scss} --config ./.prettierrc"
+```
+
+Create new file prettierrc.json
+```
+{
+   “semi”: true,
+   “singleQuote”: true,
+   “jsxSingleQuote”: true,
+   “trailingComma”: “es5”,
+   “printWidth”: 80,
+   “tabWidth”: 2,
+   “endOfLine”: “auto”
+}
+```
+
+or
+
+* Install prettier and eslint extensions
+
+or 
+
+* Add settings for VSCode for when we save it automatically run.
+create a .vscode folder and settings.json inside this folder.
+```
+{
+"editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+"editor.defaultFormatter": "esbenp.prettier-vscode",
+"editor.formatOnSave": true
+}
+```
