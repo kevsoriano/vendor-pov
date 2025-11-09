@@ -1,6 +1,12 @@
 # Setup a new microservice
 
-## Create a project
+## Create a Microservice
+* Create a project
+* Add Controller
+* Define Models
+* Configure Service Layer
+* Configure Data Layer
+* Create Interactive Documentation with Swagger
 
 ## Configure microservice to work with ...
 * Spring Cloud Config Server
@@ -15,7 +21,26 @@
 * Add Spring Security Annotations
 
 
+### swagger
+```
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>3.0.0</version>
+</dependency> 
 
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-boot-starter</artifactId>
+    <version>3.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger-ui</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
 
 
 
