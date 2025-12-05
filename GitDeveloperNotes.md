@@ -1,3 +1,20 @@
+Prerequisites
+You only need to set this up once per machine.
+1. Install Git if you don't already have it.
+    a. You can check your git version by running git --version in the terminal
+2. Set up your name and email, if you haven't already
+```
+git config --global user.name "Your Name"
+git config --global user.email "your-email@email.com"
+```
+Check that your settings are correct by running:
+```
+git config user.name
+git config user.email
+```
+
+
+
 Some basic Git commands are:
 ```
 git status
