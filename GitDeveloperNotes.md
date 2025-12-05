@@ -1,4 +1,6 @@
-** Prerequisites
+# Git
+
+## Prerequisites
 
 *You only need to set this up once per machine.*
 
@@ -15,10 +17,12 @@ git config user.name
 git config user.email
 ```
 
-** Clone Repository
+## Clone Repository
+```
 git clone https://github.com/kevsoriano/vendor-pov.git
+```
 
-** Developer Workflow
+## Developer Workflow
 
 1. Go to the working directory of the repository
 ```
@@ -69,7 +73,7 @@ git commit --amend # Update (rewrite) the current commit
 git push
 ```
 
-** Merging feature branch into *main* branch
+### Merging feature branch into *main* branch
 1. Checkout the target branch: switch to the branch you want to merge into.
 ```
 git checkout master
@@ -95,7 +99,7 @@ Once all conflicts are resolved (or if there were none), Git will create a new m
 git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D
 ```
 
-** Revert changes
+### Revert changes
 
 1. Undoing a Local Commit (Not yet pushed):
 git reset: This command modifies the commit history.
