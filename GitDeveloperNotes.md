@@ -119,7 +119,5 @@ git revert HEAD # Reverts the most recent commit.
 
 Some basic Git commands are:
 ```
-git status
-git add
-git commit
+git status # Displays the state of the working directory and the staging area
 ```
