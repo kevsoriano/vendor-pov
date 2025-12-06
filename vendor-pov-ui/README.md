@@ -8,6 +8,23 @@ NodeJS installed on the system.
 npm i -D --save-exact @biomejs/biome
 ```
 
+- Edit package.json
+```
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "biome lint --write ./src",
+    "lint:check": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format --check .",
+    "check": "biome check --apply .",
+    "check:ci": "biome check .",
+    "preview": "vite preview"
+  },
+```
+
+### Common commands
+
 - Code Formatting
 Format your code with:
 ```
