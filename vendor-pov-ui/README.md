@@ -1,6 +1,23 @@
 ## Prerequisites
 NodeJS installed on the system.
 
+## Centralized Error Logging
+Introduced a custom Logger Utility (./utils/logger.ts) to standardize logging throughout the application. This improves log management and readability.
+
+Usage:
+```
+  const logger = Logger.for("ComponentName");
+  logger.debug("Debug Message", { data });
+  logger.info("Info message");
+  logger.error("Error occurred", error);
+```
+
+Runtime Configuration:
+```
+  localStorage.setItem("LOG_LEVEL", "DEBUG"); // Enable debug logs
+  localStorage.setItem("LOG_NAMESPACES", "AgentPage,newsAPIAgent"); // Enable specific namespaces
+```
+
 ## Configure Biome (Centralized tool for linting, formatting and import organization)
 
 - Install
@@ -154,5 +171,3 @@ If you’re seeing conflicts:
 - Ensure you’re not running multiple formatters on the same files
 - Remove other linting/formatting tools or disable them for files handled by Biome
 - Check for conflicting editor extensions
-
-## Centralized Error Logging
