@@ -1,73 +1,141 @@
-# React + TypeScript + Vite
+## Prerequisites
+NodeJS installed on the system.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Configure Biome (Centralized tool for linting, formatting and import organization)
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Install
+```
+npm i -D --save-exact @biomejs/biome
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Code Formatting
+Format your code with:
 ```
+npm run format
+```
+
+- Linting
+To check for code quality issues:
+```
+npm run lint:check
+```
+
+- Running Both Linting and Formatting
+```
+npm run check
+```
+
+- Run all tools with the check command
+```
+npx @biomejs/biome check --write ./src
+```
+
+- List all commands
+```
+biome --help displays the available commands.
+```
+
+### Configuring Biome
+- Adjusting Formatter Options
+```
+{
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab",
+    "indentWidth": 4,
+    "lineWidth": 100
+  }
+}
+```
+
+- Customizing Linter Rules
+```
+{
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "error"
+      }
+    }
+  }
+}
+```
+- Ignoring files
+```
+{
+  "files": {
+    "ignore": ["dist/**", "build/**", "node_modules/**"]
+  }
+}
+```
+
+### IDE Integration
+Visual Studio Code
+1. Install the “Biome” extension from the VS Code marketplace
+2. Configure it in your settings.json (Command + , in Mac or Ctrl + Shift + P in Win):
+```
+{
+  "editor.formatOnSave": true,
+  "[javascript][typescript][javascriptreact][typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
+}
+```
+
+### Integrating Biome with Git Hooks
+Using Biome with Git hooks ensures code quality before commits. Install Husky and configure it with Biome:
+```
+npm install --save-dev husky lint-staged
+npx husky install
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
+Then configure lint-staged in your package.json:
+```
+{
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": ["biome check --apply"]
+  }
+}
+```
+
+If not working, try:
+https://medium.com/@abpeter14/how-to-install-commitlint-husky-2024-f1157f14006f
+
+### Migrating from ESLint and Prettier
+1. Remove old tools
+```
+npm uninstall eslint prettier eslint-config-* eslint-plugin-*
+```
+
+2. Remove the configuration files
+```
+rm .eslintrc.* .prettierrc.*
+```
+
+### Troubleshooting Common Issues
+#### Configuration Not Taking Effect
+If your configuration isn’t being applied:
+
+- Verify your biome.json is in the project root
+- Check for syntax errors in your configuration
+- Try running with the --verbose flag to get more information
+
+#### Performance Issues
+If Biome seems slow:
+- Check if you’re analyzing too many files (especially in node_modules)
+- Ensure your ignore patterns are correctly set
+
+#### Conflicts with Other Tools
+If you’re seeing conflicts:
+
+- Ensure you’re not running multiple formatters on the same files
+- Remove other linting/formatting tools or disable them for files handled by Biome
+- Check for conflicting editor extensions
+
+## Centralized Error Logging
