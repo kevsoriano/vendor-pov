@@ -1,6 +1,12 @@
 ## Prerequisites
 NodeJS installed on the system.
 
+##
+Start app
+```
+npm run dev
+```
+
 ## Centralized Error Logging
 Introduced a custom Logger Utility (./utils/logger.ts) to standardize logging throughout the application. This improves log management and readability.
 
@@ -171,3 +177,42 @@ If you’re seeing conflicts:
 - Ensure you’re not running multiple formatters on the same files
 - Remove other linting/formatting tools or disable them for files handled by Biome
 - Check for conflicting editor extensions
+
+## Material UI + Font + Icons
+- Install Material UI
+```
+npm install @mui/material @emotion/react @emotion/styled
+```
+
+- Install Roboto Font
+```
+npm install @fontsource/roboto
+```
+
+- Install Material Icons
+```
+npm install @mui/icons-material
+```
+
+## TailwindCSS
+- Install TailwindCSS 4
+```
+npm install tailwindcss @tailwindcss/vite
+```
+
+- Configure the Vite plugin (vite.config.ts)
+```
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})
+```
+
+- Import Tailwind CSS
+```
+@import "tailwindcss";
+```
