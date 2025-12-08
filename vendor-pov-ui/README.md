@@ -7,7 +7,202 @@ Start app
 npm run dev
 ```
 
-## Centralized Error Logging
+## API Requests
+
+Sample #1 
+```
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const BASE_URL = "https://jsonplaceholder.typicode.com";
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+export default function FetchExample1() {
+  const [error, setError] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [page, setPage] = useState(0);
+
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = new AbortController();
+
+      setIsLoading(true);
+
+      try {
+        const response = await fetch(`${BASE_URL}/posts?page=${page}`, {
+          signal: abortControllerRef.current?.signal,
+        });
+        const posts = (await response.json()) as Post[];
+        setPosts(posts);
+      } catch (e: any) {
+        if (e.name === "AbortError") {
+          console.log("Aborted");
+          return;
+        }
+
+        setError(e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [page]);
+
+  if (error) {
+    return <div>Something went wrong! Please try again.</div>;
+  }
+
+  return (
+    <div className="tutorial">
+      <h1 className="mb-4 text-2xl">Data Fething in React</h1>
+      <button onClick={() => setPage(page - 1)}>Decrease Page ({page})</button>
+      <button onClick={() => setPage(page + 1)}>Increase Page ({page})</button>
+      {isLoading && <div>Loading...</div>}
+      {!isLoading && (
+        <ul>
+          {posts.map((post) => {
+            return <li key={post.id}>{post.title}</li>;
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+```
+
+Sample #2
+```
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+
+const BASE_URL = "https://jsonplaceholder.typicode.com";
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+export default function FetchExample2() {
+  const [page, setPage] = useState(0);
+
+  const {
+    data: posts,
+    isError,
+    isPending,
+  } = useQuery({
+    queryKey: ["posts", { page }],
+    queryFn: async () => {
+      const response = await fetch(`${BASE_URL}/posts?page=${page}`);
+      return (await response.json()) as Post[];
+    },
+  });
+
+  // Do cool things with the JSX
+
+  return (
+    <div className="tutorial">
+      <h1 className="mb-4 text-2xl">Data Fething in React</h1>
+      <button onClick={() => setPage(page - 1)}>Decrease Page ({page})</button>
+      <button onClick={() => setPage(page + 1)}>Increase Page ({page})</button>
+      {isPending && <div>Loading...</div>}
+      {!isPending && (
+        <ul>
+          {posts?.map((post) => {
+            return <li key={post.id}>{post.title}</li>;
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+```
+
+Sample #3 (SSR)
+```
+const BASE_URL = "https://jsonplaceholder.typicode.com";
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+export default async function FetchExample3() {
+  const response = await fetch(`${BASE_URL}/posts`);
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch posts");
+  }
+
+  const posts = (await response.json()) as Post[];
+
+  return (
+    <div className="tutorial">
+      <h1 className="mb-4 text-2xl">Data Fething in React</h1>
+      <ul>
+        {posts.map((post) => {
+          return <li key={post.id}>{post.title}</li>;
+        })}
+      </ul>
+    </div>
+  );
+}
+```
+
+## Routing
+Install
+```
+npm i react-router-dom
+```
+
+Import createBrowserRouter and RouterProvider
+```
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+```
+
+Replace App component with RouterProvider to let RouterProvider handle routing
+From:
+```
+createRoot(document.getElementById("root")!).render(
+	<StrictMode>
+		<App />
+	</StrictMode>,
+);
+```
+To:
+```
+createRoot(document.getElementById("root")!).render(
+	<StrictMode>
+		<RouterProvider router={router} />
+	</StrictMode>,
+);
+```
+
+Create route in createBrowserRouter
+```
+const router = createBrowserRouter([
+	{
+		path: '/',
+		element: <App />
+	}
+]);
+```
+
+
+
+## Custom Error Logging
 Introduced a custom Logger Utility (./utils/logger.ts) to standardize logging throughout the application. This improves log management and readability.
 
 Usage:
@@ -24,7 +219,7 @@ Runtime Configuration:
   localStorage.setItem("LOG_NAMESPACES", "AgentPage,newsAPIAgent"); // Enable specific namespaces
 ```
 
-## Configure Biome (Centralized tool for linting, formatting and import organization)
+## Biome (Centralized tool for linting, formatting and import organization)
 
 - Install
 ```

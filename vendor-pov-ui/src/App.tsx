@@ -1,6 +1,6 @@
-import { useState } from "react";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
+import { Outlet } from "react-router-dom";
 
 function App() {
 	return (
@@ -12,8 +12,8 @@ function App() {
 				<div className="flex h-[calc(100vh-60px)]">
 					<Sidebar />
 					<main className="bg-[#e4eaee] w-full">
-						<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-							Main
+						<div className="">
+							<Outlet />
 						</div>
 					</main>
 				</div>
