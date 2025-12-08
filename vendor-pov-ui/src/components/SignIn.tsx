@@ -1,4 +1,56 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const BASE_URL = "http://localhost:8082";
+
+interface Auth {
+  email: string;
+  password: string;
+}
+
 function SignIn() {
+    const [error, setError] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const [credentials, setCredentials] = useState<Auth>();
+
+    const handleSubmit = (formData: any) => {
+        const email = formData.get("email")
+        const password = formData.get("password")
+        
+        setCredentials({
+            "email": email,
+            "password": password
+        })
+    };
+
+    useEffect(() => {
+        const signin = async () => {
+            if(credentials === undefined) {
+                return
+            }
+            
+            setIsLoading(true);
+
+            try {
+                const response = await fetch(`${BASE_URL}/users/login`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "email": credentials?.email,
+                        "password": credentials?.password
+                    })
+                });
+                console.log(response)
+            } catch (e: any) {
+                console.log("Aborted"); 
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        signin()
+    }, [credentials]);
+
     return (
         <>
             <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 w-[100vw] h-[100vh] bg-gray-50">
@@ -10,7 +62,7 @@ function SignIn() {
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                     <div className="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-                        <form action="#" method="POST" className="space-y-6">
+                        <form action={handleSubmit} className="space-y-6">
                             <div>
                                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                                 Email address

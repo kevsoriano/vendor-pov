@@ -42,7 +42,11 @@
 </dependency>
 ```
 
-
+### CORS
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedOrigins=* 
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedOriginPatterns=*
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedMethods=*
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowedHeaders=*
 
 
 
