@@ -12,7 +12,7 @@ function App() {
 				<div className="flex h-[calc(100vh-60px)]">
 					<Sidebar />
 					<main className="bg-[#e4eaee] w-full">
-						<div className="">
+						<div>
 							<Outlet />
 						</div>
 					</main>

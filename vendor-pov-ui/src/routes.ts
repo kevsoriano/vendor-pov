@@ -8,6 +8,7 @@ import App from "./App.tsx";
 import AddProduct from "./pages/products/AddProduct.tsx";
 import SignIn from "./components/SignIn.tsx";
 import SignUp from "./components/SignUp.tsx";
+import Sell from "./pages/Sell.tsx";
 
 export const router = createBrowserRouter([
 	{ 
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
 			{ 
 				index: true, 
 				Component: Home,
+			},
+			{ 
+				path: 'sell', 
+				Component: Sell,
 			},
 			{ 
 				path: 'customers', 
