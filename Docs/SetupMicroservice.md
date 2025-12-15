@@ -3,18 +3,18 @@
 ## Prerequisites
 1. Install Java
 * Windows 
-- Go to "https://www.oracle.com/java/technologies/downloads/#jdk25-windows"
-- Select the latest JDK version.
-- Navigate to the Windows tab.
-- Click the x64 Installer download link.
+1. Go to "https://www.oracle.com/java/technologies/downloads/#jdk25-windows"
+2. Select the latest JDK version.
+3. Navigate to the Windows tab.
+4. Click the x64 Installer download link.
 
 * Mac
-- Run the command
+1. Run the command
 ```
 brew install openjdk
 ```
 
-- Verify installation:
+2. Verify installation:
 ```
 java -version
 ```
@@ -50,25 +50,25 @@ Eureka Discovery Client - to connect to API Gateway
 5. Move downloaded project from step 4 to local copy of repository
 
 6. Import the project in STS
-- Navigate to File > Import
+1. Navigate to File > Import
 ![Reference](./images/img2.png)
 
-- Click on Existing Maven Projects, then click Next
+2. Click on Existing Maven Projects, then click Next
 
-- Specify Root Directory of repository by clicking on Browse
+3. Specify Root Directory of repository by clicking on Browse
 
-- Tick the checkbox of the project you want to import
+4. Tick the checkbox of the project you want to import
 
 ![Reference](./images/img3.png)
 
 * Add Controller
-- Right click on under "src/main/java" and add new class
+1. Right click on under "src/main/java" and add new class
 ![Reference](./images/img4.png)
 
-- Set a name for the class (e.g. UserController) and save it under controllers package
+2. Set a name for the class (e.g. UserController) and save it under controllers package
 ![Reference](./images/img5.png)
 
-- Annotate the class with @RestController and @RequestMapping
+3. Annotate the class with @RestController and @RequestMapping
 ![Reference](./images/img6.png)
 
 Notes:
@@ -87,7 +87,7 @@ Notes:
 
 ## Configure microservice to work with ...
 * Spring Cloud Eureka Client
-- Add dependency in pom.xml
+1. Add dependency in pom.xml
 ```
     <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -96,10 +96,10 @@ Notes:
     </dependency>
 ```
 
-- Annotate main method with @EnableDiscoveryClient
+2. Annotate main method with @EnableDiscoveryClient
 ![Reference](./images/img7.png)
 
-- application.properties
+3. application.properties
 ```
     spring.application.name=users
     server.port=0
