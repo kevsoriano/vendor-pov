@@ -6,8 +6,11 @@ function App() {
 	return (
 		<>
 			<div className="h-[100vh]">
-				<div className="h-[60px] w-[100vw] items-center border-b bg-[#374954] text-white">
+				<div className="flex justify-between h-[60px] w-[100vw] items-center border-b bg-[#374954] text-white px-8">
 					<span>Header</span>
+					<div>
+						<span>logout</span>
+					</div>
 				</div>
 				<div className="flex h-[calc(100vh-60px)]">
 					<Sidebar />

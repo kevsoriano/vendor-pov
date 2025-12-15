@@ -147,14 +147,14 @@ const Products = () => {
                     <div className='flex flex-col w-[33%]'>
                         <label htmlFor="">Product Type</label>
                         <select className='border p-2'>
-                            <option>T-shirt</option>
+                            <option>Select a Product Type</option>
                             <option>Pants</option>
                         </select>
                     </div>
                     <div className='flex flex-col w-[31%]'>
                         <label htmlFor="">Supplier</label>
                         <select className='border p-2'>
-                            <option>Supplier 1</option>
+                            <option>Select a Supplier</option>
                             <option>Supplier 2</option>
                             <option>Supplier 3</option>
                         </select>
@@ -162,7 +162,7 @@ const Products = () => {
                     <div className='flex flex-col w-[31%]'>
                         <label htmlFor="">Brand</label>
                         <select className='border p-2'>
-                            <option>Bench</option>
+                            <option>Select a Brand</option>
                             <option>Penshoppe</option>
                             <option>Uniqlo</option>
                         </select>
@@ -170,7 +170,7 @@ const Products = () => {
                     <div className='flex flex-col w-[31%]'>
                         <label htmlFor="">Tags</label>
                         <select className='border p-2'>
-                            <option>Summer</option>
+                            <option>Select a Product Tag</option>
                             <option>Rainy</option>
                         </select>
                     </div>
