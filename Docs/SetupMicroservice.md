@@ -90,7 +90,7 @@ Notes:
 * Create Interactive Documentation with Swagger
 
 ## Configure microservice to work with ...
-* Spring Cloud Eureka Client
+* Spring Cloud Eureka Server (Discovery Service)
 1. Add dependency in pom.xml
 ```
     <dependency>
@@ -112,15 +112,19 @@ Notes:
 
 Notes:
 - spring.application.name 
+
 When your microservice starts up, it uses the value of spring.application.name to register itself with the Eureka Server. This is the name that other services will use to call this service. The service registry resolves the name to the actual host and port of a running instance.
 
 - server.port 
+
 By setting this property to 0, a dynamically allocated, random port is assigned to the Spring Boot microservice upon startup. This is a crucial to enable the deployment of multiple service instances (scaling horizontally) and prevents port conflicts. The Service Discovery mechanism (Eureka) will register each instance with its unique host and port combination, allowing a Load Balancer to distribute requests efficiently across the available instances.
 
 - eureka.client.service-url.defaultZone 
+
 This defines the address of the eureka server that the microservice need to connect to.
 
 * API Gateway
+
 
 * Spring Cloud Config Server
 
