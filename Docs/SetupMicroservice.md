@@ -51,6 +51,7 @@ Eureka Discovery Client - to connect to API Gateway
 
 6. Import the project in STS
 1. Navigate to File > Import
+
 ![Reference](./images/img2.png)
 
 2. Click on Existing Maven Projects, then click Next
@@ -63,12 +64,15 @@ Eureka Discovery Client - to connect to API Gateway
 
 * Add Controller
 1. Right click on under "src/main/java" and add new class
+
 ![Reference](./images/img4.png)
 
 2. Set a name for the class (e.g. UserController) and save it under controllers package
+
 ![Reference](./images/img5.png)
 
 3. Annotate the class with @RestController and @RequestMapping
+
 ![Reference](./images/img6.png)
 
 Notes:
