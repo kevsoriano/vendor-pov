@@ -24,7 +24,7 @@ Eureka Discovery Client - to connect to API Gateway
 
 4. Click on Generate to download Project
 
-[Reference](./images/img1.png)
+![Reference](./images/img1.png)
 
 * Add Controller
 * Define Models
