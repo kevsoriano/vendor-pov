@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  server: {
+    allowedHosts: [
+      'ec2-3-26-207-53.ap-southeast-2.compute.amazonaws.com',
+      '*'
+    ]
+  }
 })

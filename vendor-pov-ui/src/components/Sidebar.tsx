@@ -10,17 +10,17 @@ import '../App.css'
 import { Link } from 'react-router-dom';
 
 const initialNavigation = [
-  { 
-    name: 'Home', 
-    link: '/', 
-    icon: HomeIcon, 
+  {
+    name: 'Home',
+    link: '/',
+    icon: HomeIcon,
     current: true,
     children: []
   },
-  { 
-    name: 'Sell', 
-    link: '', 
-    icon: SellIcon, 
+  {
+    name: 'Sell',
+    link: '',
+    icon: SellIcon,
     current: false,
     children: [
       {
@@ -55,17 +55,17 @@ const initialNavigation = [
       }
     ]
   },
-  { 
-    name: 'Sales Ledger', 
-    link: '/sales-ledger', 
-    icon: SalesLedgerIcon, 
+  {
+    name: 'Sales Ledger',
+    link: '/sales-ledger',
+    icon: SalesLedgerIcon,
     current: false,
     children: []
   },
-  { 
-    name: 'Reporting', 
-    link: '', 
-    icon: ReportingIcon, 
+  {
+    name: 'Reporting',
+    link: '',
+    icon: ReportingIcon,
     current: false,
     children: [
       {
@@ -110,10 +110,10 @@ const initialNavigation = [
       }
     ]
   },
-  { 
-    name: 'Products', 
-    link: '', 
-    icon: ProductIcon, 
+  {
+    name: 'Products',
+    link: '',
+    icon: ProductIcon,
     current: false,
     children: [
       {
@@ -156,12 +156,12 @@ const initialNavigation = [
         link: '/product-tags',
         current: false
       }
-    ] 
+    ]
   },
-  { 
-    name: 'Customers', 
-    link: '', 
-    icon: CustomersIcon, 
+  {
+    name: 'Customers',
+    link: '',
+    icon: CustomersIcon,
     current: false,
     children: [
       {
@@ -176,10 +176,10 @@ const initialNavigation = [
       }
     ]
   },
-  { 
-    name: 'Setup', 
-    link: '', 
-    icon: SetupIcon, 
+  {
+    name: 'Setup',
+    link: '',
+    icon: SetupIcon,
     current: false,
     children: [
       {
@@ -241,31 +241,31 @@ const initialNavigation = [
   },
 ]
 
-const userNavigation = [
-  { name: 'Your profile', href: '#' },
-  { name: 'Sign out', href: '#' },
-]
+// const userNavigation = [
+//   { name: 'Your profile', href: '#' },
+//   { name: 'Sign out', href: '#' },
+// ]
 
 export default function Sidebar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  // const [sidebarOpen, setSidebarOpen] = useState(false)
   const [navigation, setNavigation] = useState(initialNavigation);
 
   const handleMenuClick = (index: number) => {
     const updatedMenus = navigation.map((menu, idx) => {
-        if (idx === index) {
-            return { ...menu, current: true };
-        } else {
-            return { ...menu, current: false };
-        }
+      if (idx === index) {
+        return { ...menu, current: true };
+      } else {
+        return { ...menu, current: false };
+      }
     });
     setNavigation(updatedMenus);
   }
 
   const handleSubMenuClick = (index: number) => {
     const updatedMenus = navigation.map((menu) => {
-      if(menu.current === true) {
+      if (menu.current === true) {
         const updatedSubMenus = menu.children.map((submenu, idx) => {
-          if(idx === index) {
+          if (idx === index) {
             return {
               ...submenu,
               current: true
@@ -295,7 +295,7 @@ export default function Sidebar() {
           {navigation && navigation.map((item, index) =>
             <Link to={item.link} key={item.name} >
               <li className={`text-center p-2 text-xs ${item.current ? 'bg-[#ffffff]' : 'bg-[#e4eaee]'}`} onClick={() => handleMenuClick(index)}>
-                <img src={item.icon} alt="" style={{ width: '28px', height: '24px', margin: 'auto' }}/>
+                <img src={item.icon} alt="" style={{ width: '28px', height: '24px', margin: 'auto' }} />
                 <div className='mt-2'>
                   {item.name}
                 </div>
@@ -306,17 +306,17 @@ export default function Sidebar() {
       </div>
 
       {navigation && navigation.map((item) => {
-        if(item.current === true && item.children?.length !== 0) {
+        if (item.current === true && item.children?.length !== 0) {
           return (
             <aside key={item.name + "active"} className={`aside show`}>
               <ul>
-                  { item.children?.map((submenu, index) => (
-                      <Link to={submenu.link}>
-                        <li key={submenu.name} className={`aside-item text-xs ${submenu.current ? 'bg-[#eff4f4]' : ''}`} onClick={() => handleSubMenuClick(index)}>
-                          {submenu.name}
-                        </li>
-                      </Link>
-                  ))}
+                {item.children?.map((submenu, index) => (
+                  <Link to={submenu.link}>
+                    <li key={submenu.name} className={`aside-item text-xs ${submenu.current ? 'bg-[#eff4f4]' : ''}`} onClick={() => handleSubMenuClick(index)}>
+                      {submenu.name}
+                    </li>
+                  </Link>
+                ))}
               </ul>
             </aside>
           )

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,8 @@ import com.vendorpov.User.shared.UserDto;
 
 import jakarta.validation.Valid;
 
+
+@CrossOrigin(origins="*")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -52,7 +55,7 @@ public class UserController {
 	}
 	
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<List<UserResponseModel>> getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
+	public ResponseEntity<List<UserResponseModel>> getUsers(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestParam(required = false) String sort) {
 		List<UserResponseModel> returnValue = new ArrayList<>();
@@ -72,7 +75,7 @@ public class UserController {
 	@GetMapping(value="/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 //	@PreAuthorize("principal==#userId")
 //	@PostAuthorize("principal==returnObject.body.userId")
-	@PreAuthorize("hasRole('ADMIN') or principal==#userId")
+//	@PreAuthorize("hasRole('ADMIN') or principal==#userId")
 	public ResponseEntity<UserResponseModel> getUser(@PathVariable String userId) {
 		UserDto userDto = userService.getUserByUserId(userId);
 		UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);

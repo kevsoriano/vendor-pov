@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -48,6 +48,26 @@ function createData(
 function Row(props: { row: ReturnType<typeof createData> }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
+
+  const BASE_URL = "http://localhost:8082";
+  const token = "eyJhbGciOiJIUzM4NCJ9.eyJzY29wZSI6W3siYXV0aG9yaXR5IjoiREVMRVRFIn0seyJhdXRob3JpdHkiOiJSRUFEIn0seyJhdXRob3JpdHkiOiJST0xFX0FETUlOIn0seyJhdXRob3JpdHkiOiJXUklURSJ9XSwic3ViIjoiMmJmYjI1OGMtNGY3ZC00YjVhLWJiZjItZDk1YzVjMTc5ZTc4IiwiZXhwIjoxNzY2NDE3NzA0LCJpYXQiOjE3NjY0MTc2Njh9.DEUoeGBQL3j3e8d0rpRPxDF0L6m2EEb7_JbgCaOyO5uX8NJd_e_PmJjwFvmu99j9"
+  
+  useEffect(() => {
+    fetch(`${BASE_URL}/users`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Data from backend:', data)
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error)
+      })
+  }, [])
 
   return (
     <Fragment>
@@ -109,114 +129,113 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 }
 
 const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-    createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-    createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-    createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
+  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
+  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
+  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
+  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
+  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
 ];
 
 
 const Products = () => {
-    const [activeTab, setActiveTab] = useState('one');
+  const [activeTab, setActiveTab] = useState('one');
 
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-        setActiveTab(newValue);
-    };
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    console.log(event)
+    setActiveTab(newValue);
+  };
 
-
-
-    return (
-        <div>
-            <div className='px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]'>
-                <h1>Products</h1>
-            </div>
-            <div className='flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center'>
-                <p>Add, view and edit your products all in one place.</p>
-                <div className='flex gap-2'>
-                    <button className='bg-[#5d91b4] text-white'>Import</button>
-                    <button className='bg-[#00b740] text-white'><Link to={'/products/add'} >Add Product</Link></button>
-                </div>
-            </div>
-            <div className='flex justify-between px-4 sm:px-6 lg:px-8 py-6 bg-[#ffffff]'>
-                <div className='flex w-[60%] gap-4 flex-wrap'>
-                    <div className='flex flex-col w-[64%]'>
-                        <label htmlFor="">Search for Products</label>
-                        <input type="text" className='border p-2' />
-                    </div>
-                    <div className='flex flex-col w-[33%]'>
-                        <label htmlFor="">Product Type</label>
-                        <select className='border p-2'>
-                            <option>Select a Product Type</option>
-                            <option>Pants</option>
-                        </select>
-                    </div>
-                    <div className='flex flex-col w-[31%]'>
-                        <label htmlFor="">Supplier</label>
-                        <select className='border p-2'>
-                            <option>Select a Supplier</option>
-                            <option>Supplier 2</option>
-                            <option>Supplier 3</option>
-                        </select>
-                    </div>
-                    <div className='flex flex-col w-[31%]'>
-                        <label htmlFor="">Brand</label>
-                        <select className='border p-2'>
-                            <option>Select a Brand</option>
-                            <option>Penshoppe</option>
-                            <option>Uniqlo</option>
-                        </select>
-                    </div>
-                    <div className='flex flex-col w-[31%]'>
-                        <label htmlFor="">Tags</label>
-                        <select className='border p-2'>
-                            <option>Select a Product Tag</option>
-                            <option>Rainy</option>
-                        </select>
-                    </div>
-                </div>
-                <div className='inline-block align-bottom text-end'>
-                    <button className='bg-[#5d91b4] text-white'>Search</button>
-                </div>
-            </div>
-            <div className='flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]'>
-                <div>
-                    <Tabs
-                        value={activeTab}
-                        onChange={handleChange}
-                        textColor="secondary"
-                        indicatorColor="secondary"
-                        aria-label="secondary tabs example"
-                    >
-                        <Tab value="one" label="Active"/>
-                        <Tab value="two" label="Inactive" />
-                        <Tab value="three" label="All" />
-                    </Tabs>
-                </div>
-                <div>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="collapsible table">
-                            <TableHead>
-                            <TableRow>
-                                <TableCell />
-                                <TableCell>Dessert (100g serving)</TableCell>
-                                <TableCell align="right">Calories</TableCell>
-                                <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                                <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                            </TableRow>
-                            </TableHead>
-                            <TableBody>
-                            {rows.map((row) => (
-                                <Row key={row.name} row={row} />
-                            ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
-            </div>
+  return (
+    <div>
+      <div className='px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]'>
+        <h1>Products</h1>
+      </div>
+      <div className='flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center'>
+        <p>Add, view and edit your products all in one place.</p>
+        <div className='flex gap-2'>
+          <button className='bg-[#5d91b4] text-white'>Import</button>
+          <button className='bg-[#00b740] text-white'><Link to={'/products/add'} >Add Product</Link></button>
         </div>
-    )
+      </div>
+      <div className='flex justify-between px-4 sm:px-6 lg:px-8 py-6 bg-[#ffffff]'>
+        <div className='flex w-[60%] gap-4 flex-wrap'>
+          <div className='flex flex-col w-[64%]'>
+            <label htmlFor="">Search for Products</label>
+            <input type="text" className='border p-2' />
+          </div>
+          <div className='flex flex-col w-[33%]'>
+            <label htmlFor="">Product Type</label>
+            <select className='border p-2'>
+              <option>Select a Product Type</option>
+              <option>Pants</option>
+            </select>
+          </div>
+          <div className='flex flex-col w-[31%]'>
+            <label htmlFor="">Supplier</label>
+            <select className='border p-2'>
+              <option>Select a Supplier</option>
+              <option>Supplier 2</option>
+              <option>Supplier 3</option>
+            </select>
+          </div>
+          <div className='flex flex-col w-[31%]'>
+            <label htmlFor="">Brand</label>
+            <select className='border p-2'>
+              <option>Select a Brand</option>
+              <option>Penshoppe</option>
+              <option>Uniqlo</option>
+            </select>
+          </div>
+          <div className='flex flex-col w-[31%]'>
+            <label htmlFor="">Tags</label>
+            <select className='border p-2'>
+              <option>Select a Product Tag</option>
+              <option>Rainy</option>
+            </select>
+          </div>
+        </div>
+        <div className='inline-block align-bottom text-end'>
+          <button className='bg-[#5d91b4] text-white'>Search</button>
+        </div>
+      </div>
+      <div className='flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]'>
+        <div>
+          <Tabs
+            value={activeTab}
+            onChange={handleChange}
+            textColor="secondary"
+            indicatorColor="secondary"
+            aria-label="secondary tabs example"
+          >
+            <Tab value="one" label="Active" />
+            <Tab value="two" label="Inactive" />
+            <Tab value="three" label="All" />
+          </Tabs>
+        </div>
+        <div>
+          <TableContainer component={Paper}>
+            <Table aria-label="collapsible table">
+              <TableHead>
+                <TableRow>
+                  <TableCell />
+                  <TableCell>Dessert (100g serving)</TableCell>
+                  <TableCell align="right">Calories</TableCell>
+                  <TableCell align="right">Fat&nbsp;(g)</TableCell>
+                  <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+                  <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <Row key={row.name} row={row} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default Products;

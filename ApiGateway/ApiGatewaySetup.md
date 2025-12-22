@@ -22,3 +22,23 @@ application.properties
 management.endpoint.gateway.access=UNRESTRICTED
 management.endpoints.web.exposure.include=gateway,health,mappings
 ```
+
+## CORS configuration
+application.properties
+```
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-origins=http://localhost:3000,http://localhost:5173
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-origin-patterns=*
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-headers=*
+spring.cloud.gateway.server.webflux.globalcors.add-to-simple-url-handler-mapping=true
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].exposed-headers=token,userid
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allow-credentials=true
+spring.cloud.gateway.server.webflux.default-filters[0]=DedupeResponseHeader=Access-Control-Allow-Origin
+```
+
+Add to apply function in AuthorizationHeaderFilter.java
+```
+if (req.getMethod().name().equalsIgnoreCase("OPTIONS")) {
+    return chain.filter(exchange);
+}
+```

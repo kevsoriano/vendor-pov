@@ -1,18 +1,27 @@
 import { createBrowserRouter } from "react-router-dom";
-import Home from "./pages/Home";
-import Customers from "./pages/customers/Customers";
+import AuthenticationPage, { action as AuthAction } from "./pages/Auth/Authentication";
+import SignIn from "./components/SignIn";
+import App from "./App";
+import SignUp from "./components/SignUp";
 import CustomerDetail from "./pages/customers/CustomerDetail";
-import Products from "./pages/products/Products.tsx";
-import ProductDetail from "./pages/products/ProductDetail.tsx";
-import App from "./App.tsx";
-import AddProduct from "./pages/products/AddProduct.tsx";
-import SignIn from "./components/SignIn.tsx";
-import SignUp from "./components/SignUp.tsx";
-import TestCreatableSelect from "./pages/TestCreatableSelect.tsx";
-import TestProductVariants from "./pages/TestProductVariants.tsx";
-import TestTypewriter from "./pages/TestTypewriter.tsx";
+import Customers from "./pages/customers/Customers";
+import Home from "./pages/Home";
+import AddProduct from "./pages/products/AddProduct";
+import ProductDetail from "./pages/products/ProductDetail";
+import Products from "./pages/products/Products";
+import TestCreatableSelect from "./pages/TestCreatableSelect";
+import TestProductVariants from "./pages/TestProductVariants";
 
 export const router = createBrowserRouter([
+	// {
+	// 	path: '/',
+	// 	Component: 
+	// },
+	{
+		path: '/auth',
+		Component: AuthenticationPage,
+		action: AuthAction
+	},
 	{
 		path: 'test-creatable',
 		Component: TestCreatableSelect
@@ -22,11 +31,7 @@ export const router = createBrowserRouter([
 		Component: TestProductVariants
 	},
 	{
-		path: 'test-typewriter',
-		Component: TestTypewriter
-	},
-	{
-		path: 'signin',
+		path: '/signin',
 		Component: SignIn,
 	},
 	{

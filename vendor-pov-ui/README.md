@@ -7,6 +7,10 @@ Start app
 npm run dev
 ```
 
+## Dockerize app
+
+docker build -t react-app:dev .
+
 ## API Requests
 
 Sample #1 

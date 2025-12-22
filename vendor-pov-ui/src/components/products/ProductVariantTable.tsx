@@ -50,13 +50,16 @@ export default function ProductVariantTable({ variants, attributeNames }: Produc
                             </th>
                         ))}
                         <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">
-                            Price
-                        </th>
-                        <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">
                             SKU
                         </th>
                         <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">
-                            Stock
+                            Supplier Code
+                        </th>
+                        <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">
+                            Supplier Price
+                        </th>
+                        <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">
+                            Retail Price
                         </th>
                     </tr>
                 </thead>
@@ -78,8 +81,8 @@ export default function ProductVariantTable({ variants, attributeNames }: Produc
                                 ))}
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <input
-                                        type="number"
-                                        placeholder="0.00"
+                                        type="text"
+                                        placeholder="SKU"
                                         className="block w-24 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         defaultValue={variant.price}
                                     />
@@ -87,9 +90,17 @@ export default function ProductVariantTable({ variants, attributeNames }: Produc
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <input
                                         type="text"
-                                        placeholder="SKU"
+                                        placeholder="Supplier Code"
                                         className="block w-32 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         defaultValue={variant.sku}
+                                    />
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <input
+                                        type="number"
+                                        placeholder="0"
+                                        className="block w-20 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        defaultValue={variant.stock}
                                     />
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -123,7 +134,7 @@ export default function ProductVariantTable({ variants, attributeNames }: Produc
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                                                    <label className="block text-sm font-medium text-gray-900">Description</label>
                                                     <div className="mt-1">
                                                         <textarea
                                                             rows={3}

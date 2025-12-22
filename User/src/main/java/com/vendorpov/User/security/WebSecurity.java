@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -43,22 +44,25 @@ public class WebSecurity {
 		AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager,userService,env);
 		authenticationFilter.setFilterProcessesUrl(env.getProperty("login.url.path"));
 		
-		http.csrf((csrf)->csrf.disable());
+		http.csrf(csrf ->csrf.disable());
 		
 		http.authorizeHttpRequests((auth)->
 			auth
+				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.requestMatchers("/users/**").permitAll()
-				.requestMatchers("/actuator/**").permitAll()
+//				.requestMatchers("/actuator/**").permitAll()
 //				.requestMatchers("/users/**").access(new WebExpressionAuthorizationManager("hasIpAddress('"+env.getProperty("gateway.ip")+"')"))
-				.requestMatchers("/h2-console/**").permitAll()
-				.requestMatchers("/v2/api-docs","/configuration/**","/swagger*/**","/webjars/**").permitAll())
+//				.requestMatchers("/h2-console/**").permitAll()
+//				.requestMatchers("/v2/api-docs","/configuration/**","/swagger*/**","/webjars/**").permitAll())
+				
+			.anyRequest().permitAll())
 		.addFilter(new AuthorizationFilter(authenticationManager, env))
 		.addFilter(authenticationFilter)
 		.authenticationManager(authenticationManager)
 		.sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		
 		// h2 console requires frames
-		http.headers((headers)->headers.frameOptions((frameOptions)->frameOptions.sameOrigin()));
+//		http.headers((headers)->headers.frameOptions((frameOptions)->frameOptions.sameOrigin()));
 		
 		return http.build();
 	}

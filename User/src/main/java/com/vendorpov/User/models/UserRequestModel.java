@@ -20,9 +20,7 @@ public class UserRequestModel {
 	@NotEmpty(message = "password cannot be empty")
 	@Size(min = 8, max = 16, message = "password must be greater than or equal to 8 and less than 16 characters")
 	private String password;
-	@NotNull
 	private List<AddressDetailsModel> addresses;
-	@NotNull
 	private List<RoleDetailsModel> roles;
 
 	public String getFirstName() {

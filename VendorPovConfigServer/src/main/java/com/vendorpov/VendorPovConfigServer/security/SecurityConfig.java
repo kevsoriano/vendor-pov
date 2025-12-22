@@ -25,15 +25,21 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+//		http
+//			.authorizeHttpRequests(auth -> auth
+//					.requestMatchers(HttpMethod.POST,"/actuator/busrefresh").hasRole("ADMIN")
+//					.requestMatchers(HttpMethod.POST, "/encrypt").hasRole("ADMIN")
+//					.requestMatchers(HttpMethod.POST, "/decrypt").hasRole("ADMIN")
+//					.requestMatchers(HttpMethod.GET,"/**").hasRole("CLIENT")
+//					.anyRequest().authenticated()) 
+//			.csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/busrefresh","/encrypt","/decrypt"))
+//			.httpBasic(Customizer.withDefaults());
+		
 		http
-			.authorizeHttpRequests(auth -> auth
-					.requestMatchers(HttpMethod.POST,"/actuator/busrefresh").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.POST, "/encrypt").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.POST, "/decrypt").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.GET,"/**").hasRole("CLIENT")
-					.anyRequest().authenticated()) 
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/busrefresh","/encrypt","/decrypt"))
-			.httpBasic(Customizer.withDefaults());
+		.authorizeHttpRequests(auth -> auth
+				.anyRequest().permitAll()) 
+		.csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/busrefresh","/encrypt","/decrypt"))
+		.httpBasic(Customizer.withDefaults());
 
 		return http.build();
 	}

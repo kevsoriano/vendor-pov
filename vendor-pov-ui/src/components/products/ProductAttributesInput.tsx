@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import CreatableMultiSelect, { type CreatableMultiSelectOption } from '../common/CreatableMultiSelect'
 
@@ -79,7 +78,7 @@ export default function ProductAttributesInput({ attributes, onChange }: Product
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-gray-900">Attributes</h3>
+                <h3 className="text-sm font-medium text-gray-900">Attributes</h3>
                 <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500">
                         {attributes.length}/{MAX_ATTRIBUTES} attributes
@@ -102,7 +101,7 @@ export default function ProductAttributesInput({ attributes, onChange }: Product
             )}
 
             <div className="space-y-4">
-                {attributes.map((attribute, index) => (
+                {attributes.map((attribute) => (
                     <div key={attribute.id} className="relative bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                         <div className="absolute top-4 right-4">
                             <button

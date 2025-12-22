@@ -21,6 +21,8 @@ java -version
 
 2. Install Spring Tool Suite - https://spring.io/tools#eclipse
 
+3. Install Postman - https://www.postman.com/downloads/
+
 ## Create a Microservice
 * Create a project
 1. Go to https://start.spring.io/
@@ -41,7 +43,7 @@ Java version - 17
 3. Add dependencies
 Spring Web - for building APIs
 Spring Boot Devtools - for hot reload
-Eureka Discovery Client - to connect to API Gateway
+Validation - for validating request payloads
 
 4. Click on Generate to download Project
 
@@ -83,6 +85,33 @@ Notes:
 
 @RequestMapping - maps incoming HTTP requests to controller methods.
 - When @RequestMapping is defined in the class level, it will be applied to all methods within the class. Otherwise, if @RequestMapping is defined in a specific method, then it will only be applied to that method.
+
+4. Setup a simple GET method
+
+```
+package com.vendorpov.Products.controllers;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/products")
+public class ProductController {
+	
+	@GetMapping
+	public String getProducts() {
+		return "Hello World";
+	}
+
+}
+```
+
+5. Start up service and try sending a request in Postman
+
+6. Add a POST method to create resources
+
+7. Update Get method
 
 * Define Models
 * Configure Service Layer
