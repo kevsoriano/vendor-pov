@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import com.vendorpov.User.services.UserService;
 
@@ -50,12 +51,12 @@ public class WebSecurity {
 			auth
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.requestMatchers("/users/**").permitAll()
-//				.requestMatchers("/actuator/**").permitAll()
-//				.requestMatchers("/users/**").access(new WebExpressionAuthorizationManager("hasIpAddress('"+env.getProperty("gateway.ip")+"')"))
-//				.requestMatchers("/h2-console/**").permitAll()
-//				.requestMatchers("/v2/api-docs","/configuration/**","/swagger*/**","/webjars/**").permitAll())
-				
-			.anyRequest().permitAll())
+				.requestMatchers("/actuator/**").permitAll()
+				.requestMatchers("/users/**").access(new WebExpressionAuthorizationManager("hasIpAddress('"+env.getProperty("gateway.ip")+"')"))
+				.requestMatchers("/h2-console/**").permitAll()
+				.requestMatchers("/v2/api-docs","/configuration/**","/swagger*/**","/webjars/**").permitAll()
+//				.anyRequest().permitAll()
+			)
 		.addFilter(new AuthorizationFilter(authenticationManager, env))
 		.addFilter(authenticationFilter)
 		.authenticationManager(authenticationManager)

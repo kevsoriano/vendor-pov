@@ -145,3 +145,7 @@ Add in controller class
 '''
 @CrossOrigin(origins=*)
 '''
+May have to add the following matcher in WebSecurityConfig as well
+```
+.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+```
