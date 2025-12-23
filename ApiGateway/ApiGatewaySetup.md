@@ -26,7 +26,7 @@ management.endpoints.web.exposure.include=gateway,health,mappings
 ## CORS configuration
 application.properties
 ```
-spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-origins=http://localhost:3000,http://localhost:5173
+spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-origins=*
 spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-origin-patterns=*
 spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-methods=GET,POST,PUT,DELETE,OPTIONS
 spring.cloud.gateway.server.webflux.globalcors.cors-configurations.[/**].allowed-headers=*
