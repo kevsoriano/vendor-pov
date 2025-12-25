@@ -1,0 +1,40 @@
+.np-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.75rem 1rem;
+	margin: 0 0 1rem 0;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.np-message {
+	flex: 1 1 auto;
+	margin-right: 0.5rem;
+}
+
+.np-close {
+	background: transparent;
+	border: none;
+	font-size: 1.25rem;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0.25rem 0.5rem;
+}
+
+.np-success {
+	background: #e6ffef;
+	color: #0b6b3a;
+	border: 1px solid #9cf0b6;
+}
+
+.np-error {
+	background: #fff0f0;
+	color: #8f1d1d;
+	border: 1px solid #f3a3a3;
+}
+
+.np-info {
+	background: #eef6ff;
+	color: #0b4a7a;
+	border: 1px solid #bcdcff;
+}

@@ -6,19 +6,14 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": [
-			"**",
-			"!!**/dist",
-			"!!**/build",
-			"!!**/node_modules"
-		],
+		"includes": ["**", "!!**/dist", "!!**/build", "!!**/node_modules"],
 		"ignoreUnknown": false
 	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
 		"indentWidth": 3,
-    	"lineWidth": 100
+		"lineWidth": 100
 	},
 	"linter": {
 		"enabled": true,

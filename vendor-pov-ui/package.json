@@ -1,41 +1,41 @@
 {
-  "name": "vendor-pov-ui",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "build": "tsc -b && vite build",
-    "lint": "biome lint --write ./src",
-    "lint:check": "biome lint .",
-    "format": "biome format --write .",
-    "format:check": "biome format --check .",
-    "check": "biome check --apply .",
-    "check:ci": "biome check .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@fontsource/roboto": "^5.2.9",
-    "@headlessui/react": "^2.2.9",
-    "@heroicons/react": "^2.2.0",
-    "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
-    "@tailwindcss/vite": "^4.1.17",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.10.1",
-    "tailwindcss": "^4.1.17"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.3.8",
-    "@types/node": "^24.10.1",
-    "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.1",
-    "globals": "^16.5.0",
-    "typescript": "~5.9.3",
-    "vite": "^7.2.4"
-  }
+	"name": "vendor-pov-ui",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite --host 0.0.0.0",
+		"build": "tsc -b && vite build",
+		"lint": "biome lint --write ./src",
+		"lint:check": "biome lint .",
+		"format": "biome format --write .",
+		"format:check": "biome format --check .",
+		"check": "biome check --apply .",
+		"check:ci": "biome check .",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.1",
+		"@fontsource/roboto": "^5.2.9",
+		"@headlessui/react": "^2.2.9",
+		"@heroicons/react": "^2.2.0",
+		"@mui/icons-material": "^7.3.6",
+		"@mui/material": "^7.3.6",
+		"@tailwindcss/vite": "^4.1.17",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0",
+		"react-router-dom": "^7.10.1",
+		"tailwindcss": "^4.1.17"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.8",
+		"@types/node": "^24.10.1",
+		"@types/react": "^19.2.5",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react": "^5.1.1",
+		"globals": "^16.5.0",
+		"typescript": "~5.9.3",
+		"vite": "^7.2.4"
+	}
 }

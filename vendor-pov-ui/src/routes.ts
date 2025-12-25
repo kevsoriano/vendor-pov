@@ -1,70 +1,74 @@
 import { createBrowserRouter } from "react-router-dom";
-import AuthenticationPage, { action as AuthAction } from "./pages/Auth/Authentication";
-import SignIn from "./components/SignIn";
+import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentication";
 import App from "./App";
-import SignUp from "./components/SignUp";
-import CustomerDetail from "./pages/customers/CustomerDetail";
-import Customers from "./pages/customers/Customers";
-import Home from "./pages/Home";
+import HomePage from "./pages/HomePage";
+import ErrorPage from "./pages/ErrorPage";
+import { checkAuthLoader, tokenLoader } from "./utils/auth";
+import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
 import AddProduct from "./pages/products/AddProduct";
 import ProductDetail from "./pages/products/ProductDetail";
 import Products from "./pages/products/Products";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
 import TestProductVariants from "./pages/TestProductVariants";
+import UsersPage from "./pages/users/UsersPage";
+import AddUsersPage from "./pages/users/AddUsersPage";
 
 export const router = createBrowserRouter([
-	// {
-	// 	path: '/',
-	// 	Component: 
-	// },
 	{
-		path: '/auth',
-		Component: AuthenticationPage,
-		action: AuthAction
-	},
-	{
-		path: 'test-creatable',
-		Component: TestCreatableSelect
-	},
-	{
-		path: 'test-product-variants',
-		Component: TestProductVariants
-	},
-	{
-		path: '/signin',
-		Component: SignIn,
-	},
-	{
-		path: 'signup',
-		Component: SignUp,
-	},
-	{
-		Component: App, // LayoutComponent
+		path: "/",
+		Component: App,
+		// errorElement: <ErrorPage />,
+		id: "root",
+		loader: tokenLoader,
 		children: [
+			// TODO: index route
 			{
-				index: true,
-				Component: Home,
+				path: "/home",
+				Component: HomePage,
+				loader: checkAuthLoader,
 			},
 			{
-				path: 'customers',
-				Component: Customers,
+				path: "/auth",
+				Component: AuthenticationPage,
+				action: AuthAction,
 			},
 			{
-				path: ":customerId",
-				Component: CustomerDetail
+				path: "/logout",
+				action: LogoutAction,
 			},
 			{
-				path: 'products',
+				path: "/users",
+				Component: UsersPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "/users/add",
+				Component: AddUsersPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "products",
 				Component: Products,
+				loader: checkAuthLoader,
 			},
 			{
 				path: "products/:productId",
-				Component: ProductDetail
+				Component: ProductDetail,
+				loader: checkAuthLoader,
 			},
 			{
 				path: "products/add",
-				Component: AddProduct
+				Component: AddProduct,
+				loader: checkAuthLoader,
 			},
-		]
-	}
+			{
+				path: "test-creatable",
+				Component: TestCreatableSelect,
+			},
+			{
+				path: "test-product-variants",
+				Component: TestProductVariants,
+			},
+		],
+	},
 ]);
