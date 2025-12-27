@@ -1,23 +1,24 @@
 import { Fragment, useEffect, useState } from "react";
 import NotificationBanner from "../../components/common/NotificationBanner";
 import { fetchAvailableUsers } from "../../utils/http";
-import Tab from "@mui/material/Tab";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Tabs from "@mui/material/Tabs";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import ResourceTable from "../../components/common/ResourceTable";
+import Button from "@mui/material/Button";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from "react-router-dom";
 
-function createData(firstName: string, lastName: number, email: number) {
+function rowData(firstName: string, lastName: number, email: number) {
 	return {
 		firstName,
 		lastName,
@@ -25,7 +26,7 @@ function createData(firstName: string, lastName: number, email: number) {
 	};
 }
 
-function Row(props: { row: ReturnType<typeof createData> }) {
+function Row(props: { row: ReturnType<typeof rowData> }) {
 	const { row } = props;
 	const [open, setOpen] = useState(false);
 
@@ -37,13 +38,17 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 						{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
 					</IconButton>
 				</TableCell>
-				<TableCell component="th" scope="row">
+				<TableCell component="th" scope="row" align="center">
 					{row.firstName}
 				</TableCell>
-				<TableCell align="right">{row.lastName}</TableCell>
-				<TableCell align="right">{row.email}</TableCell>
+				<TableCell align="center">{row.lastName}</TableCell>
+				<TableCell align="center">{row.email}</TableCell>
+				<TableCell align="center">
+					<Button><EditIcon /></Button>
+					<Button><DeleteIcon /></Button>
+				</TableCell>
 			</TableRow>
-			{/* <TableRow>
+			<TableRow>
 				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 1 }}>
@@ -60,15 +65,13 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{row.map((data) => (
-                    <></>
-									))}
+									<span>Hello</span>
 								</TableBody>
 							</Table>
 						</Box>
 					</Collapse>
 				</TableCell>
-			</TableRow> */}
+			</TableRow>
 		</Fragment>
 	);
 }
@@ -112,6 +115,18 @@ const UsersPage = () => {
 
 	return (
 		<div>
+			<div className="px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
+				<h1>Users</h1>
+			</div>
+			<div className="flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center">
+				<p>Add, view and edit your products all in one place.</p>
+				<div className="flex gap-2">
+					<button className="bg-[#5d91b4] text-white">Import</button>
+					<button className="bg-[#00b740] text-white">
+						<Link to={"/users/add"}>Add User</Link>
+					</button>
+				</div>
+			</div>
 			{notification && (
 				<NotificationBanner
 					message={notification.message}
@@ -125,40 +140,11 @@ const UsersPage = () => {
 			{!isFetching && users.length === 0 && <div>No users found.</div>}
 
 			{!isFetching && users.length > 0 && (
-				<div className="flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
-					<div>
-						<Tabs
-							value={activeTab}
-							onChange={handleChange}
-							textColor="secondary"
-							indicatorColor="secondary"
-							aria-label="secondary tabs example"
-						>
-							<Tab value="one" label="Active" />
-							<Tab value="two" label="Inactive" />
-							<Tab value="three" label="All" />
-						</Tabs>
-					</div>
-					<div>
-						<TableContainer component={Paper}>
-							<Table aria-label="collapsible table">
-								<TableHead>
-									<TableRow>
-										<TableCell />
-										<TableCell>First Name</TableCell>
-										<TableCell align="right">Last Name</TableCell>
-										<TableCell align="right">Email</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									{users.map((user) => (
-										<Row key={user.firstName} row={user} />
-									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
-					</div>
-				</div>
+				<ResourceTable
+					headers={["", "First Name", "Last Name", "Email"]}
+					items={users}
+					renderRow={(user) => <Row key={user.email} row={user} />}
+				></ResourceTable>
 			)}
 		</div>
 	);

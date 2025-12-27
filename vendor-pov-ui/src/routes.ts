@@ -6,11 +6,11 @@ import ErrorPage from "./pages/ErrorPage";
 import { checkAuthLoader, tokenLoader } from "./utils/auth";
 import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
 import AddProduct from "./pages/products/AddProduct";
-import ProductDetail from "./pages/products/ProductDetail";
-import Products from "./pages/products/Products";
+import ProductDetail from "./pages/products/ProductDetailPage";
+import Products from "./pages/products/ProductListPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
 import TestProductVariants from "./pages/TestProductVariants";
-import UsersPage from "./pages/users/UsersPage";
+import UsersPage from "./pages/users/UserListPage";
 import AddUsersPage from "./pages/users/AddUsersPage";
 
 export const router = createBrowserRouter([
