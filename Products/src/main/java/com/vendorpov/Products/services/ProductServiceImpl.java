@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.vendorpov.Products.data.ProductEntity;
 import com.vendorpov.Products.data.ProductRepository;
+import com.vendorpov.Products.shared.ProductAttributeDto;
 import com.vendorpov.Products.shared.ProductDto;
 
 @Service
@@ -24,16 +25,31 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public ProductDto createProduct(ProductDto productDetails) {
-		productDetails.setProductId(UUID.randomUUID().toString());
-		
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		
 		ProductEntity productEntity = modelMapper.map(productDetails, ProductEntity.class);
-		productRepository.save(productEntity);
+		productEntity.setProductId(UUID.randomUUID().toString());
 		
-		ProductDto returnValue = modelMapper.map(productEntity, ProductDto.class);
-		return returnValue;
+//		for(int i=0; i<productDetails.getProductAttributes().size();i++) {
+//			ProductAttributeDto productAttribute = productDetails.getProductAttributes().get(i);
+//			productAttribute.setProduct(productDetails);
+//			productAttribute.setProductAttributeId(UUID.randomUUID().toString());
+//			
+//			
+//			productDetails.getProductAttributes().set(i,productAttribute);
+//		}
+		
+		if (productEntity.getProductAttributes() != null) {
+	        productEntity.getProductAttributes().forEach(attribute -> {
+	            attribute.setProductAttributeId(UUID.randomUUID().toString());
+	            attribute.setProduct(productEntity); // Link to parent Entity
+	        });
+	    }
+		
+		ProductEntity createdProduct = productRepository.save(productEntity);
+		
+		return modelMapper.map(createdProduct, ProductDto.class);
 	}
 
 	@Override

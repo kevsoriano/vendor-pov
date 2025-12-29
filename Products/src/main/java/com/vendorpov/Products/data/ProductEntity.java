@@ -13,9 +13,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Entity(name = "products")
 public class ProductEntity implements Serializable {
@@ -31,6 +29,8 @@ public class ProductEntity implements Serializable {
 	private String name;
 	@Column
 	private String description;
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductAttributeEntity> productAttributes;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -66,6 +66,14 @@ public class ProductEntity implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<ProductAttributeEntity> getProductAttributes() {
+		return productAttributes;
+	}
+
+	public void setProductAttributes(List<ProductAttributeEntity> productAttributes) {
+		this.productAttributes = productAttributes;
 	}
 
 	public Instant getCreatedOn() {

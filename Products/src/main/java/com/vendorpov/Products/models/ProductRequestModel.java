@@ -1,10 +1,8 @@
 package com.vendorpov.Products.models;
 
-import java.time.Instant;
 import java.util.List;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class ProductRequestModel {
@@ -12,6 +10,7 @@ public class ProductRequestModel {
 	@Size(min = 2, message = "name must be greater than or equal to 2 characters")
 	private String name;
 	private String description;
+	private List<ProductAttributeRequestModel> productAttributes;
 
 	public String getName() {
 		return name;
@@ -28,4 +27,13 @@ public class ProductRequestModel {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public List<ProductAttributeRequestModel> getProductAttributes() {
+		return productAttributes;
+	}
+
+	public void setProductAttributes(List<ProductAttributeRequestModel> productAttributes) {
+		this.productAttributes = productAttributes;
+	}
+
 }
