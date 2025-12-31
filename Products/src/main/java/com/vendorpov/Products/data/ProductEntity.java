@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -31,6 +30,8 @@ public class ProductEntity implements Serializable {
 	private String description;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttributeEntity> productAttributes;
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductVariantEntity> productVariants;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -74,6 +75,14 @@ public class ProductEntity implements Serializable {
 
 	public void setProductAttributes(List<ProductAttributeEntity> productAttributes) {
 		this.productAttributes = productAttributes;
+	}
+
+	public List<ProductVariantEntity> getProductVariants() {
+		return productVariants;
+	}
+
+	public void setProductVariants(List<ProductVariantEntity> productVariants) {
+		this.productVariants = productVariants;
 	}
 
 	public Instant getCreatedOn() {

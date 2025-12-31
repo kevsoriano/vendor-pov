@@ -4,15 +4,14 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
-public class ProductDto implements Serializable {
+public class ProductVariantDto implements Serializable {
 
-	private static final long serialVersionUID = -2800386597500305630L;
+	private static final long serialVersionUID = 6703134141545020761L;
 	private long id;
-	private String productId;
-	private String name;
-	private String description;
+	private String productVariantId;
+	private String variant_sku;
 	private List<ProductAttributeDto> productAttributes;
-	private List<ProductVariantDto> productVariants;
+	private ProductDto product;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
 
@@ -24,28 +23,20 @@ public class ProductDto implements Serializable {
 		this.id = id;
 	}
 
-	public String getProductId() {
-		return productId;
+	public String getProductVariantId() {
+		return productVariantId;
 	}
 
-	public void setProductId(String productId) {
-		this.productId = productId;
+	public void setProductVariantId(String productVariantId) {
+		this.productVariantId = productVariantId;
 	}
 
-	public String getName() {
-		return name;
+	public String getVariant_sku() {
+		return variant_sku;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	public void setVariant_sku(String variant_sku) {
+		this.variant_sku = variant_sku;
 	}
 
 	public List<ProductAttributeDto> getProductAttributes() {
@@ -56,12 +47,12 @@ public class ProductDto implements Serializable {
 		this.productAttributes = productAttributes;
 	}
 
-	public List<ProductVariantDto> getProductVariants() {
-		return productVariants;
+	public ProductDto getProduct() {
+		return product;
 	}
 
-	public void setProductVariants(List<ProductVariantDto> productVariants) {
-		this.productVariants = productVariants;
+	public void setProduct(ProductDto product) {
+		this.product = product;
 	}
 
 	public Instant getCreatedOn() {

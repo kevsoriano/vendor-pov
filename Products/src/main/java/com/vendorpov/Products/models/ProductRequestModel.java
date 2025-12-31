@@ -11,6 +11,7 @@ public class ProductRequestModel {
 	private String name;
 	private String description;
 	private List<ProductAttributeRequestModel> productAttributes;
+	private List<ProductVariantRequestModel> productVariants;
 
 	public String getName() {
 		return name;
@@ -34,6 +35,14 @@ public class ProductRequestModel {
 
 	public void setProductAttributes(List<ProductAttributeRequestModel> productAttributes) {
 		this.productAttributes = productAttributes;
+	}
+
+	public List<ProductVariantRequestModel> getProductVariants() {
+		return productVariants;
+	}
+
+	public void setProductVariants(List<ProductVariantRequestModel> productVariants) {
+		this.productVariants = productVariants;
 	}
 
 }

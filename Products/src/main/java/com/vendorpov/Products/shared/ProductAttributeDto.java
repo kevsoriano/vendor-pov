@@ -11,6 +11,7 @@ public class ProductAttributeDto implements Serializable {
 	private String attributeKey;
 	private String attributeValue;
 	private ProductDto product;
+	private List<ProductVariantDto> productVariants;
 
 	public long getId() {
 		return id;
@@ -50,6 +51,14 @@ public class ProductAttributeDto implements Serializable {
 
 	public void setProduct(ProductDto product) {
 		this.product = product;
+	}
+
+	public List<ProductVariantDto> getProductVariants() {
+		return productVariants;
+	}
+
+	public void setProductVariants(List<ProductVariantDto> productVariants) {
+		this.productVariants = productVariants;
 	}
 
 }
