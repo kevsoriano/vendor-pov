@@ -71,7 +71,6 @@ public class ProductServiceImpl implements ProductService {
 	            variant.setProduct(productEntity);
 	            variant.setProductVariantId(UUID.randomUUID().toString());
 
-	            // Use a Set to ensure uniqueness in the join table
 	            Set<ProductAttributeEntity> linkedAttributes = new HashSet<>();
 
 	            if (variant.getProductAttributes() != null) {
@@ -83,17 +82,9 @@ public class ProductServiceImpl implements ProductService {
 	                        .orElse(null);
 
 	                    linkedAttributes.add(matchedAttr);
-	                    
-	                    // Set inverse side
-	                    if (matchedAttr.getProductVariants() == null) {
-	                        matchedAttr.setProductVariants(new ArrayList<>());
-	                    }
 	                    matchedAttr.getProductVariants().add(variant);
 	                }
-	            } else {
-	            	System.out.println("Empty" + variant.getVariant_sku());
-	            }
-	            // Set the linked attributes back to the variant
+	            } 
 	            variant.setProductAttributes(linkedAttributes);
 	        }
 	    }
