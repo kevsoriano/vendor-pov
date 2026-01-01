@@ -57,25 +57,11 @@ public class ProductServiceImpl implements ProductService {
 
 	            if (variant.getProductAttributes() != null) {
 	                for (ProductAttributeEntity dtoAttr : variant.getProductAttributes()) {
-	                    // Initialize product attributes if null
-	                    if (productEntity.getProductAttributes() == null) {
-	                        productEntity.setProductAttributes(new ArrayList<>());
-	                    }
-
-	                    // Find existing attribute or use the new one from variant
 	                    ProductAttributeEntity matchedAttr = productEntity.getProductAttributes().stream()
-	                        .filter(a -> a.getAttributeKey() != null && a.getAttributeKey().equals(dtoAttr.getAttributeKey()) && 
-	                                     a.getAttributeValue() != null && a.getAttributeValue().equals(dtoAttr.getAttributeValue()))
+	                        .filter(a -> a.getAttributeKey() != null && a.getAttributeKey().toLowerCase().equals(dtoAttr.getAttributeKey().toLowerCase()) && 
+	                                     a.getAttributeValue() != null && a.getAttributeValue().toLowerCase().equals(dtoAttr.getAttributeValue().toLowerCase()))
 	                        .findFirst()
 	                        .orElse(null);
-
-	                    if (matchedAttr == null) {
-	                        // Not found, so we adopt this attribute into the Product
-	                        matchedAttr = dtoAttr;
-	                        matchedAttr.setProduct(productEntity);
-	                        matchedAttr.setProductAttributeId(UUID.randomUUID().toString());
-	                        productEntity.getProductAttributes().add(matchedAttr);
-	                    }
 
 	                    linkedAttributes.add(matchedAttr);
 	                    
@@ -85,6 +71,8 @@ public class ProductServiceImpl implements ProductService {
 	                    }
 	                    matchedAttr.getProductVariants().add(variant);
 	                }
+	            } else {
+	            	System.out.println("Empty" + variant.getVariant_sku());
 	            }
 	            // Set the linked attributes back to the variant
 	            variant.setProductAttributes(linkedAttributes);
