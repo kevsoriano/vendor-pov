@@ -2,6 +2,7 @@ package com.vendorpov.Products.data;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,8 +11,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "products")
@@ -28,6 +33,13 @@ public class ProductEntity implements Serializable {
 	private String name;
 	@Column
 	private String description;
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "product_tag_assignments", 
+			joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), 
+			inverseJoinColumns = @JoinColumn(name = "product_tag_id", referencedColumnName = "id")
+	)
+	private Collection<ProductTagEntity> productTags;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttributeEntity> productAttributes;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -67,6 +79,14 @@ public class ProductEntity implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Collection<ProductTagEntity> getProductTags() {
+		return productTags;
+	}
+
+	public void setProductTags(Collection<ProductTagEntity> productTags) {
+		this.productTags = productTags;
 	}
 
 	public List<ProductAttributeEntity> getProductAttributes() {

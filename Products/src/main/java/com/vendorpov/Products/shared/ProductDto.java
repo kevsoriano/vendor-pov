@@ -11,6 +11,7 @@ public class ProductDto implements Serializable {
 	private String productId;
 	private String name;
 	private String description;
+	private List<ProductTagDto> productTags;
 	private List<ProductAttributeDto> productAttributes;
 	private List<ProductVariantDto> productVariants;
 	private Instant createdOn;
@@ -46,6 +47,14 @@ public class ProductDto implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<ProductTagDto> getProductTags() {
+		return productTags;
+	}
+
+	public void setProductTags(List<ProductTagDto> productTags) {
+		this.productTags = productTags;
 	}
 
 	public List<ProductAttributeDto> getProductAttributes() {

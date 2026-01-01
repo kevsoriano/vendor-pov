@@ -15,9 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.vendorpov.Products.data.ProductAttributeEntity;
-import com.vendorpov.Products.data.ProductAttributeRepository;
 import com.vendorpov.Products.data.ProductEntity;
 import com.vendorpov.Products.data.ProductRepository;
+import com.vendorpov.Products.data.ProductTagEntity;
+import com.vendorpov.Products.data.ProductTagRepository;
 import com.vendorpov.Products.data.ProductVariantEntity;
 import com.vendorpov.Products.shared.ProductDto;
 
@@ -29,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductRepository productRepository;
 	@Autowired
-	ProductAttributeRepository productAttributeRepository;
+	ProductTagRepository productTagRepository;
 
 	@Override
 	@Transactional
@@ -39,6 +40,24 @@ public class ProductServiceImpl implements ProductService {
 		
 		ProductEntity productEntity = modelMapper.map(productDetails, ProductEntity.class);
 		productEntity.setProductId(UUID.randomUUID().toString());
+		
+		if (productEntity.getProductTags() != null && !productEntity.getProductTags().isEmpty()) { 
+			List<ProductTagEntity> tags = new ArrayList<>();
+			productEntity.getProductTags().forEach(tag -> {
+				ProductTagEntity savedProductTag = productTagRepository.findByName(tag.getName());
+				if(savedProductTag != null) {
+					savedProductTag.getProducts().add(productEntity);
+					tags.add(savedProductTag);
+				} else {
+					List<ProductEntity> products = new ArrayList<>();
+					products.add(productEntity);
+					tag.setProductTagId(UUID.randomUUID().toString());
+					tag.setProducts(products);
+					tags.add(tag);
+				}
+			});
+			productEntity.setProductTags(tags);
+		}
 		
 		if (productEntity.getProductAttributes() != null) {
 	        for (ProductAttributeEntity attribute : productEntity.getProductAttributes()) {
