@@ -20,6 +20,10 @@ import com.vendorpov.Products.data.ProductRepository;
 import com.vendorpov.Products.data.ProductTagEntity;
 import com.vendorpov.Products.data.ProductTagRepository;
 import com.vendorpov.Products.data.ProductVariantEntity;
+import com.vendorpov.Products.data.SupplierEntity;
+import com.vendorpov.Products.data.SupplierProductVariantCompositeKey;
+import com.vendorpov.Products.data.SupplierProductVariantEntity;
+import com.vendorpov.Products.data.SupplierRepository;
 import com.vendorpov.Products.shared.ProductDto;
 
 import jakarta.transaction.Transactional;
@@ -31,6 +35,9 @@ public class ProductServiceImpl implements ProductService {
 	ProductRepository productRepository;
 	@Autowired
 	ProductTagRepository productTagRepository;
+	@Autowired
+//	SupplierServiceClient supplierServiceClient;
+	SupplierRepository supplierRepository;
 
 	@Override
 	@Transactional
@@ -81,13 +88,40 @@ public class ProductServiceImpl implements ProductService {
 	                        .findFirst()
 	                        .orElse(null);
 
+	                    if (matchedAttr == null) {
+	                        throw new RuntimeException("Product attribute '" + dtoAttr.getAttributeKey() + ":" + dtoAttr.getAttributeValue() + "' not found on product");
+	                    }
+	                    if (matchedAttr.getProductVariants() == null) {
+	                        matchedAttr.setProductVariants(new ArrayList<>());
+	                    }
 	                    linkedAttributes.add(matchedAttr);
 	                    matchedAttr.getProductVariants().add(variant);
 	                }
 	            } 
 	            variant.setProductAttributes(linkedAttributes);
-	        }
+	            
+				List<SupplierProductVariantEntity> newLinks = new ArrayList<>();
+	            if (variant.getSupplierProductVariants() != null) {
+	            	List<SupplierProductVariantEntity> originalSupplierLinks = new ArrayList<>(variant.getSupplierProductVariants());
+					for (SupplierProductVariantEntity supplierProductVariant : originalSupplierLinks) {
+						SupplierEntity supplierEntity = supplierRepository.findBySupplierId(supplierProductVariant.getSupplier().getSupplierId());
+						if(supplierEntity==null) {
+							throw new RuntimeException("Supplier not found");
+						}
+						SupplierProductVariantEntity link = new SupplierProductVariantEntity();
+						link.setProductVariant(variant);
+						link.setSupplier(supplierEntity);
+						link.setSupplierPrice(supplierProductVariant.getSupplierPrice());
+						link.setTaxRate(supplierProductVariant.getTaxRate());
+						link.setId(new SupplierProductVariantCompositeKey(variant.getId(), supplierEntity.getId()));
+						newLinks.add(link);
+					}
+				}
+				variant.setSupplierProductVariants(newLinks);
+			}
 	    }
+		
+//		List<SupplierResponseModel> suppliers = supplierServiceClient.getSuppliers();
 		
 		ProductEntity createdProduct = productRepository.save(productEntity);
 		return modelMapper.map(createdProduct, ProductDto.class);

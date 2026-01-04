@@ -6,9 +6,18 @@ import java.util.List;
 public class ProductTagDto implements Serializable {
 
 	private static final long serialVersionUID = 8998943347036010582L;
+	private long id;
 	private String productTagId;
 	private String name;
 	private List<ProductDto> products;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getProductTagId() {
 		return productTagId;

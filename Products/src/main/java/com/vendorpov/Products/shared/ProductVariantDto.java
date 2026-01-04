@@ -9,8 +9,9 @@ public class ProductVariantDto implements Serializable {
 	private static final long serialVersionUID = 6703134141545020761L;
 	private long id;
 	private String productVariantId;
-	private String variant_sku;
+	private String variantSku;
 	private List<ProductAttributeDto> productAttributes;
+	private List<SupplierProductVariantDto> supplierProductVariants;
 	private ProductDto product;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
@@ -31,12 +32,12 @@ public class ProductVariantDto implements Serializable {
 		this.productVariantId = productVariantId;
 	}
 
-	public String getVariant_sku() {
-		return variant_sku;
+	public String getVariantSku() {
+		return variantSku;
 	}
 
-	public void setVariant_sku(String variant_sku) {
-		this.variant_sku = variant_sku;
+	public void setVariantSku(String variantSku) {
+		this.variantSku = variantSku;
 	}
 
 	public List<ProductAttributeDto> getProductAttributes() {
@@ -45,6 +46,14 @@ public class ProductVariantDto implements Serializable {
 
 	public void setProductAttributes(List<ProductAttributeDto> productAttributes) {
 		this.productAttributes = productAttributes;
+	}
+
+	public List<SupplierProductVariantDto> getSupplierProductVariants() {
+		return supplierProductVariants;
+	}
+
+	public void setSupplierProductVariants(List<SupplierProductVariantDto> supplierProductVariants) {
+		this.supplierProductVariants = supplierProductVariants;
 	}
 
 	public ProductDto getProduct() {

@@ -4,15 +4,16 @@ import java.util.List;
 
 public class ProductVariantRequestModel {
 
-	private String variant_sku;
+	private String variantSku;
 	private List<ProductAttributeRequestModel> productAttributes;
+	private List<SupplierProductVariantRequestModel> supplierProductVariants;
 
-	public String getVariant_sku() {
-		return variant_sku;
+	public String getVariantSku() {
+		return variantSku;
 	}
 
-	public void setVariant_sku(String variant_sku) {
-		this.variant_sku = variant_sku;
+	public void setVariantSku(String variantSku) {
+		this.variantSku = variantSku;
 	}
 
 	public List<ProductAttributeRequestModel> getProductAttributes() {
@@ -21,6 +22,14 @@ public class ProductVariantRequestModel {
 
 	public void setProductAttributes(List<ProductAttributeRequestModel> productAttributes) {
 		this.productAttributes = productAttributes;
+	}
+
+	public List<SupplierProductVariantRequestModel> getSupplierProductVariants() {
+		return supplierProductVariants;
+	}
+
+	public void setSupplierProductVariants(List<SupplierProductVariantRequestModel> supplierProductVariants) {
+		this.supplierProductVariants = supplierProductVariants;
 	}
 
 }

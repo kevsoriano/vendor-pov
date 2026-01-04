@@ -149,3 +149,14 @@ May have to add the following matcher in WebSecurityConfig as well
 ```
 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 ```
+
+## Relationship Mapping Annotations
+@OneToOne
+
+@OneToMany / @ManyToOne
+
+@ManyToMany
+
+### Note: if you need to add fields to a joining table, then @ManyToMany is not suitable.
+
+## 

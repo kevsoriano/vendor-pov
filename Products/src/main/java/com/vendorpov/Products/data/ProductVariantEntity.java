@@ -3,6 +3,7 @@ package com.vendorpov.Products.data;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -17,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity(name = "product_variants")
 public class ProductVariantEntity implements Serializable {
@@ -29,17 +31,15 @@ public class ProductVariantEntity implements Serializable {
 	@Column(unique = true, nullable = false)
 	private String productVariantId;
 	@Column(length = 50, nullable = false)
-	private String variant_sku;
+	private String variantSku;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	@JoinTable(
-		name = "product_variant_attributes", 
-		joinColumns = @JoinColumn(name = "product_variant_id", referencedColumnName = "id"), 
-		inverseJoinColumns = @JoinColumn(name = "product_attribute_id", referencedColumnName = "id"
-	))
+	@JoinTable(name = "product_variant_attributes", joinColumns = @JoinColumn(name = "product_variant_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_attribute_id", referencedColumnName = "id"))
 	private Collection<ProductAttributeEntity> productAttributes;
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private ProductEntity product;
+	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SupplierProductVariantEntity> supplierProductVariants;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -61,12 +61,12 @@ public class ProductVariantEntity implements Serializable {
 		this.productVariantId = productVariantId;
 	}
 
-	public String getVariant_sku() {
-		return variant_sku;
+	public String getVariantSku() {
+		return variantSku;
 	}
 
-	public void setVariant_sku(String variant_sku) {
-		this.variant_sku = variant_sku;
+	public void setVariantSku(String variantSku) {
+		this.variantSku = variantSku;
 	}
 
 	public Collection<ProductAttributeEntity> getProductAttributes() {
@@ -83,6 +83,14 @@ public class ProductVariantEntity implements Serializable {
 
 	public void setProduct(ProductEntity product) {
 		this.product = product;
+	}
+
+	public List<SupplierProductVariantEntity> getSupplierProductVariants() {
+		return supplierProductVariants;
+	}
+
+	public void setSupplierProductVariants(List<SupplierProductVariantEntity> supplierProductVariants) {
+		this.supplierProductVariants = supplierProductVariants;
 	}
 
 	public Instant getCreatedOn() {

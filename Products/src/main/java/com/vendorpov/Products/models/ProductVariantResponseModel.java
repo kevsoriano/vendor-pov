@@ -1,0 +1,35 @@
+package com.vendorpov.Products.models;
+
+import java.util.List;
+
+public class ProductVariantResponseModel {
+
+	private String variantSku;
+	private List<ProductAttributeResponseModel> productAttributes;
+	private List<SupplierProductVariantResponseModel> supplierProductVariants;
+
+	public String getVariantSku() {
+		return variantSku;
+	}
+
+	public void setVariantSku(String variantSku) {
+		this.variantSku = variantSku;
+	}
+
+	public List<ProductAttributeResponseModel> getProductAttributes() {
+		return productAttributes;
+	}
+
+	public void setProductAttributes(List<ProductAttributeResponseModel> productAttributes) {
+		this.productAttributes = productAttributes;
+	}
+
+	public List<SupplierProductVariantResponseModel> getSupplierProductVariants() {
+		return supplierProductVariants;
+	}
+
+	public void setSupplierProductVariants(List<SupplierProductVariantResponseModel> supplierProductVariants) {
+		this.supplierProductVariants = supplierProductVariants;
+	}
+
+}
