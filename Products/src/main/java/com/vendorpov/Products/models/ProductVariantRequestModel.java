@@ -7,6 +7,7 @@ public class ProductVariantRequestModel {
 	private String variantSku;
 	private List<ProductAttributeRequestModel> productAttributes;
 	private List<SupplierProductVariantRequestModel> supplierProductVariants;
+	private List<InventoryRequestModel> inventories;
 
 	public String getVariantSku() {
 		return variantSku;
@@ -30,6 +31,14 @@ public class ProductVariantRequestModel {
 
 	public void setSupplierProductVariants(List<SupplierProductVariantRequestModel> supplierProductVariants) {
 		this.supplierProductVariants = supplierProductVariants;
+	}
+
+	public List<InventoryRequestModel> getInventories() {
+		return inventories;
+	}
+
+	public void setInventories(List<InventoryRequestModel> inventories) {
+		this.inventories = inventories;
 	}
 
 }

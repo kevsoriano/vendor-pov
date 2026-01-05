@@ -40,6 +40,8 @@ public class ProductVariantEntity implements Serializable {
 	private ProductEntity product;
 	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SupplierProductVariantEntity> supplierProductVariants;
+	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<InventoryEntity> inventories;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -91,6 +93,14 @@ public class ProductVariantEntity implements Serializable {
 
 	public void setSupplierProductVariants(List<SupplierProductVariantEntity> supplierProductVariants) {
 		this.supplierProductVariants = supplierProductVariants;
+	}
+
+	public List<InventoryEntity> getInventories() {
+		return inventories;
+	}
+
+	public void setInventories(List<InventoryEntity> inventories) {
+		this.inventories = inventories;
 	}
 
 	public Instant getCreatedOn() {

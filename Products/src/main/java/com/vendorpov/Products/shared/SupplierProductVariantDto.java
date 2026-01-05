@@ -6,18 +6,9 @@ import java.math.BigDecimal;
 public class SupplierProductVariantDto implements Serializable {
 
 	private static final long serialVersionUID = -6458634379518346695L;
-	private String supplierProductVariantId;
 	private SupplierDto supplier;
 	private BigDecimal supplierPrice;
 	private BigDecimal taxRate;
-
-	public String getSupplierProductVariantId() {
-		return supplierProductVariantId;
-	}
-
-	public void setSupplierProductVariantId(String supplierProductVariantId) {
-		this.supplierProductVariantId = supplierProductVariantId;
-	}
 
 	public SupplierDto getSupplier() {
 		return supplier;

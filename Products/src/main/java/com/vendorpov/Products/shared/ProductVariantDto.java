@@ -12,6 +12,7 @@ public class ProductVariantDto implements Serializable {
 	private String variantSku;
 	private List<ProductAttributeDto> productAttributes;
 	private List<SupplierProductVariantDto> supplierProductVariants;
+	private List<InventoryDto> inventories;
 	private ProductDto product;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
@@ -54,6 +55,14 @@ public class ProductVariantDto implements Serializable {
 
 	public void setSupplierProductVariants(List<SupplierProductVariantDto> supplierProductVariants) {
 		this.supplierProductVariants = supplierProductVariants;
+	}
+
+	public List<InventoryDto> getInventories() {
+		return inventories;
+	}
+
+	public void setInventories(List<InventoryDto> inventories) {
+		this.inventories = inventories;
 	}
 
 	public ProductDto getProduct() {

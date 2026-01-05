@@ -3,32 +3,26 @@ package com.vendorpov.Products.data;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
-@Entity(name = "suppliers")
-public class SupplierEntity implements Serializable {
+@Entity(name = "outlets")
+public class OutletEntity implements Serializable {
 
-	private static final long serialVersionUID = 5027515860634704602L;
+	private static final long serialVersionUID = -4935584647091561212L;
 	@Id
 	@GeneratedValue
 	private long id;
-	@Column(length = 100, nullable = false)
-	private String supplierId;
-	@Column(length = 50, nullable = false)
+	private String outletId;
 	private String name;
-	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<SupplierProductVariantEntity> supplierProductVariant;
-	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "outlet", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<InventoryEntity> inventories;
 	@CreationTimestamp
 	private Instant createdOn;
@@ -43,12 +37,12 @@ public class SupplierEntity implements Serializable {
 		this.id = id;
 	}
 
-	public String getSupplierId() {
-		return supplierId;
+	public String getOutletId() {
+		return outletId;
 	}
 
-	public void setSupplierId(String supplierId) {
-		this.supplierId = supplierId;
+	public void setOutletId(String outletId) {
+		this.outletId = outletId;
 	}
 
 	public String getName() {
@@ -57,14 +51,6 @@ public class SupplierEntity implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Set<SupplierProductVariantEntity> getSupplierProductVariant() {
-		return supplierProductVariant;
-	}
-
-	public void setSupplierProductVariant(Set<SupplierProductVariantEntity> supplierProductVariant) {
-		this.supplierProductVariant = supplierProductVariant;
 	}
 
 	public List<InventoryEntity> getInventories() {

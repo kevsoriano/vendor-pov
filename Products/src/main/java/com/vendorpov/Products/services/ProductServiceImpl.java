@@ -14,6 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.vendorpov.Products.data.InventoryEntity;
+import com.vendorpov.Products.data.OutletEntity;
+import com.vendorpov.Products.data.OutletRepository;
 import com.vendorpov.Products.data.ProductAttributeEntity;
 import com.vendorpov.Products.data.ProductEntity;
 import com.vendorpov.Products.data.ProductRepository;
@@ -38,6 +41,8 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 //	SupplierServiceClient supplierServiceClient;
 	SupplierRepository supplierRepository;
+	@Autowired
+	OutletRepository outletRepository;
 
 	@Override
 	@Transactional
@@ -79,7 +84,6 @@ public class ProductServiceImpl implements ProductService {
 	            variant.setProductVariantId(UUID.randomUUID().toString());
 
 	            Set<ProductAttributeEntity> linkedAttributes = new HashSet<>();
-
 	            if (variant.getProductAttributes() != null) {
 	                for (ProductAttributeEntity dtoAttr : variant.getProductAttributes()) {
 	                    ProductAttributeEntity matchedAttr = productEntity.getProductAttributes().stream()
@@ -118,6 +122,30 @@ public class ProductServiceImpl implements ProductService {
 					}
 				}
 				variant.setSupplierProductVariants(newLinks);
+				
+				List<InventoryEntity> newInventories = new ArrayList<>();
+	            if (variant.getInventories() != null) {
+	            	List<InventoryEntity> originalInventories = new ArrayList<>(variant.getInventories());
+					for (InventoryEntity inventory : originalInventories) {
+						SupplierEntity supplierEntity = supplierRepository.findBySupplierId(inventory.getSupplier().getSupplierId());
+						if(supplierEntity==null) {
+							throw new RuntimeException("Supplier not found");
+						}
+						OutletEntity outletEntity = outletRepository.findByOutletId(inventory.getOutlet().getOutletId());
+						if(outletEntity==null) {
+							throw new RuntimeException("Outlet not found");
+						}
+						InventoryEntity link = new InventoryEntity();
+						link.setProductVariant(variant);
+						link.setSupplier(supplierEntity);
+						link.setOutlet(outletEntity);
+						link.setQuantity(inventory.getQuantity());
+						link.setReorderThreshold(inventory.getReorderThreshold());
+						link.setReorderQty(inventory.getReorderThreshold());
+						newInventories.add(link);
+					}
+				}
+				variant.setInventories(newInventories);
 			}
 	    }
 		
