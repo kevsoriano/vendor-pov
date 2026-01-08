@@ -22,7 +22,7 @@ public class SaleEntity implements Serializable {
 	@GeneratedValue
 	private long id;
 	@Column(unique = true, nullable = false)
-	private long saleId;
+	private String saleId;
 	@Column
 	private double totalAmount;
 	@Column
@@ -42,11 +42,11 @@ public class SaleEntity implements Serializable {
 		this.id = id;
 	}
 
-	public long getSaleId() {
+	public String getSaleId() {
 		return saleId;
 	}
 
-	public void setSaleId(long saleId) {
+	public void setSaleId(String saleId) {
 		this.saleId = saleId;
 	}
 

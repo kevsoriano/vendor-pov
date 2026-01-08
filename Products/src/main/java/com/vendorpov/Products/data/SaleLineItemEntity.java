@@ -21,7 +21,7 @@ public class SaleLineItemEntity implements Serializable {
 	@JoinColumn(name = "sale_id")
 	private SaleEntity sale;
 	@ManyToOne
-	@JoinColumn(name = "sale_id")
+	@JoinColumn(name = "product_variant_id")
 	private ProductVariantEntity productVariant;
 	@Column
 	private double quantity;

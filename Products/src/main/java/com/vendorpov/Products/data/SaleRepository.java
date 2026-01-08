@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SaleRepository extends CrudRepository<SaleEntity, Long>, PagingAndSortingRepository<SaleEntity, Long> {
-	SupplierEntity findBySaleId(String supplierId);
+	SaleEntity findBySaleId(String saleId);
 }
