@@ -112,13 +112,13 @@ public class ProductServiceImpl implements ProductService {
 						if(supplierEntity==null) {
 							throw new RuntimeException("Supplier not found");
 						}
-						SupplierProductVariantEntity link = new SupplierProductVariantEntity();
-						link.setProductVariant(variant);
-						link.setSupplier(supplierEntity);
-						link.setSupplierPrice(supplierProductVariant.getSupplierPrice());
-						link.setTaxRate(supplierProductVariant.getTaxRate());
-						link.setId(new SupplierProductVariantCompositeKey(variant.getId(), supplierEntity.getId()));
-						newLinks.add(link);
+						SupplierProductVariantEntity supplierProductVariantlink = new SupplierProductVariantEntity();
+						supplierProductVariantlink.setProductVariant(variant);
+						supplierProductVariantlink.setSupplier(supplierEntity);
+						supplierProductVariantlink.setSupplierPrice(supplierProductVariant.getSupplierPrice());
+						supplierProductVariantlink.setTaxRate(supplierProductVariant.getTaxRate());
+						supplierProductVariantlink.setId(new SupplierProductVariantCompositeKey(variant.getId(), supplierEntity.getId()));
+						newLinks.add(supplierProductVariantlink);
 					}
 				}
 				variant.setSupplierProductVariants(newLinks);
@@ -135,14 +135,14 @@ public class ProductServiceImpl implements ProductService {
 						if(outletEntity==null) {
 							throw new RuntimeException("Outlet not found");
 						}
-						InventoryEntity link = new InventoryEntity();
-						link.setProductVariant(variant);
-						link.setSupplier(supplierEntity);
-						link.setOutlet(outletEntity);
-						link.setQuantity(inventory.getQuantity());
-						link.setReorderThreshold(inventory.getReorderThreshold());
-						link.setReorderQty(inventory.getReorderThreshold());
-						newInventories.add(link);
+						InventoryEntity inventoryLink = new InventoryEntity();
+						inventoryLink.setProductVariant(variant);
+						inventoryLink.setSupplier(supplierEntity);
+						inventoryLink.setOutlet(outletEntity);
+						inventoryLink.setQuantity(inventory.getQuantity());
+						inventoryLink.setReorderThreshold(inventory.getReorderThreshold());
+						inventoryLink.setReorderQty(inventory.getReorderThreshold());
+						newInventories.add(inventoryLink);
 					}
 				}
 				variant.setInventories(newInventories);
@@ -188,6 +188,9 @@ public class ProductServiceImpl implements ProductService {
 		
 		productDto.setName(productDetails.getName());
 		productDto.setDescription(productDetails.getDescription());
+		productDto.setProductTags(productDetails.getProductTags());
+		productDto.setProductAttributes(productDetails.getProductAttributes());
+		productDto.setProductVariants(productDetails.getProductVariants());
 		
 		ProductEntity product = modelMapper.map(productDto, ProductEntity.class);
 		ProductEntity updatedProduct = productRepository.save(product);

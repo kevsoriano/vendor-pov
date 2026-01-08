@@ -3,16 +3,16 @@ package com.vendorpov.Products.models;
 import java.math.BigDecimal;
 
 public class SupplierProductVariantResponseModel {
-	private String supplierId;
+	private SupplierResponseModel supplier;
 	private BigDecimal supplierPrice;
 	private BigDecimal taxRate;
 
-	public String getSupplierId() {
-		return supplierId;
+	public SupplierResponseModel getSupplier() {
+		return supplier;
 	}
 
-	public void setSupplierId(String supplierId) {
-		this.supplierId = supplierId;
+	public void setSupplier(SupplierResponseModel supplier) {
+		this.supplier = supplier;
 	}
 
 	public BigDecimal getSupplierPrice() {
