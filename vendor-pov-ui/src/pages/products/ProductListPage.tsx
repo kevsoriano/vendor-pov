@@ -16,37 +16,28 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Link } from "react-router-dom";
 import { getAuthToken } from "../../utils/auth";
+import ResourceTable from "../../components/common/ResourceTable";
+import NotificationBanner from "../../components/common/NotificationBanner";
+import Button from "@mui/material/Button";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-function createData(
-	name: string,
-	calories: number,
-	fat: number,
-	carbs: number,
-	protein: number,
-	price: number,
+interface Product {
+	name: string;
+	productId: number;
+}
+
+function rowData(
+	name: string, 
+	productId: number, 
 ) {
 	return {
 		name,
-		calories,
-		fat,
-		carbs,
-		protein,
-		price,
-		history: [
-			{
-				date: "2020-01-05",
-				customerId: "11091700",
-				amount: 3,
-			},
-			{
-				date: "2020-01-02",
-				customerId: "Anonymous",
-				amount: 1,
-			},
-		],
+		productId,
 	};
 }
-function Row(props: { row: ReturnType<typeof createData> }) {
+
+function Row(props: { row: ReturnType<typeof rowData> }) {
 	const { row } = props;
 	const [open, setOpen] = useState(false);
 
@@ -58,15 +49,16 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 						{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
 					</IconButton>
 				</TableCell>
-				<TableCell component="th" scope="row">
+				<TableCell component="th" scope="row" align="center">
 					{row.name}
 				</TableCell>
-				<TableCell align="right">{row.calories}</TableCell>
-				<TableCell align="right">{row.fat}</TableCell>
-				<TableCell align="right">{row.carbs}</TableCell>
-				<TableCell align="right">{row.protein}</TableCell>
+				<TableCell align="center">{row.productId}</TableCell>
+				<TableCell align="center">
+					<Button><EditIcon /></Button>
+					<Button><DeleteIcon /></Button>
+				</TableCell>
 			</TableRow>
-			<TableRow>
+			{/* <TableRow>
 				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 1 }}>
@@ -83,35 +75,16 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{row.history.map((historyRow) => (
-										<TableRow key={historyRow.date}>
-											<TableCell component="th" scope="row">
-												{historyRow.date}
-											</TableCell>
-											<TableCell>{historyRow.customerId}</TableCell>
-											<TableCell align="right">{historyRow.amount}</TableCell>
-											<TableCell align="right">
-												{Math.round(historyRow.amount * row.price * 100) / 100}
-											</TableCell>
-										</TableRow>
-									))}
+									<span>Hello</span>
 								</TableBody>
 							</Table>
 						</Box>
 					</Collapse>
 				</TableCell>
-			</TableRow>
+			</TableRow> */}
 		</Fragment>
 	);
 }
-
-const rows = [
-	createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-	createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-	createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-	createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-	createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-];
 
 const Products = () => {
 	const [activeTab, setActiveTab] = useState("one");
@@ -119,7 +92,11 @@ const Products = () => {
 	const token = getAuthToken();
 
 	const [isFetching, setIsFetching] = useState(false);
-	const [products, setProducts] = useState([]);
+	const [notification, setNotification] = useState<{
+		message: string;
+		type: "success" | "error" | "info";
+	} | null>(null);
+	const [products, setProducts] = useState<Product[]>([]);
 
 	useEffect(() => {
 		setIsFetching(true);
@@ -136,6 +113,7 @@ const Products = () => {
 				})
 				.then((data) => {
 					setProducts(data);
+					console.log(data);
 				})
 				.finally(() => {
 					setIsFetching(false);
@@ -163,83 +141,25 @@ const Products = () => {
 					</button>
 				</div>
 			</div>
-			<div className="flex justify-between px-4 sm:px-6 lg:px-8 py-6 bg-[#ffffff]">
-				<div className="flex w-[60%] gap-4 flex-wrap">
-					<div className="flex flex-col w-[64%]">
-						<label htmlFor="">Search for Products</label>
-						<input type="text" className="border p-2" />
-					</div>
-					<div className="flex flex-col w-[33%]">
-						<label htmlFor="">Product Type</label>
-						<select className="border p-2">
-							<option>Select a Product Type</option>
-							<option>Pants</option>
-						</select>
-					</div>
-					<div className="flex flex-col w-[31%]">
-						<label htmlFor="">Supplier</label>
-						<select className="border p-2">
-							<option>Select a Supplier</option>
-							<option>Supplier 2</option>
-							<option>Supplier 3</option>
-						</select>
-					</div>
-					<div className="flex flex-col w-[31%]">
-						<label htmlFor="">Brand</label>
-						<select className="border p-2">
-							<option>Select a Brand</option>
-							<option>Penshoppe</option>
-							<option>Uniqlo</option>
-						</select>
-					</div>
-					<div className="flex flex-col w-[31%]">
-						<label htmlFor="">Tags</label>
-						<select className="border p-2">
-							<option>Select a Product Tag</option>
-							<option>Rainy</option>
-						</select>
-					</div>
-				</div>
-				<div className="inline-block align-bottom text-end">
-					<button className="bg-[#5d91b4] text-white">Search</button>
-				</div>
-			</div>
-			<div className="flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
-				<div>
-					<Tabs
-						value={activeTab}
-						onChange={handleChange}
-						textColor="secondary"
-						indicatorColor="secondary"
-						aria-label="secondary tabs example"
-					>
-						<Tab value="one" label="Active" />
-						<Tab value="two" label="Inactive" />
-						<Tab value="three" label="All" />
-					</Tabs>
-				</div>
-				<div>
-					<TableContainer component={Paper}>
-						<Table aria-label="collapsible table">
-							<TableHead>
-								<TableRow>
-									<TableCell />
-									<TableCell>Dessert (100g serving)</TableCell>
-									<TableCell align="right">Calories</TableCell>
-									<TableCell align="right">Fat&nbsp;(g)</TableCell>
-									<TableCell align="right">Carbs&nbsp;(g)</TableCell>
-									<TableCell align="right">Protein&nbsp;(g)</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{rows.map((row) => (
-									<Row key={row.name} row={row} />
-								))}
-							</TableBody>
-						</Table>
-					</TableContainer>
-				</div>
-			</div>
+			{notification && (
+				<NotificationBanner
+					message={notification.message}
+					type={notification.type}
+					onClose={() => setNotification(null)}
+				/>
+			)}
+
+			{isFetching && <div>Loading products...</div>}
+
+			{!isFetching && products.length === 0 && <div>No products found.</div>}
+
+			{!isFetching && products.length > 0 && (
+				<ResourceTable
+					headers={["", "Name", "Product ID"]}
+					items={products}
+					renderRow={(product) => <Row key={product.productId} row={product} />}
+				></ResourceTable>
+			)}
 		</div>
 	);
 };

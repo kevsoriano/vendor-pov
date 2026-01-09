@@ -48,7 +48,7 @@ function Row(props: { row: ReturnType<typeof rowData> }) {
 					<Button><DeleteIcon /></Button>
 				</TableCell>
 			</TableRow>
-			<TableRow>
+			{/* <TableRow>
 				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 1 }}>
@@ -71,7 +71,7 @@ function Row(props: { row: ReturnType<typeof rowData> }) {
 						</Box>
 					</Collapse>
 				</TableCell>
-			</TableRow>
+			</TableRow> */}
 		</Fragment>
 	);
 }
@@ -119,7 +119,7 @@ const UsersPage = () => {
 				<h1>Users</h1>
 			</div>
 			<div className="flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center">
-				<p>Add, view and edit your products all in one place.</p>
+				<p>Add, view and edit your users all in one place.</p>
 				<div className="flex gap-2">
 					<button className="bg-[#5d91b4] text-white">Import</button>
 					<button className="bg-[#00b740] text-white">
