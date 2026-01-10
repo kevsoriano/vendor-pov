@@ -1,15 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import NotificationBanner from "../../components/common/NotificationBanner";
 import { fetchAvailableUsers } from "../../utils/http";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ResourceTable from "../../components/common/ResourceTable";
