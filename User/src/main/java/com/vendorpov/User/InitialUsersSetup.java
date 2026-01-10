@@ -53,8 +53,8 @@ public class InitialUsersSetup {
 		if(roleAdmin == null) return;
 		
 		UserEntity adminUser = new UserEntity();
-		adminUser.setFirstName("Sergey");
-		adminUser.setLastName("Kargopolov");
+		adminUser.setFirstName("admin");
+		adminUser.setLastName("admin");
 		adminUser.setEmail("admin@test.com");
 		adminUser.setUserId(UUID.randomUUID().toString());
 		adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("12345678"));
