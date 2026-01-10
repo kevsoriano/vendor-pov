@@ -8,18 +8,15 @@ import CreatableMultiSelect from "../../components/common/CreatableMultiSelect";
 import Modal from "../../components/common/Modal";
 import type { ProductVariant } from "../../components/products/ProductVariantTable";
 import type { ProductAttribute } from "../../components/products/ProductAttributesInput";
-import { getAuthToken } from "../../utils/auth";
+import ProductTypeSelector, {
+	type ProductType,
+} from "../../components/products/ProductTypeSelector";
 
 const initialOptions: CreatableSelectOption[] = [
 	{ id: 1, name: "Apple" },
 	{ id: 2, name: "Banana" },
 	{ id: 3, name: "Orange" },
 ];
-
-interface Brand {
-	name: string;
-	brandId: string;
-}
 
 const AddProduct = () => {
 	const [selectedOption, setSelectedOption] = useState<CreatableSelectOption | null>(null);
@@ -29,36 +26,53 @@ const AddProduct = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [newOptionName, setNewOptionName] = useState("");
 	const [isMultiSelectCreation, setIsMultiSelectCreation] = useState(false);
+	const [productType, setProductType] = useState<ProductType>("standard");
 
-	const BASE_URL = "http://localhost:8082";
-	const token = getAuthToken();
-
-	const [isFetching, setIsFetching] = useState(false);
-	const [brands, setBrands] = useState<Brand[]>([]);
+	const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
+	const [variants, setVariants] = useState<ProductVariant[]>([]);
 
 	useEffect(() => {
-		setIsFetching(true);
-		const fetchBrands = async () => {
-			const response = await fetch(`${BASE_URL}/brands`, {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-			})
-				.then((response) => {
-					return response.json();
-				})
-				.then((data) => {
-					setBrands(data);
-					console.log(data);
-				})
-				.finally(() => {
-					setIsFetching(false);
-				});
+		// Generate variants based on attributes
+		const generateVariants = () => {
+			const attributesWithValues = attributes.filter(
+				(attr) => attr.values.length > 0 && attr.name.trim() !== "",
+			);
+
+			if (attributesWithValues.length === 0) {
+				setVariants([]);
+				return;
+			}
+
+			// Start with an empty variant
+			let generated: Record<string, string>[] = [{}];
+
+			for (const attr of attributesWithValues) {
+				const nextGenerated: Record<string, string>[] = [];
+				for (const existing of generated) {
+					for (const value of attr.values) {
+						nextGenerated.push({
+							...existing,
+							[attr.name]: value.name,
+						});
+					}
+				}
+				generated = nextGenerated;
+			}
+
+			// Transform into ProductVariant objects
+			const newVariants: ProductVariant[] = generated.map((variantAttrs) => ({
+				id: crypto.randomUUID(),
+				attributes: variantAttrs,
+				price: 0,
+				stock: 0,
+				sku: "",
+			}));
+
+			setVariants(newVariants);
 		};
-		fetchBrands();
-	}, []);
+
+		generateVariants();
+	}, [attributes]);
 
 	const handleCreate = (name: string, isMulti: boolean = false) => {
 		setNewOptionName(name);
@@ -152,17 +166,47 @@ const AddProduct = () => {
 									onCreate={(name) => handleCreate(name, false)}
 								/>
 							</div>
+
+							<div className="mb-4">
+								<CreatableSelect
+									label="Product Category"
+									options={options}
+									value={selectedOption}
+									onChange={setSelectedOption}
+									onCreate={(name) => handleCreate(name, false)}
+								/>
+							</div>
+
+							<div className="mb-4">
+								<CreatableMultiSelect
+									label="Product Attributes"
+									options={options}
+									value={selectedTags}
+									onChange={setSelectedTags}
+									onCreate={(name) => handleCreate(name, true)}
+								/>
+							</div>
+
+							<div className="mb-4">
+								<CreatableMultiSelect
+									label="Tags"
+									options={options}
+									value={selectedTags}
+									onChange={setSelectedTags}
+									onCreate={(name) => handleCreate(name, true)}
+								/>
+							</div>
 						</div>
 					</div>
 
-					{/* <div className="flex mb-8" id="product-type">
+					<div className="flex mb-8" id="product-type">
 						<div className="w-[15%]">
 							<p>Product Type</p>
 						</div>
 						<div className="flex flex-col">
 							<ProductTypeSelector selectedType={productType} onChange={setProductType} />
 						</div>
-					</div> */}
+					</div>
 
 					<div className="flex" id="inventory">
 						<div className="w-[15%]">
