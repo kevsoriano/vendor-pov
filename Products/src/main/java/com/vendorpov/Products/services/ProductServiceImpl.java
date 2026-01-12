@@ -7,12 +7,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.vendorpov.Products.data.InventoryEntity;
 import com.vendorpov.Products.data.OutletEntity;
@@ -39,19 +40,18 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductTagRepository productTagRepository;
 	@Autowired
-//	SupplierServiceClient supplierServiceClient;
 	SupplierRepository supplierRepository;
 	@Autowired
 	OutletRepository outletRepository;
+	@Autowired
+    private ModelMapper modelMapper;
 
 	@Override
 	@Transactional
-	public ProductDto createProduct(ProductDto productDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
+	public ProductDto createProduct(ProductDto productDetails) {		
 		ProductEntity productEntity = modelMapper.map(productDetails, ProductEntity.class);
-		productEntity.setProductId(UUID.randomUUID().toString());
+		productEntity.setExternalId(UUID.randomUUID().toString());
+		productEntity.getBrand().setExternalId(UUID.randomUUID().toString());
 		
 		if (productEntity.getProductTags() != null && !productEntity.getProductTags().isEmpty()) { 
 			List<ProductTagEntity> tags = new ArrayList<>();
@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
 				} else {
 					List<ProductEntity> products = new ArrayList<>();
 					products.add(productEntity);
-					tag.setProductTagId(UUID.randomUUID().toString());
+					tag.setExternalId(UUID.randomUUID().toString());
 					tag.setProducts(products);
 					tags.add(tag);
 				}
@@ -74,14 +74,14 @@ public class ProductServiceImpl implements ProductService {
 		if (productEntity.getProductAttributes() != null) {
 	        for (ProductAttributeEntity attribute : productEntity.getProductAttributes()) {
 	            attribute.setProduct(productEntity);
-	            attribute.setProductAttributeId(UUID.randomUUID().toString());
+	            attribute.setExternalId(UUID.randomUUID().toString());
 	        }
 	    }
 		
 		if (productEntity.getProductVariants() != null) {
 	        for (ProductVariantEntity variant : productEntity.getProductVariants()) {
 	            variant.setProduct(productEntity);
-	            variant.setProductVariantId(UUID.randomUUID().toString());
+	            variant.setExternalId(UUID.randomUUID().toString());
 
 	            Set<ProductAttributeEntity> linkedAttributes = new HashSet<>();
 	            if (variant.getProductAttributes() != null) {
@@ -108,7 +108,7 @@ public class ProductServiceImpl implements ProductService {
 	            if (variant.getSupplierProductVariants() != null) {
 	            	List<SupplierProductVariantEntity> originalSupplierLinks = new ArrayList<>(variant.getSupplierProductVariants());
 					for (SupplierProductVariantEntity supplierProductVariant : originalSupplierLinks) {
-						SupplierEntity supplierEntity = supplierRepository.findBySupplierId(supplierProductVariant.getSupplier().getSupplierId());
+						SupplierEntity supplierEntity = supplierRepository.findByExternalId(supplierProductVariant.getSupplier().getExternalId());
 						if(supplierEntity==null) {
 							throw new RuntimeException("Supplier not found");
 						}
@@ -127,11 +127,11 @@ public class ProductServiceImpl implements ProductService {
 	            if (variant.getInventories() != null) {
 	            	List<InventoryEntity> originalInventories = new ArrayList<>(variant.getInventories());
 					for (InventoryEntity inventory : originalInventories) {
-						SupplierEntity supplierEntity = supplierRepository.findBySupplierId(inventory.getSupplier().getSupplierId());
+						SupplierEntity supplierEntity = supplierRepository.findByExternalId(inventory.getSupplier().getExternalId());
 						if(supplierEntity==null) {
 							throw new RuntimeException("Supplier not found");
 						}
-						OutletEntity outletEntity = outletRepository.findByOutletId(inventory.getOutlet().getOutletId());
+						OutletEntity outletEntity = outletRepository.findByExternalId(inventory.getOutlet().getExternalId());
 						if(outletEntity==null) {
 							throw new RuntimeException("Outlet not found");
 						}
@@ -162,32 +162,32 @@ public class ProductServiceImpl implements ProductService {
 		Page<ProductEntity> productPage = productRepository.findAll(pageRequest);
 		List<ProductEntity> products = productPage.getContent();
 		for(ProductEntity product: products) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 			ProductDto productDto = modelMapper.map(product, ProductDto.class);
+			productDto.setId(product.getExternalId());
 			returnValue.add(productDto);
 		}
 		return returnValue;
 	}
 
 	@Override
-	public ProductDto getProductByProductId(String productId) {
-		ProductEntity productEntity = productRepository.findByProductId(productId);
-//		if(productEntity==null) throw new UsernameNotFoundException(productId);
-		return new ModelMapper().map(productEntity, ProductDto.class);
+	public ProductDto getProductByExternalId(String id) {
+		ProductEntity productEntity = productRepository.findByExternalId(id);
+		if (productEntity == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with ID: " + id);
+	    }
+		ProductDto returnValue = modelMapper.map(productEntity, ProductDto.class);
+		returnValue.setId(productEntity.getExternalId());
+		return returnValue;
 	}
 
 	@Override
-	public ProductDto updateProduct(String productId, ProductDto productDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-		ProductEntity productEntity = productRepository.findByProductId(productId);
+	public ProductDto updateProduct(String id, ProductDto productDetails) {
+		ProductEntity productEntity = productRepository.findByExternalId(id);
 		ProductDto productDto = modelMapper.map(productEntity, ProductDto.class);
 		
 		productDto.setName(productDetails.getName());
 		productDto.setDescription(productDetails.getDescription());
+		productDto.setBrand(productDetails.getBrand());
 		productDto.setProductTags(productDetails.getProductTags());
 		productDto.setProductAttributes(productDetails.getProductAttributes());
 		productDto.setProductVariants(productDetails.getProductVariants());
@@ -196,12 +196,13 @@ public class ProductServiceImpl implements ProductService {
 		ProductEntity updatedProduct = productRepository.save(product);
 
 		ProductDto returnValue = modelMapper.map(updatedProduct, ProductDto.class);
+		returnValue.setId(id);
 		return returnValue;
 	}
 
 	@Override
-	public void deleteProduct(String productId) {
-		ProductEntity productEntity = productRepository.findByProductId(productId);
+	public void deleteProduct(String id) {
+		ProductEntity productEntity = productRepository.findByExternalId(id);
 		productRepository.delete(productEntity);
 	}
 

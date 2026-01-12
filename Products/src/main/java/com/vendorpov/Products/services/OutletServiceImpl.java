@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,16 +20,17 @@ public class OutletServiceImpl implements OutletService {
 	
 	@Autowired
 	OutletRepository outletRepository;
+	@Autowired
+    private ModelMapper modelMapper;
 
 	@Override
 	public OutletDto createOutlet(OutletDto outletDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		OutletEntity outletEntity = modelMapper.map(outletDetails, OutletEntity.class);
-		outletEntity.setOutletId(UUID.randomUUID().toString());
+		outletEntity.setExternalId(UUID.randomUUID().toString());
 		outletRepository.save(outletEntity);
+		
 		OutletDto returnValue = modelMapper.map(outletEntity, OutletDto.class);
+		returnValue.setId(outletEntity.getExternalId());
 		
 		return returnValue;
 	}
@@ -41,43 +41,40 @@ public class OutletServiceImpl implements OutletService {
 		Pageable pageRequest = PageRequest.of(page, limit);
 		Page<OutletEntity> outletPage = outletRepository.findAll(pageRequest);
 		List<OutletEntity> outlets = outletPage.getContent();
+		
 		for(OutletEntity outlet: outlets) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 			OutletDto productDto = modelMapper.map(outlet, OutletDto.class);
+			productDto.setId(outlet.getExternalId());
 			returnValue.add(productDto);
 		}
+		
 		return returnValue;
 	}
 
 	@Override
-	public OutletDto getOutletByOutletId(String outletId) {
-		OutletEntity outletEntity = outletRepository.findByOutletId(outletId);
-//		if(productEntity==null) throw new UsernameNotFoundException(productId);
-		return new ModelMapper().map(outletEntity, OutletDto.class);
-	}
-
-	@Override
-	public OutletDto updateOutlet(String outletId, OutletDto outletDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-		OutletEntity outletEntity = outletRepository.findByOutletId(outletId);
-		OutletDto outletDto = modelMapper.map(outletEntity, OutletDto.class);
-		
-		outletDto.setName(outletDetails.getName());
-		
-		OutletEntity outlet = modelMapper.map(outletDto, OutletEntity.class);
-		OutletEntity updatedProduct = outletRepository.save(outlet);
-
-		OutletDto returnValue = modelMapper.map(updatedProduct, OutletDto.class);
+	public OutletDto getOutletByExternalId(String id) {
+		OutletEntity outletEntity = outletRepository.findByExternalId(id);
+		OutletDto returnValue = modelMapper.map(outletEntity, OutletDto.class);
+		returnValue.setId(outletEntity.getExternalId());
 		return returnValue;
 	}
 
 	@Override
-	public void deleteOutlet(String outletId) {
-		OutletEntity outletEntity = outletRepository.findByOutletId(outletId);
+	public OutletDto updateOutlet(String id, OutletDto outletDetails) {
+		OutletEntity existingOutlet = outletRepository.findByExternalId(id);
+		existingOutlet.setName(outletDetails.getName());
+
+		OutletEntity updatedOutlet = outletRepository.save(existingOutlet);
+
+		OutletDto returnValue = modelMapper.map(updatedOutlet, OutletDto.class);
+	    returnValue.setId(updatedOutlet.getExternalId());
+	    
+		return returnValue; 
+	}
+
+	@Override
+	public void deleteOutlet(String id) {
+		OutletEntity outletEntity = outletRepository.findByExternalId(id);
 		outletRepository.delete(outletEntity);
 	}
 

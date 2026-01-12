@@ -1,14 +1,11 @@
 package com.vendorpov.Products.shared;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
-public class ProductVariantDto implements Serializable {
+public class ProductVariantDto extends BaseDto {
 
 	private static final long serialVersionUID = 6703134141545020761L;
-	private long id;
-	private String productVariantId;
 	private String variantSku;
 	private List<ProductAttributeDto> productAttributes;
 	private List<SupplierProductVariantDto> supplierProductVariants;
@@ -16,22 +13,6 @@ public class ProductVariantDto implements Serializable {
 	private ProductDto product;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getProductVariantId() {
-		return productVariantId;
-	}
-
-	public void setProductVariantId(String productVariantId) {
-		this.productVariantId = productVariantId;
-	}
 
 	public String getVariantSku() {
 		return variantSku;

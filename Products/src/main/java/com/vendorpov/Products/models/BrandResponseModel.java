@@ -1,15 +1,15 @@
 package com.vendorpov.Products.models;
 
 public class BrandResponseModel {
-	public String brandId;
+	public String id;
 	public String name;
 
-	public String getBrandId() {
-		return brandId;
+	public String getId() {
+		return id;
 	}
 
-	public void setBrandId(String brandId) {
-		this.brandId = brandId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

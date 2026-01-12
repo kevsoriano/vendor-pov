@@ -1,6 +1,10 @@
 package com.vendorpov.Products.data;
 
 import java.io.Serializable;
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +31,10 @@ public class InventoryEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "product__variant_id")
 	private ProductVariantEntity productVariant;
+	@CreationTimestamp
+	private Instant createdOn;
+	@UpdateTimestamp
+	private Instant lastUpdatedOn;
 
 	public long getId() {
 		return id;
@@ -82,6 +90,22 @@ public class InventoryEntity implements Serializable {
 
 	public void setProductVariant(ProductVariantEntity productVariant) {
 		this.productVariant = productVariant;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Instant getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Instant lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

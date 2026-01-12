@@ -1,15 +1,15 @@
 package com.vendorpov.Products.models;
 
 public class SupplierRequestModel {
-	private String supplierId;
+	private String id;
 	private String name;
 
-	public String getSupplierId() {
-		return supplierId;
+	public String getId() {
+		return id;
 	}
 
-	public void setSupplierId(String supplierId) {
-		this.supplierId = supplierId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

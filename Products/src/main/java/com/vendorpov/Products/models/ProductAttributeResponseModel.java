@@ -1,16 +1,16 @@
 package com.vendorpov.Products.models;
 
 public class ProductAttributeResponseModel {
-	private String productAttributeId;
+	private String id;
 	private String attributeKey;
 	private String attributeValue;
 
-	public String getProductAttributeId() {
-		return productAttributeId;
+	public String getId() {
+		return id;
 	}
 
-	public void setProductAttributeId(String productAttributeId) {
-		this.productAttributeId = productAttributeId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getAttributeKey() {

@@ -3,19 +3,19 @@ package com.vendorpov.Products.models;
 import java.util.List;
 
 public class ProductResponseModel {
-	private String productId;
+	private String id;
 	private String name;
 	private String description;
 	private List<ProductTagResponseModel> productTags;
 	private List<ProductAttributeResponseModel> productAttributes;
 	private List<ProductVariantResponseModel> productVariants;
 
-	public String getProductId() {
-		return productId;
+	public String getId() {
+		return id;
 	}
 
-	public void setProductId(String productId) {
-		this.productId = productId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

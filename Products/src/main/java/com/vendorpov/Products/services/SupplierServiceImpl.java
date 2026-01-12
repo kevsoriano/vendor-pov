@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,16 +22,17 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Autowired
 	SupplierRepository supplierRepository;
+	@Autowired
+    private ModelMapper modelMapper;
 
 	@Override
 	public SupplierDto createSupplier(SupplierDto supplierDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		SupplierEntity supplierEntity = modelMapper.map(supplierDetails, SupplierEntity.class);
-		supplierEntity.setSupplierId(UUID.randomUUID().toString());
+		supplierEntity.setExternalId(UUID.randomUUID().toString());
 		supplierRepository.save(supplierEntity);
+		
 		SupplierDto returnValue = modelMapper.map(supplierEntity, SupplierDto.class);
+		returnValue.setId(supplierEntity.getExternalId());
 		
 		return returnValue;
 	}
@@ -44,40 +44,39 @@ public class SupplierServiceImpl implements SupplierService {
 		Page<SupplierEntity> supplierPage = supplierRepository.findAll(pageRequest);
 		List<SupplierEntity> suppliers = supplierPage.getContent();
 		for(SupplierEntity supplier: suppliers) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 			SupplierDto supplierDto = modelMapper.map(supplier, SupplierDto.class);
+			supplierDto.setId(supplier.getExternalId());
 			returnValue.add(supplierDto);
 		}
 		return returnValue;
 	}
 
 	@Override
-	public SupplierDto getSupplier(String supplierId) {
-		SupplierEntity supplierEntity = supplierRepository.findBySupplierId(supplierId);
+	public SupplierDto getSupplierByExternalId(String id) {
+		SupplierEntity supplierEntity = supplierRepository.findByExternalId(id);
 		if (supplierEntity == null) {
-	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Supplier not found with supplier ID: " + supplierId);
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Supplier not found with supplier ID: " + id);
 	    }
-		return new ModelMapper().map(supplierEntity, SupplierDto.class);
+		SupplierDto returnValue = modelMapper.map(supplierEntity, SupplierDto.class);
+		returnValue.setId(supplierEntity.getExternalId());
+		return returnValue;
 	}
 
 	@Override
-	public SupplierDto updateSupplier(String supplierId, SupplierDto supplierDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-		SupplierEntity supplierEntity = supplierRepository.findBySupplierId(supplierId);
+	public SupplierDto updateSupplier(String id, SupplierDto supplierDetails) {
+		SupplierEntity supplierEntity = supplierRepository.findByExternalId(id);
 		supplierEntity.setName(supplierDetails.getName());
 
 		SupplierEntity updatedSupplier = supplierRepository.save(supplierEntity);
+		SupplierDto returnValue = modelMapper.map(updatedSupplier, SupplierDto.class);
+		returnValue.setId(supplierEntity.getExternalId());
 		
-		return modelMapper.map(updatedSupplier, SupplierDto.class);
+		return returnValue;
 	}
 
 	@Override
-	public void deleteSupplier(String supplierId) {
-		SupplierEntity supplierEntity = supplierRepository.findBySupplierId(supplierId);
+	public void deleteSupplier(String id) {
+		SupplierEntity supplierEntity = supplierRepository.findByExternalId(id);
 		supplierRepository.delete(supplierEntity);
 	}
 }

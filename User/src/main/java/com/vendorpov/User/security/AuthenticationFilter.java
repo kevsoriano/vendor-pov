@@ -64,13 +64,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
  		
 		String token = Jwts.builder()
 				.claim("scope", auth.getAuthorities())
-                .subject(userDetails.getUserId())
+                .subject(userDetails.getId())
                 .expiration(Date.from(now.plusMillis(Long.parseLong(env.getProperty("token.expiration_time")))))
                 .issuedAt(Date.from(now))
                 .signWith(secretKey)   
                 .compact();
 
 		res.addHeader("token", token);
-		res.addHeader("userId", userDetails.getUserId());
+		res.addHeader("userId", userDetails.getId());
 	}
 }

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AddressRepository extends CrudRepository<AddressEntity, Long>, PagingAndSortingRepository<AddressEntity, Long> {
 	List<AddressEntity> findAllByUserDetails(UserEntity userDetails);
-	AddressEntity findByAddressId(String addressId);
+	AddressEntity findByExternalId(String id);
 }

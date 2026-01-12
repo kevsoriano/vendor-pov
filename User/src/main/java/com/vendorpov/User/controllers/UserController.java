@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -40,17 +39,18 @@ public class UserController {
 	UserService userService;
 	@Autowired
 	Environment env;
+	@Autowired
+	ModelMapper modelMapper;
 
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<UserResponseModel> createUser(@Valid @RequestBody UserRequestModel user) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		UserDto userDto = modelMapper.map(user, UserDto.class);
 		UserDto createdUser = userService.createUser(userDto);
 		
 		UserResponseModel returnValue = modelMapper.map(createdUser, UserResponseModel.class);
+		// Ensure response id reflects the externalId coming from UserDto
+		returnValue.setId(createdUser.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
 	
@@ -62,10 +62,8 @@ public class UserController {
 		List<UserDto> users = userService.getUsers(page, limit);
 
 		for(UserDto user: users) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 			UserResponseModel userDetails = modelMapper.map(user, UserResponseModel.class);
+			userDetails.setId(user.getId());
 			returnValue.add(userDetails);
 		}
 
@@ -77,8 +75,9 @@ public class UserController {
 //	@PostAuthorize("principal==returnObject.body.userId")
 //	@PreAuthorize("hasRole('ADMIN') or principal==#userId")
 	public ResponseEntity<UserResponseModel> getUser(@PathVariable String userId) {
-		UserDto userDto = userService.getUserByUserId(userId);
-		UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);
+		UserDto userDto = userService.getUserByExternalId(userId);
+		UserResponseModel returnValue = modelMapper.map(userDto, UserResponseModel.class);
+		returnValue.setId(userDto.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
@@ -86,13 +85,11 @@ public class UserController {
 	@PutMapping(value="/{userId}", consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<UserResponseModel> updateUser(@PathVariable String userId, @RequestBody UpdateUserRequestModel userDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 		UserDto userDto = modelMapper.map(userDetails, UserDto.class);
 		UserDto updatedUser = userService.updateUser(userId, userDto);
 
 		UserResponseModel returnValue = modelMapper.map(updatedUser, UserResponseModel.class);
+		returnValue.setId(updatedUser.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	

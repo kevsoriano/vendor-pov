@@ -10,6 +10,7 @@ public class ProductRequestModel {
 	@Size(min = 2, message = "name must be greater than or equal to 2 characters")
 	private String name;
 	private String description;
+	private BrandRequestModel brand;
 	private List<ProductTagRequestModel> productTags;
 	private List<ProductAttributeRequestModel> productAttributes;
 	private List<ProductVariantRequestModel> productVariants;
@@ -28,6 +29,14 @@ public class ProductRequestModel {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public BrandRequestModel getBrand() {
+		return brand;
+	}
+
+	public void setBrand(BrandRequestModel brand) {
+		this.brand = brand;
 	}
 
 	public List<ProductTagRequestModel> getProductTags() {

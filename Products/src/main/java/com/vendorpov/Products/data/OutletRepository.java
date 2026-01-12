@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OutletRepository extends CrudRepository<OutletEntity, Long>, PagingAndSortingRepository<OutletEntity, Long> {
 	OutletEntity findByName(String name);
-	OutletEntity findByOutletId(String outletId);
+	OutletEntity findByExternalId(String outletId);
 }

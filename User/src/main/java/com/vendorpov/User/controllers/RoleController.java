@@ -24,10 +24,11 @@ import com.vendorpov.User.shared.RoleDto;
 public class RoleController {
 	@Autowired
 	RoleService roleService;
+	@Autowired
+	ModelMapper modelMapper; 
 	
 	@GetMapping
 	public ResponseEntity<List<RoleDetailsModel>> listRoles() {
-		ModelMapper modelMapper = new ModelMapper();
 		List<RoleDetailsModel> returnValue = new ArrayList<>();
 		List<RoleDto> roles = roleService.getRoles();
 		

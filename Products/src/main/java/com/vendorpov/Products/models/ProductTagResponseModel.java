@@ -1,15 +1,15 @@
 package com.vendorpov.Products.models;
 
 public class ProductTagResponseModel {
-	private String productTagId;
+	private String id;
 	private String name;
 
-	public String getProductTagId() {
-		return productTagId;
+	public String getId() {
+		return id;
 	}
 
-	public void setProductTagId(String productTagId) {
-		this.productTagId = productTagId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

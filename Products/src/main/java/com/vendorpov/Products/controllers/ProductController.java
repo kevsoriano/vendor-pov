@@ -69,7 +69,7 @@ public class ProductController {
 	
 	@GetMapping(value="/{productId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<ProductResponseModel> getProduct(@PathVariable String productId) {
-		ProductDto productDto = productService.getProductByProductId(productId);
+		ProductDto productDto = productService.getProductByExternalId(productId);
 		ProductResponseModel returnValue = new ModelMapper().map(productDto, ProductResponseModel.class);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}

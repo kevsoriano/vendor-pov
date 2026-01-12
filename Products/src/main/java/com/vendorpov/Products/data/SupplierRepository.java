@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SupplierRepository extends CrudRepository<SupplierEntity, Long>, PagingAndSortingRepository<SupplierEntity, Long>  {
 	SupplierEntity findByName(String name);
-	SupplierEntity findBySupplierId(String supplierId);
+	SupplierEntity findByExternalId(String supplierId);
 }
 

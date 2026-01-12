@@ -1,19 +1,19 @@
 package com.vendorpov.User.models;
 
 public class AddressDetailsModel {
-	private String addressId;
+	private String id;
 	private String city;
 	private String country;
 	private String streetName;
 	private String postalCode;
 	private String type;
 
-	public String getAddressId() {
-		return addressId;
+	public String getId() {
+		return id;
 	}
 
-	public void setAddressId(String addressId) {
-		this.addressId = addressId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getCity() {

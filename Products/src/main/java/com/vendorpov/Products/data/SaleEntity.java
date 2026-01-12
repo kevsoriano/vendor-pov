@@ -1,6 +1,5 @@
 package com.vendorpov.Products.data;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
@@ -10,19 +9,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "sales")
-public class SaleEntity implements Serializable {
+public class SaleEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -2152902082737927802L;
-	@Id
-	@GeneratedValue
-	private long id;
-	@Column(unique = true, nullable = false)
-	private String saleId;
 	@Column
 	private double totalAmount;
 	@Column
@@ -30,25 +22,9 @@ public class SaleEntity implements Serializable {
 	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SaleLineItemEntity> saleLineItems;
 	@CreationTimestamp
-	private Instant saleDate;
+	private Instant createdOn;
 	@UpdateTimestamp
 	private Instant lastUpdatedOn;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getSaleId() {
-		return saleId;
-	}
-
-	public void setSaleId(String saleId) {
-		this.saleId = saleId;
-	}
 
 	public double getTotalAmount() {
 		return totalAmount;
@@ -74,12 +50,12 @@ public class SaleEntity implements Serializable {
 		this.saleLineItems = saleLineItems;
 	}
 
-	public Instant getSaleDate() {
-		return saleDate;
+	public Instant getCreatedOn() {
+		return createdOn;
 	}
 
-	public void setSaleDate(Instant saleDate) {
-		this.saleDate = saleDate;
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	public Instant getLastUpdatedOn() {

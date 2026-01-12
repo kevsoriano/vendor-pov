@@ -1,22 +1,20 @@
 package com.vendorpov.Products.data;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "sale_line_items")
-public class SaleLineItemEntity implements Serializable {
+public class SaleLineItemEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -5363226890568292894L;
-	@Id
-	@GeneratedValue
-	private long id;
 	@ManyToOne
 	@JoinColumn(name = "sale_id")
 	private SaleEntity sale;
@@ -29,14 +27,10 @@ public class SaleLineItemEntity implements Serializable {
 	private BigDecimal unitPrice;
 	@Column
 	private BigDecimal discountAmount;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
+	@CreationTimestamp
+	private Instant createdOn;
+	@UpdateTimestamp
+	private Instant lastUpdatedOn;
 
 	public SaleEntity getSale() {
 		return sale;
@@ -76,6 +70,22 @@ public class SaleLineItemEntity implements Serializable {
 
 	public void setDiscountAmount(BigDecimal discountAmount) {
 		this.discountAmount = discountAmount;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Instant getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Instant lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

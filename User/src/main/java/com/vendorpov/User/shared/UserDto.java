@@ -1,13 +1,10 @@
 package com.vendorpov.User.shared;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class UserDto implements Serializable {
+public class UserDto extends BaseDto {
 
-	private static final long serialVersionUID = -2004330410565240800L;
-	private long id;
-	private String userId;
+	private static final long serialVersionUID = -3019261670280233161L;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -15,22 +12,6 @@ public class UserDto implements Serializable {
 	private String encryptedPassword;
 	private List<AddressDto> addresses;
 	private List<RoleDto> roles;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
 	public String getFirstName() {
 		return firstName;

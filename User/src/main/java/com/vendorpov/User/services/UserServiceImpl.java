@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +18,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.vendorpov.User.data.AddressEntity;
 import com.vendorpov.User.data.AuthorityEntity;
 import com.vendorpov.User.data.RoleEntity;
+import com.vendorpov.User.data.RoleRepository;
 import com.vendorpov.User.data.UserEntity;
 import com.vendorpov.User.data.UserRepository;
 import com.vendorpov.User.shared.AddressDto;
@@ -28,14 +29,14 @@ import com.vendorpov.User.shared.UserDto;
 
 @Service
 public class UserServiceImpl implements UserService {
-	UserRepository userRepository;
-	BCryptPasswordEncoder bCryptPasswordEncoder;
-	
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-		this.userRepository = userRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-	}
+	UserRepository userRepository;
+	@Autowired
+	RoleRepository roleRepository;
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	ModelMapper modelMapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -62,15 +63,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto createUser(UserDto userDetails) {
-		userDetails.setUserId(UUID.randomUUID().toString());
 		userDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
 		
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
+		userEntity.setExternalId(UUID.randomUUID().toString());
+		
+		Collection<RoleEntity> roles = userEntity.getRoles();
+		
+		roles.forEach((role)-> {
+			List<RoleEntity> managedRoles = new ArrayList<>();
+	        RoleEntity persistedRole = roleRepository.findByName(role.getName()); 
+	        if (persistedRole != null) {
+	            managedRoles.add(persistedRole);
+	        } else {
+	        	role.setExternalId(UUID.randomUUID().toString());
+	        }
+	        
+		});
+		
 		userRepository.save(userEntity);
 		UserDto returnValue = modelMapper.map(userEntity, UserDto.class);
+		// Ensure DTO id uses entity.externalId (ModelMapper base type mapping doesn't apply to subclasses)
+//		returnValue.setId(userEntity.getExternalId());
 		
 		return returnValue;
 	}
@@ -78,14 +92,16 @@ public class UserServiceImpl implements UserService {
 	public UserDto getUserByEmail(String email) throws UsernameNotFoundException {
 		UserEntity userEntity = userRepository.findByEmail(email);
 		if(userEntity==null) throw new UsernameNotFoundException(email);
-		return new ModelMapper().map(userEntity, UserDto.class);
+		UserDto dto = modelMapper.map(userEntity, UserDto.class);
+		return dto;
 	}
 
 	@Override
-	public UserDto getUserByUserId(String userId) throws UsernameNotFoundException {
-		UserEntity userEntity = userRepository.findByUserId(userId);
-		if(userEntity==null) throw new UsernameNotFoundException(userId);
-		return new ModelMapper().map(userEntity, UserDto.class);
+	public UserDto getUserByExternalId(String id) throws UsernameNotFoundException {
+		UserEntity userEntity = userRepository.findByExternalId(id);
+		if(userEntity==null) throw new UsernameNotFoundException(id);
+		UserDto dto = modelMapper.map(userEntity, UserDto.class);
+		return dto;
 	}
 
 	@Override
@@ -95,9 +111,6 @@ public class UserServiceImpl implements UserService {
 		Page<UserEntity> userPage = userRepository.findAll(pageRequest);
 		List<UserEntity> users = userPage.getContent();
 		for(UserEntity user: users) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 			UserDto userDto = modelMapper.map(user, UserDto.class);
 			returnValue.add(userDto);
 		}
@@ -105,35 +118,34 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto updateUser(String userId, UserDto userDetails) {
-		List<AddressDto> addresses = new ArrayList<>();
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+	public UserDto updateUser(String id, UserDto userDetails) {
+		UserEntity existingUser = userRepository.findByExternalId(id);
 
-		UserEntity userEntity = userRepository.findByUserId(userId);
+		existingUser.setFirstName(userDetails.getFirstName());
+	    existingUser.setLastName(userDetails.getLastName());
+		
+	    if (userDetails.getAddresses() != null && !userDetails.getAddresses().isEmpty()) {
+	        List<AddressEntity> updatedAddresses = new ArrayList<>();
+	        
+	        for (AddressDto addressDto : userDetails.getAddresses()) {
+	            AddressEntity addressEntity = modelMapper.map(addressDto, AddressEntity.class);
+	            addressEntity.setUserDetails(existingUser); 
+	            updatedAddresses.add(addressEntity);
+	        }
+	        
+	        existingUser.setAddresses(updatedAddresses);
+	    }
 
-		UserDto userDto = modelMapper.map(userEntity, UserDto.class);
-		userDto.setFirstName(userDetails.getFirstName());
-		userDto.setLastName(userDetails.getLastName());
-		for(int i = 0; i<userDetails.getAddresses().size();i++) {
-			AddressDto address = userDetails.getAddresses().get(i);
-			address.setAddressId(userEntity.getAddresses().get(i).getAddressId());
-			address.setId(userEntity.getAddresses().get(i).getId());
-			address.setUserDetails(userDto.getAddresses().get(i).getUserDetails());
-			addresses.add(address);
-		}
-		userDto.setAddresses(addresses);
-
-		UserEntity user = modelMapper.map(userDto, UserEntity.class);
-		UserEntity updatedUser = userRepository.save(user);
+		UserEntity updatedUser = userRepository.save(existingUser);
 
 		UserDto returnValue = modelMapper.map(updatedUser, UserDto.class);
-		return returnValue;
+	    
+		return returnValue; 
 	}
 
 	@Override
-	public void deleteUser(String userId) {
-		UserEntity userEntity = userRepository.findByUserId(userId);
+	public void deleteUser(String id) {
+		UserEntity userEntity = userRepository.findByExternalId(id);
 		userRepository.delete(userEntity);
 	}
 

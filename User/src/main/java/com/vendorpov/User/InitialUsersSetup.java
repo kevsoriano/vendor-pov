@@ -2,7 +2,6 @@ package com.vendorpov.User;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,6 @@ public class InitialUsersSetup {
 		adminUser.setFirstName("admin");
 		adminUser.setLastName("admin");
 		adminUser.setEmail("admin@test.com");
-		adminUser.setUserId(UUID.randomUUID().toString());
 		adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("12345678"));
 		adminUser.setRoles(Arrays.asList(roleAdmin));
 		

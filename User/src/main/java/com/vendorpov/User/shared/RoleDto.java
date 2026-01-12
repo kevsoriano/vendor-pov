@@ -1,22 +1,12 @@
 package com.vendorpov.User.shared;
 
-import java.io.Serializable;
 import java.util.Collection;
 
-public class RoleDto implements Serializable {
+public class RoleDto extends BaseDto {
 
 	private static final long serialVersionUID = 6713234421453163257L;
-	private long id;
 	private String name;
 	private Collection<AuthorityDto> authorities;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;

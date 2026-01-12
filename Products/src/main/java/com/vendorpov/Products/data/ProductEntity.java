@@ -1,6 +1,5 @@
 package com.vendorpov.Products.data;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -12,27 +11,24 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity(name = "products")
-public class ProductEntity implements Serializable {
+public class ProductEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 5807974061282671674L;
 
-	@Id
-	@GeneratedValue
-	private long id;
-	@Column(unique = true, nullable = false)
-	private String productId;
 	@Column(length = 50, nullable = false)
 	private String name;
 	@Column
 	private String description;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "brand_id", referencedColumnName = "id")
+	private BrandEntity brand;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "product_tag_assignments", 
@@ -49,22 +45,6 @@ public class ProductEntity implements Serializable {
 	@UpdateTimestamp
 	private Instant lastUpdatedOn;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getProductId() {
-		return productId;
-	}
-
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -79,6 +59,14 @@ public class ProductEntity implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public BrandEntity getBrand() {
+		return brand;
+	}
+
+	public void setBrand(BrandEntity brand) {
+		this.brand = brand;
 	}
 
 	public Collection<ProductTagEntity> getProductTags() {

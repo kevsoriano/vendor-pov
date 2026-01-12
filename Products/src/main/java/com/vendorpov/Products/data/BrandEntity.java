@@ -1,39 +1,26 @@
 package com.vendorpov.Products.data;
 
-import java.io.Serializable;
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity(name = "brands")
-public class BrandEntity implements Serializable {
+public class BrandEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 8950907501509756560L;
-	@Id
-	@GeneratedValue
-	private long id;
-	@Column
-	private String brandId;
 	@Column
 	private String name;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getBrandId() {
-		return brandId;
-	}
-
-	public void setBrandId(String brandId) {
-		this.brandId = brandId;
-	}
+	@OneToOne(mappedBy = "brand")
+	private ProductEntity product;
+	@CreationTimestamp
+	private Instant createdOn;
+	@UpdateTimestamp
+	private Instant lastUpdatedOn;
 
 	public String getName() {
 		return name;
@@ -41,6 +28,30 @@ public class BrandEntity implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public ProductEntity getProduct() {
+		return product;
+	}
+
+	public void setProduct(ProductEntity product) {
+		this.product = product;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Instant getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Instant lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

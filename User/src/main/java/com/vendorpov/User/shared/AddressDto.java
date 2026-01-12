@@ -1,34 +1,14 @@
 package com.vendorpov.User.shared;
 
-import java.io.Serializable;
+public class AddressDto extends BaseDto {
 
-public class AddressDto implements Serializable {
-	
 	private static final long serialVersionUID = 28979911717493107L;
-	private long id;
-	private String addressId;
 	private String city;
 	private String country;
 	private String streetName;
 	private String postalCode;
 	private String type;
 	private UserDto userDetails;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(String addressId) {
-		this.addressId = addressId;
-	}
 
 	public String getCity() {
 		return city;

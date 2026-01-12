@@ -1,23 +1,19 @@
 package com.vendorpov.User.data;
 
-import java.io.Serializable;
+import java.time.Instant;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "addresses")
-public class AddressEntity implements Serializable {
+public class AddressEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -5692113777587157381L;
-	@Id
-	@GeneratedValue
-	private long id;
-	@Column(nullable = false, unique = true)
-	private String addressId;
 	@Column(length = 15, nullable = false)
 	private String city;
 	@Column(length = 15, nullable = false)
@@ -31,22 +27,10 @@ public class AddressEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private UserEntity userDetails;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(String addressId) {
-		this.addressId = addressId;
-	}
+	@CreationTimestamp
+	private Instant createdOn;
+	@UpdateTimestamp
+	private Instant lastUpdatedOn;
 
 	public String getCity() {
 		return city;
@@ -94,6 +78,22 @@ public class AddressEntity implements Serializable {
 
 	public void setUserDetails(UserEntity userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Instant getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Instant lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

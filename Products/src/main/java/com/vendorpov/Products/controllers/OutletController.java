@@ -68,7 +68,7 @@ public class OutletController {
 	
 	@GetMapping(value="/{outletId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<OutletResponseModel> getOutlet(@PathVariable String outletId) {
-		OutletDto outletDto = outletService.getOutletByOutletId(outletId);
+		OutletDto outletDto = outletService.getOutletByExternalId(outletId);
 		OutletResponseModel returnValue = new ModelMapper().map(outletDto, OutletResponseModel.class);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}

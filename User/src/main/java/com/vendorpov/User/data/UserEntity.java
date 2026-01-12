@@ -1,31 +1,26 @@
 package com.vendorpov.User.data;
 
-import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "users")
-public class UserEntity implements Serializable {
+public class UserEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 4205011532178888802L;
-	@Id
-	@GeneratedValue
-	private long id;
-	@Column(unique = true, nullable = false)
-	private String userId;
 	@Column(nullable = false, length = 50)
 	private String firstName;
 	@Column(nullable = false, length = 50)
@@ -40,22 +35,10 @@ public class UserEntity implements Serializable {
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
 	private List<RoleEntity> roles;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	@CreationTimestamp
+	private Instant createdOn;
+	@UpdateTimestamp
+	private Instant lastUpdatedOn;
 
 	public String getFirstName() {
 		return firstName;
@@ -103,6 +86,22 @@ public class UserEntity implements Serializable {
 
 	public void setRoles(List<RoleEntity> roles) {
 		this.roles = roles;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Instant getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Instant lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

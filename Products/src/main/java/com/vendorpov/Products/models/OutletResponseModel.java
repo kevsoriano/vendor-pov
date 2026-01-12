@@ -1,15 +1,15 @@
 package com.vendorpov.Products.models;
 
 public class OutletResponseModel {
-	private String outletId;
+	private String id;
 	private String name;
 
-	public String getOutletId() {
-		return outletId;
+	public String getId() {
+		return id;
 	}
 
-	public void setOutletId(String outletId) {
-		this.outletId = outletId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

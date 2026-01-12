@@ -1,37 +1,19 @@
 package com.vendorpov.Products.shared;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
-public class ProductDto implements Serializable {
+public class ProductDto extends BaseDto {
 
 	private static final long serialVersionUID = -2800386597500305630L;
-	private long id;
-	private String productId;
 	private String name;
 	private String description;
+	private BrandDto brand;
 	private List<ProductTagDto> productTags;
 	private List<ProductAttributeDto> productAttributes;
 	private List<ProductVariantDto> productVariants;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getProductId() {
-		return productId;
-	}
-
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
 
 	public String getName() {
 		return name;
@@ -47,6 +29,14 @@ public class ProductDto implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public BrandDto getBrand() {
+		return brand;
+	}
+
+	public void setBrand(BrandDto brand) {
+		this.brand = brand;
 	}
 
 	public List<ProductTagDto> getProductTags() {

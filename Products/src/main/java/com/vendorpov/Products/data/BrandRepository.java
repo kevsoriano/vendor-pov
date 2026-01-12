@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BrandRepository  extends CrudRepository<BrandEntity, Long>, PagingAndSortingRepository<BrandEntity, Long> {
 	BrandEntity findByName(String name);
-	BrandEntity findByBrandId(String brandId);
+	BrandEntity findByExternalId(String id);
 }

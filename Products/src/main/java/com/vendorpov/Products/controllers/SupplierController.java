@@ -67,7 +67,7 @@ public class SupplierController {
 	
 	@GetMapping(value="/{supplierId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<SupplierResponseModel> getSupplier(@PathVariable String supplierId) {
-		SupplierDto supplierDto = supplierService.getSupplier(supplierId);
+		SupplierDto supplierDto = supplierService.getSupplierByExternalId(supplierId);
 		SupplierResponseModel returnValue = new ModelMapper().map(supplierDto, SupplierResponseModel.class);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}

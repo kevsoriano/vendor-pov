@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +19,8 @@ import com.vendorpov.Products.shared.BrandDto;
 public class BrandServiceImpl implements BrandService {
 	@Autowired
 	BrandRepository brandRepository;
+	@Autowired
+    private ModelMapper modelMapper;
 
 	@Override
 	public List<BrandDto> getBrands(int page, int limit) {
@@ -28,43 +29,52 @@ public class BrandServiceImpl implements BrandService {
 		Page<BrandEntity> brandPage = brandRepository.findAll(pageRequest);
 		List<BrandEntity> brands = brandPage.getContent();
 		for(BrandEntity brand: brands) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-			BrandDto productDto = modelMapper.map(brand, BrandDto.class);
-			returnValue.add(productDto);
+			BrandDto brandDto = modelMapper.map(brand, BrandDto.class);
+			brandDto.setId(brand.getExternalId());
+			returnValue.add(brandDto);
 		}
 		return returnValue;
 	}
 
 	@Override
 	public BrandDto createBrand(BrandDto brandDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		BrandEntity brandEntity = modelMapper.map(brandDetails, BrandEntity.class);
-		brandEntity.setBrandId(UUID.randomUUID().toString());
+		brandEntity.setExternalId(UUID.randomUUID().toString());
 		brandRepository.save(brandEntity);
 		
-		return modelMapper.map(brandEntity, BrandDto.class);
-	}
-
-	@Override
-	public BrandDto getBrandByBrandId(String brandId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BrandDto updateBrand(String brandId, BrandDto brandDetails) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteBrand(String brandId) {
-		// TODO Auto-generated method stub
+		BrandDto returnValue = modelMapper.map(brandEntity, BrandDto.class);
+		returnValue.setId(brandEntity.getExternalId());
 		
+		return returnValue;
+	}
+
+	@Override
+	public BrandDto getBrandByExternalId(String id) {
+		BrandEntity brandEntity = brandRepository.findByExternalId(id);
+//		if(brandEntity==null) throw new UsernameNotFoundException(id);
+		BrandDto returnValue = modelMapper.map(brandEntity, BrandDto.class);
+		returnValue.setId(brandEntity.getExternalId());
+		return returnValue;
+	}
+
+	@Override
+	public BrandDto updateBrand(String id, BrandDto brandDetails) {
+		BrandEntity existingBrand = brandRepository.findByExternalId(id);
+
+		existingBrand.setName(brandDetails.getName());
+
+		BrandEntity updatedBrand = brandRepository.save(existingBrand);
+
+		BrandDto returnValue = modelMapper.map(updatedBrand, BrandDto.class);
+	    returnValue.setId(updatedBrand.getExternalId());
+	    
+		return returnValue; 
+	}
+
+	@Override
+	public void deleteBrand(String id) {
+		BrandEntity brandEntity = brandRepository.findByExternalId(id);
+		brandRepository.delete(brandEntity);
 	}
 
 }
