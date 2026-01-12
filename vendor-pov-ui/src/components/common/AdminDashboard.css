@@ -100,9 +100,41 @@
     flex: 1
 }
 
-.editor-right {
-    width: 44%;
-    min-width: 320px
+/* Highlight overlay positioned underneath the textarea */
+.highlight-wrapper {
+    position: relative;
+    /* draw the border/background on the wrapper so the overlay can be transparent */
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+.highlight-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 12px;
+    border-radius: 6px;
+    /* overlay should be transparent so textarea text can be rendered from the overlay while
+       the textarea itself shows the caret. */
+    background: transparent;
+    white-space: pre-wrap;
+    color: #111;
+    font-family: inherit;
+    line-height: 1.45;
+    word-wrap: break-word;
+    pointer-events: none;
+    overflow: hidden;
+    /* Hide scrollbars on overlay; let textarea handle scrolling */
+    text-align: left;
+}
+
+.highlight-overlay .variable {
+    background: linear-gradient(180deg, #fff1b8, #ffd666);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #7a4a00;
+    font-weight: 600;
+    margin: 0 2px;
 }
 
 .template-input {
@@ -110,8 +142,31 @@
     min-height: 140px;
     padding: 12px;
     border-radius: 6px;
-    border: 1px solid #e5e7eb;
-    font-family: inherit
+    /* keep transparent background so overlay text shows through; keep the textarea on top */
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    position: relative;
+    z-index: 2;
+    color: transparent;
+    /* hide underlying text in textarea so overlay is source of visible text */
+    caret-color: #111;
+    line-height: 1.45;
+    /* Explicitly match overlay line-height */
+    /* ensure caret is visible */
+    text-align: left;
+    resize: vertical;
+    outline: none;
+}
+
+/* selection highlight for textarea remains visible */
+.template-input::selection {
+    background: rgba(37, 99, 235, 0.12);
+}
+
+.template-input:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    border-radius: 6px;
 }
 
 .instructions {
@@ -119,23 +174,32 @@
     background: linear-gradient(90deg, #fff, #fbfbff);
     padding: 8px;
     border-radius: 6px;
-    border: 1px solid #eef2ff
+    border: 1px solid #eef2ff;
 }
 
 .instruction-text {
     color: var(--muted);
-    font-size: 13px
+    font-size: 13px;
+}
+
+.instruction-text .variable {
+    background: linear-gradient(180deg, #fff1b8, #ffd666);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #7a4a00;
+    font-weight: 600;
+    margin: 0 2px;
 }
 
 .variable-list {
-    margin-top: 8px
+    margin-top: 8px;
 }
 
 .vars {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 8px
+    margin-top: 8px;
 }
 
 .var-chip {
@@ -143,19 +207,11 @@
     border: 1px solid #e5e7eb;
     padding: 6px 10px;
     border-radius: 20px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .var-empty {
-    color: var(--muted)
-}
-
-.preview-box {
-    min-height: 140px;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px dashed #e5e7eb;
-    background: #fff
+    color: var(--muted);
 }
 
 .variable {
@@ -164,13 +220,13 @@
     border-radius: 4px;
     color: #7a4a00;
     font-weight: 600;
-    margin: 0 2px
+    margin: 0 2px;
 }
 
 .help {
     margin-top: 10px;
     color: var(--muted);
-    font-size: 13px
+    font-size: 13px;
 }
 
 .footer {
