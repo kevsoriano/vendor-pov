@@ -123,18 +123,23 @@
     line-height: 1.45;
     word-wrap: break-word;
     pointer-events: none;
-    overflow: hidden;
     /* Hide scrollbars on overlay; let textarea handle scrolling */
     text-align: left;
+    scrollbar-gutter: stable;
+    /* Enforce strict typography to match textarea */
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-rendering: auto;
+    font-size: 14px;
 }
 
 .highlight-overlay .variable {
     background: linear-gradient(180deg, #fff1b8, #ffd666);
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 0;
+    border-radius: 2px;
     color: #7a4a00;
-    font-weight: 600;
-    margin: 0 2px;
+    font-weight: inherit;
+    margin: 0;
 }
 
 .template-input {
@@ -154,7 +159,14 @@
     line-height: 1.45;
     /* Explicitly match overlay line-height */
     /* ensure caret is visible */
+    /* ensure caret is visible */
     text-align: left;
+    scrollbar-gutter: stable;
+    /* Enforce strict typography to match overlay */
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-rendering: auto;
+    font-size: 14px;
     resize: vertical;
     outline: none;
 }

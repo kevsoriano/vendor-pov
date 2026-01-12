@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import PromptEditor from './PromptEditor'
 import './../AdminDashboard.css'
+import { PROMPT_INSTRUCTIONS } from '../config/promptConfigs'
 
 type PromptConfig = {
   id: string
   name: string
-  instructions: string
   template: string
 }
 
@@ -14,7 +14,6 @@ export default function AdminDashboard() {
     {
       id: 'prompt-1',
       name: 'Default SKU Analysis',
-      instructions: 'Use this prompt to analyze SKU text fields. Supported variables: {{sku_analysis_fields}}',
       template:
         "You are a product analysis AI. Analyze these fields: {{sku_analysis_fields}}. Provide a short summary and 3 bullet insights."
     }
@@ -27,7 +26,8 @@ export default function AdminDashboard() {
   function addPrompt() {
     setPrompts(ps => [
       ...ps,
-      { id: `prompt-${Date.now()}`, name: 'New Prompt', instructions: '', template: '' }
+      ...ps,
+      { id: `prompt-${Date.now()}`, name: 'New Prompt', template: '' }
     ])
   }
 
@@ -61,17 +61,9 @@ export default function AdminDashboard() {
             </div>
 
             <div className="card-body">
-              <label className="label">Instructions <span className="info" title="General instructions shown to editors and explain what fields mean">?</span></label>
-              <textarea
-                className="instructions-input"
-                value={p.instructions}
-                onChange={e => updatePrompt(p.id, { instructions: e.target.value })}
-                placeholder="General instructions and notes for this prompt"
-              />
-
               <PromptEditor
                 template={p.template}
-                instructions={p.instructions}
+                instructions={PROMPT_INSTRUCTIONS[p.id] || ''}
                 onChange={next => updatePrompt(p.id, { template: next })}
               />
 
