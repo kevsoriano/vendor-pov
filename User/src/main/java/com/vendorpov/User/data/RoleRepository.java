@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends CrudRepository<RoleEntity, Long>, PagingAndSortingRepository<RoleEntity, Long> {
+	RoleEntity findByExternalId(String id);
 	RoleEntity findByName(String name);
 	List<RoleEntity> findByNameIn(List<String> names);
 }

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import "./App.css";
+import { Outlet, useLoaderData, useSubmit } from "react-router-dom";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import { Outlet, useLoaderData, useSubmit } from "react-router-dom";
 import { getTokenDuration } from "./utils/auth";
 
 function App() {
@@ -27,19 +27,17 @@ function App() {
 	}, [token, submit]);
 
 	return (
-		<>
-			<div className="h-[100vh]">
-				<Header />
-				<div className="flex h-[calc(100vh-60px)]">
-					{token && <Sidebar />}
-					<main className="bg-[#e4eaee] w-full">
-						<div className="">
-							<Outlet />
-						</div>
-					</main>
-				</div>
+		<div className="h-[100vh]">
+			<Header />
+			<div className="flex h-[calc(100vh-60px)]">
+				{token && <Sidebar />}
+				<main className="bg-[#e4eaee] w-full">
+					<div className="">
+						<Outlet />
+					</div>
+				</main>
 			</div>
-		</>
+		</div>
 	);
 }
 

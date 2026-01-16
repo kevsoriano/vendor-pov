@@ -5,6 +5,7 @@ import java.util.List;
 public class UserDto extends BaseDto {
 
 	private static final long serialVersionUID = -3019261670280233161L;
+	private String id;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -12,6 +13,14 @@ public class UserDto extends BaseDto {
 	private String encryptedPassword;
 	private List<AddressDto> addresses;
 	private List<RoleDto> roles;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getFirstName() {
 		return firstName;

@@ -20,7 +20,7 @@ public class UserRequestModel {
 	@Size(min = 8, max = 16, message = "password must be greater than or equal to 8 and less than 16 characters")
 	private String password;
 	private List<AddressDetailsModel> addresses;
-	private List<RoleDetailsModel> roles;
+	private List<String> roles;
 
 	public String getFirstName() {
 		return firstName;
@@ -62,11 +62,11 @@ public class UserRequestModel {
 		this.addresses = addresses;
 	}
 
-	public List<RoleDetailsModel> getRoles() {
+	public List<String> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<RoleDetailsModel> roles) {
+	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
 

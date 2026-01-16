@@ -18,7 +18,7 @@ import jakarta.persistence.ManyToMany;
 public class RoleEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 4763607190444983722L;
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false, unique = true, length = 20)
 	private String name;
 	@ManyToMany(mappedBy = "roles")
 	private Collection<UserEntity> users;

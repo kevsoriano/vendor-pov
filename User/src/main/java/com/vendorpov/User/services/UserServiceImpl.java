@@ -25,6 +25,7 @@ import com.vendorpov.User.data.RoleRepository;
 import com.vendorpov.User.data.UserEntity;
 import com.vendorpov.User.data.UserRepository;
 import com.vendorpov.User.shared.AddressDto;
+import com.vendorpov.User.shared.RoleDto;
 import com.vendorpov.User.shared.UserDto;
 
 @Service
@@ -63,30 +64,26 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto createUser(UserDto userDetails) {
-		userDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
-		
 		UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
 		userEntity.setExternalId(UUID.randomUUID().toString());
 		
-		Collection<RoleEntity> roles = userEntity.getRoles();
+		Collection<RoleDto> roles = userDetails.getRoles();
+		List<RoleEntity> managedRoles = new ArrayList<>();
 		
-		roles.forEach((role)-> {
-			List<RoleEntity> managedRoles = new ArrayList<>();
-	        RoleEntity persistedRole = roleRepository.findByName(role.getName()); 
-	        if (persistedRole != null) {
-	            managedRoles.add(persistedRole);
-	        } else {
-	        	role.setExternalId(UUID.randomUUID().toString());
-	        }
-	        
+		roles.forEach((role) -> {
+			RoleEntity persistedRole = roleRepository.findByName(role.getName());
+			if (persistedRole != null) {
+				managedRoles.add(persistedRole);
+			} else {
+				throw new RuntimeException("Role '" + role.getName() + "' does not exist. Please create it first.");
+			}
 		});
 		
-		userRepository.save(userEntity);
-		UserDto returnValue = modelMapper.map(userEntity, UserDto.class);
-		// Ensure DTO id uses entity.externalId (ModelMapper base type mapping doesn't apply to subclasses)
-//		returnValue.setId(userEntity.getExternalId());
+		userEntity.setRoles(managedRoles);
 		
-		return returnValue;
+		userRepository.save(userEntity);
+		
+		return modelMapper.map(userEntity, UserDto.class);
 	}
 	
 	public UserDto getUserByEmail(String email) throws UsernameNotFoundException {

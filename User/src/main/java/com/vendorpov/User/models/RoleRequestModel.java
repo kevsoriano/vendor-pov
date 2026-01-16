@@ -2,10 +2,10 @@ package com.vendorpov.User.models;
 
 import java.util.Collection;
 
-public class RoleDetailsModel {
+public class RoleRequestModel {
 	private String id;
 	private String name;
-	private Collection<AuthorityDetailsModel> authorities;
+	private Collection<AuthorityRequestModel> authorities;
 
 	public String getId() {
 		return id;
@@ -23,11 +23,11 @@ public class RoleDetailsModel {
 		this.name = name;
 	}
 
-	public Collection<AuthorityDetailsModel> getAuthorities() {
+	public Collection<AuthorityRequestModel> getAuthorities() {
 		return authorities;
 	}
 
-	public void setAuthorities(Collection<AuthorityDetailsModel> authorities) {
+	public void setAuthorities(Collection<AuthorityRequestModel> authorities) {
 		this.authorities = authorities;
 	}
 

@@ -1,8 +1,6 @@
-package com.vendorpov.User.shared;
+package com.vendorpov.User.models;
 
-public class AuthorityDto extends BaseDto {
-
-	private static final long serialVersionUID = -5964611193055753555L;
+public class AuthorityRequestModel {
 	private String id;
 	private String name;
 

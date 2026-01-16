@@ -3,12 +3,21 @@ package com.vendorpov.User.shared;
 public class AddressDto extends BaseDto {
 
 	private static final long serialVersionUID = 28979911717493107L;
+	private String id;
 	private String city;
 	private String country;
 	private String streetName;
 	private String postalCode;
 	private String type;
 	private UserDto userDetails;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getCity() {
 		return city;
