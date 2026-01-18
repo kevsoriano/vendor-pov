@@ -1,8 +1,6 @@
-package com.vendorpov.User.shared;
+package com.vendorpov.User.models;
 
-public class AddressDto extends BaseDto {
-
-	private static final long serialVersionUID = 28979911717493107L;
+public class AddressResponseModel {
 	private String id;
 	private String city;
 	private String country;
@@ -10,7 +8,6 @@ public class AddressDto extends BaseDto {
 	private String addressLine2;
 	private String postalCode;
 	private String type;
-	private UserDto userDetails;
 
 	public String getId() {
 		return id;
@@ -66,14 +63,6 @@ public class AddressDto extends BaseDto {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public UserDto getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(UserDto userDetails) {
-		this.userDetails = userDetails;
 	}
 
 }

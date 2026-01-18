@@ -1,4 +1,4 @@
-import { Form, Link, useSearchParams, useActionData, useNavigation } from "react-router-dom";
+import { Form, Link, useActionData, useNavigation, useSearchParams } from "react-router-dom";
 
 function AuthForm() {
 	const data = useActionData();
@@ -119,8 +119,9 @@ function AuthForm() {
 												fill="none"
 												viewBox="0 0 14 14"
 												className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center 
-                                      justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+									  justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
 											>
+												<title>Checkbox state indicator</title>
 												<path
 													d="M3 8L6 11L11 3.5"
 													strokeWidth={2}

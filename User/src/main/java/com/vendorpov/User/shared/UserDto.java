@@ -1,6 +1,8 @@
 package com.vendorpov.User.shared;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Currency;
 
 public class UserDto extends BaseDto {
 
@@ -11,8 +13,12 @@ public class UserDto extends BaseDto {
 	private String email;
 	private String password;
 	private String encryptedPassword;
-	private List<AddressDto> addresses;
-	private List<RoleDto> roles;
+	private BigDecimal dailyTarget;
+	private BigDecimal weeklyTarget;
+	private BigDecimal monthlyTarget;
+	private Currency currency;
+	private Collection<AddressDto> addresses;
+	private Collection<RoleDto> roles;
 
 	public String getId() {
 		return id;
@@ -62,19 +68,51 @@ public class UserDto extends BaseDto {
 		this.encryptedPassword = encryptedPassword;
 	}
 
-	public List<AddressDto> getAddresses() {
+	public BigDecimal getDailyTarget() {
+		return dailyTarget;
+	}
+
+	public void setDailyTarget(BigDecimal dailyTarget) {
+		this.dailyTarget = dailyTarget;
+	}
+
+	public BigDecimal getWeeklyTarget() {
+		return weeklyTarget;
+	}
+
+	public void setWeeklyTarget(BigDecimal weeklyTarget) {
+		this.weeklyTarget = weeklyTarget;
+	}
+
+	public BigDecimal getMonthlyTarget() {
+		return monthlyTarget;
+	}
+
+	public void setMonthlyTarget(BigDecimal monthlyTarget) {
+		this.monthlyTarget = monthlyTarget;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
+	public Collection<AddressDto> getAddresses() {
 		return addresses;
 	}
 
-	public void setAddresses(List<AddressDto> addresses) {
+	public void setAddresses(Collection<AddressDto> addresses) {
 		this.addresses = addresses;
 	}
 
-	public List<RoleDto> getRoles() {
+	public Collection<RoleDto> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<RoleDto> roles) {
+	public void setRoles(Collection<RoleDto> roles) {
 		this.roles = roles;
 	}
 

@@ -1,36 +1,33 @@
-import { Fragment, useEffect, useState } from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAuthToken } from "../../utils/auth";
+import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
-import NotificationBanner from "../../components/common/NotificationBanner";
-import Button from "@mui/material/Button";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { getAuthToken } from "../../utils/auth";
 
 interface Product {
 	name: string;
 	productId: number;
 }
 
-function rowData(
-	name: string, 
-	productId: number, 
-) {
+function rowData(name: string, productId: number) {
 	return {
 		name,
 		productId,
@@ -54,8 +51,12 @@ function Row(props: { row: ReturnType<typeof rowData> }) {
 				</TableCell>
 				<TableCell align="center">{row.productId}</TableCell>
 				<TableCell align="center">
-					<Button><EditIcon /></Button>
-					<Button><DeleteIcon /></Button>
+					<Button>
+						<EditIcon />
+					</Button>
+					<Button>
+						<DeleteIcon />
+					</Button>
 				</TableCell>
 			</TableRow>
 			{/* <TableRow>

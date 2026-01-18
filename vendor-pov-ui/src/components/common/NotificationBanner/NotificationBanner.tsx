@@ -25,12 +25,17 @@ const NotificationBanner: React.FC<Props> = ({ message, type = "info", onClose }
 
 	return (
 		isVisible && (
-			<div className={`np-banner np-${type}`} role="status" aria-live="polite">
+			<output className={`np-banner np-${type}`} aria-live="polite">
 				<div className="np-message">{message}</div>
-				<button className="np-close" aria-label="Dismiss notification" onClick={onClose}>
+				<button
+					type="button"
+					className="np-close"
+					aria-label="Dismiss notification"
+					onClick={onClose}
+				>
 					×
 				</button>
-			</div>
+			</output>
 		)
 	);
 };

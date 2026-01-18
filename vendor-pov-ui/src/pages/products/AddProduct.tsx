@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import type { CreatableMultiSelectOption } from "../../components/common/CreatableMultiSelect";
+import CreatableMultiSelect from "../../components/common/CreatableMultiSelect";
 import CreatableSelect, {
 	type CreatableSelectOption,
 } from "../../components/common/CreatableSelect";
-import type { CreatableMultiSelectOption } from "../../components/common/CreatableMultiSelect";
-import CreatableMultiSelect from "../../components/common/CreatableMultiSelect";
 import Modal from "../../components/common/Modal";
-import type { ProductVariant } from "../../components/products/ProductVariantTable";
 import type { ProductAttribute } from "../../components/products/ProductAttributesInput";
 import ProductTypeSelector, {
 	type ProductType,
 } from "../../components/products/ProductTypeSelector";
+import type { ProductVariant } from "../../components/products/ProductVariantTable";
 
 const initialOptions: CreatableSelectOption[] = [
 	{ id: 1, name: "Apple" },
@@ -98,7 +98,6 @@ const AddProduct = () => {
 	const handleSubmit = (formData: any) => {
 		const name = formData.get("name");
 		const description = formData.get("description");
-		console.log(name, description);
 	};
 
 	return (

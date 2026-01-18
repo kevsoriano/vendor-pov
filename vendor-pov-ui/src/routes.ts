@@ -1,17 +1,20 @@
 import { createBrowserRouter } from "react-router-dom";
-import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentication";
 import App from "./App";
-import HomePage from "./pages/HomePage";
-import ErrorPage from "./pages/ErrorPage";
-import { checkAuthLoader, tokenLoader } from "./utils/auth";
+import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentication";
 import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
+// import ErrorPage from "./pages/ErrorPage";
+import HomePage from "./pages/HomePage";
 import AddProduct from "./pages/products/AddProduct";
 import ProductDetail from "./pages/products/ProductDetailPage";
 import Products from "./pages/products/ProductListPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
 import TestProductVariants from "./pages/TestProductVariants";
-import UsersPage from "./pages/users/UserListPage";
+import AddRolesPage from "./pages/users/AddRolesPage";
 import AddUsersPage from "./pages/users/AddUsersPage";
+import RoleDetailsPage from "./pages/users/RoleDetailsPage";
+import RoleListPage from "./pages/users/RoleListPage";
+import UsersPage from "./pages/users/UserListPage";
+import { checkAuthLoader, tokenLoader } from "./utils/auth";
 
 export const router = createBrowserRouter([
 	{
@@ -47,12 +50,27 @@ export const router = createBrowserRouter([
 				loader: checkAuthLoader,
 			},
 			{
+				path: "/roles",
+				Component: RoleListPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "/roles/add",
+				Component: AddRolesPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "roles/:id/edit",
+				Component: RoleDetailsPage,
+				loader: checkAuthLoader,
+			},
+			{
 				path: "products",
 				Component: Products,
 				loader: checkAuthLoader,
 			},
 			{
-				path: "products/:productId",
+				path: "products/:id/edit",
 				Component: ProductDetail,
 				loader: checkAuthLoader,
 			},

@@ -38,8 +38,8 @@ public class AppExceptionsHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	@ExceptionHandler(value = { UserServiceException.class })
-	public ResponseEntity<Object> handleUserServiceExceptions(UserServiceException ex, WebRequest request) {
+	@ExceptionHandler(value = { ResourceNotFoundException.class })
+	public ResponseEntity<Object> handleUserServiceExceptions(ResourceNotFoundException ex, WebRequest request) {
 		String errorMessageDescription = ex.getLocalizedMessage();
 
 		if (errorMessageDescription == null)

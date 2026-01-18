@@ -16,6 +16,7 @@ import com.vendorpov.User.data.AuthorityEntity;
 import com.vendorpov.User.data.AuthorityRepository;
 import com.vendorpov.User.data.RoleEntity;
 import com.vendorpov.User.data.RoleRepository;
+import com.vendorpov.User.exceptions.ResourceNotFoundException;
 import com.vendorpov.User.shared.AuthorityDto;
 import com.vendorpov.User.shared.RoleDto;
 
@@ -69,7 +70,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public RoleDto getRoleByExternalId(String id) {
 		RoleEntity roleEntity = roleRepository.findByExternalId(id);
-		if(roleEntity==null) throw new NullPointerException(id + " does not exist.");
+		if(roleEntity==null) throw new ResourceNotFoundException(id + " does not exist.");
 		RoleDto dto = modelMapper.map(roleEntity, RoleDto.class);
 		return dto;
 	}
@@ -77,23 +78,26 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public RoleDto updateRole(String id, RoleDto roleDetails) {
 		RoleEntity existingRole = roleRepository.findByExternalId(id);
+		
+		if(existingRole==null) throw new ResourceNotFoundException(id + " does not exist.");
 
 		existingRole.setName(roleDetails.getName());
 		
 		Collection<AuthorityDto> authorities = roleDetails.getAuthorities();
-		List<AuthorityEntity> managedAuthorities = new ArrayList<>();
-	    if (roleDetails.getAuthorities() != null && !roleDetails.getAuthorities().isEmpty()) {
+	    if (authorities != null && !authorities.isEmpty()) {
+			List<AuthorityEntity> managedAuthorities = new ArrayList<>();
 			authorities.forEach((authority) -> {
 				AuthorityEntity persistedAuthority = authorityRepository.findByExternalId(authority.getId());
 				if (persistedAuthority != null) {
-					persistedAuthority.setName(authority.getName());
+					// Update role memberships only; ignore modifications to existing authority attributes.
+					// persistedAuthority.setName(authority.getName());
 					managedAuthorities.add(persistedAuthority);
 				} else {
-					throw new RuntimeException("Authority '" + authority.getId() + "' does not exist. Please create it first.");
+					throw new ResourceNotFoundException("Authority '" + authority.getId() + "' does not exist. Please create it first.");
 				}
 			});
+			existingRole.setAuthorities(managedAuthorities);
 	    }
-	    existingRole.setAuthorities(managedAuthorities);
 		
 		RoleEntity updatedRole = roleRepository.save(existingRole);
 		
@@ -104,8 +108,9 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public void deleteRole(String id) {
-		RoleEntity userEntity = roleRepository.findByExternalId(id);
-		roleRepository.delete(userEntity);
+		RoleEntity roleEntity = roleRepository.findByExternalId(id);
+		if(roleEntity==null) throw new ResourceNotFoundException(id + " does not exist.");
+		roleRepository.delete(roleEntity);
 	}
 
 }

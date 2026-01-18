@@ -1,11 +1,17 @@
 package com.vendorpov.User.models;
 
-public class AddressDetailsModel {
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+
+public class AddressRequestModel {
 	private String id;
 	private String city;
 	private String country;
-	private String streetName;
+	private String addressLine1;
+	private String addressLine2;
 	private String postalCode;
+	@NotEmpty
+	@Pattern(regexp = "RESIDENTIAL|SHIPPING", message = "Must be RESIDENTIAL, SHIPPING")
 	private String type;
 
 	public String getId() {
@@ -32,12 +38,20 @@ public class AddressDetailsModel {
 		this.country = country;
 	}
 
-	public String getStreetName() {
-		return streetName;
+	public String getAddressLine1() {
+		return addressLine1;
 	}
 
-	public void setStreetName(String streetName) {
-		this.streetName = streetName;
+	public void setAddressLine1(String addressLine1) {
+		this.addressLine1 = addressLine1;
+	}
+
+	public String getAddressLine2() {
+		return addressLine2;
+	}
+
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
 	}
 
 	public String getPostalCode() {

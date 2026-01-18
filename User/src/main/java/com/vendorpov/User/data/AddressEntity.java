@@ -5,12 +5,20 @@ import java.time.Instant;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
-@Entity(name = "addresses")
+@Entity
+@Table(name = "addresses", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "type"}) // A user can only have 1 address of each type
+})
 public class AddressEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -5692113777587157381L;
@@ -19,12 +27,15 @@ public class AddressEntity extends BaseEntity {
 	@Column(length = 15, nullable = false)
 	private String country;
 	@Column(length = 100, nullable = false)
-	private String streetName;
+	private String addressLine1;
+	@Column(length = 100, nullable = false)
+	private String addressLine2;
 	@Column(length = 6, nullable = false)
 	private String postalCode;
-	@Column(length = 10, nullable = false)
-	private String type;
-	@ManyToOne
+	@Enumerated(EnumType.STRING) // Force Hibernate to use the name of the Enum
+	@Column(columnDefinition = "VARCHAR(20) CHECK (type IN ('RESIDENTIAL', 'SHIPPING'))")
+	private AddressType type;
+	@ManyToOne(cascade = CascadeType.PERSIST) // Tells Hibernate: "If the user is new, save them too"
 	@JoinColumn(name = "user_id")
 	private UserEntity userDetails;
 	@CreationTimestamp
@@ -48,12 +59,20 @@ public class AddressEntity extends BaseEntity {
 		this.country = country;
 	}
 
-	public String getStreetName() {
-		return streetName;
+	public String getAddressLine1() {
+		return addressLine1;
 	}
 
-	public void setStreetName(String streetName) {
-		this.streetName = streetName;
+	public void setAddressLine1(String addressLine1) {
+		this.addressLine1 = addressLine1;
+	}
+
+	public String getAddressLine2() {
+		return addressLine2;
+	}
+
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
 	}
 
 	public String getPostalCode() {
@@ -64,11 +83,11 @@ public class AddressEntity extends BaseEntity {
 		this.postalCode = postalCode;
 	}
 
-	public String getType() {
+	public AddressType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(AddressType type) {
 		this.type = type;
 	}
 

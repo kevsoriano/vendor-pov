@@ -1,13 +1,20 @@
 package com.vendorpov.User.models;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Currency;
 
 public class UserResponseModel {
 	private String id;
 	private String firstName;
 	private String lastName;
 	private String email;
-	private List<String> roles;
+	private BigDecimal dailyTarget;
+	private BigDecimal weeklyTarget;
+	private BigDecimal monthlyTarget;
+	private Currency currency;
+	private Collection<AddressResponseModel> addresses;
+	private Collection<RoleResponseModel> roles;
 
 	public String getId() {
 		return id;
@@ -41,11 +48,51 @@ public class UserResponseModel {
 		this.email = email;
 	}
 
-	public List<String> getRoles() {
+	public BigDecimal getDailyTarget() {
+		return dailyTarget;
+	}
+
+	public void setDailyTarget(BigDecimal dailyTarget) {
+		this.dailyTarget = dailyTarget;
+	}
+
+	public BigDecimal getWeeklyTarget() {
+		return weeklyTarget;
+	}
+
+	public void setWeeklyTarget(BigDecimal weeklyTarget) {
+		this.weeklyTarget = weeklyTarget;
+	}
+
+	public BigDecimal getMonthlyTarget() {
+		return monthlyTarget;
+	}
+
+	public void setMonthlyTarget(BigDecimal monthlyTarget) {
+		this.monthlyTarget = monthlyTarget;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
+	public Collection<AddressResponseModel> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(Collection<AddressResponseModel> addresses) {
+		this.addresses = addresses;
+	}
+
+	public Collection<RoleResponseModel> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<String> roles) {
+	public void setRoles(Collection<RoleResponseModel> roles) {
 		this.roles = roles;
 	}
 

@@ -1,10 +1,28 @@
 import { getAuthToken } from "./auth";
 
 const BASE_URL = "http://localhost:8082";
-const token = getAuthToken();
 
-export async function fetchAvailableUsers() {
-	const response = await fetch(`${BASE_URL}/users`, {
+export async function deleteResource(path: string, id: string) {
+	const token = getAuthToken();
+	const response = await fetch(`${BASE_URL}/${path}/${id}`, {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const resData = await response.json();
+
+	if (!response.ok) {
+		throw new Error(resData.message || "Failed to delete resource.");
+	}
+
+	return resData;
+}
+
+export async function getAll(path: string) {
+	const token = getAuthToken();
+	const response = await fetch(`${BASE_URL}/${path}`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -20,13 +38,33 @@ export async function fetchAvailableUsers() {
 	return resData;
 }
 
-export async function create(body: any) {
-	const response = await fetch(`${BASE_URL}/users/add`, {
+export async function get(path: string, id: string) {
+	const token = getAuthToken();
+	const response = await fetch(`${BASE_URL}/${path}/${id}`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const resData = await response.json();
+
+	if (!response.ok) {
+		throw new Error(resData.message || "Failed to fetch users.");
+	}
+
+	return resData;
+}
+
+export async function create(path: string, body: any) {
+	const token = getAuthToken();
+	const response = await fetch(`${BASE_URL}/${path}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`,
 		},
+		body: JSON.stringify(body),
 	});
 	const resData = await response.json();
 
@@ -37,8 +75,9 @@ export async function create(body: any) {
 	return resData;
 }
 
-export async function update(id: number, body: any) {
-	const response = await fetch(`${BASE_URL}/users/${id}`, {
+export async function update(path: string, id: string, body: any) {
+	const token = getAuthToken();
+	const response = await fetch(`${BASE_URL}/${path}/${id}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",

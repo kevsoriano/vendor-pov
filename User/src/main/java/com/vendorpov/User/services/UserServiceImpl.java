@@ -19,14 +19,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.vendorpov.User.data.AddressEntity;
+import com.vendorpov.User.data.AddressRepository;
 import com.vendorpov.User.data.AuthorityEntity;
 import com.vendorpov.User.data.RoleEntity;
 import com.vendorpov.User.data.RoleRepository;
 import com.vendorpov.User.data.UserEntity;
 import com.vendorpov.User.data.UserRepository;
+import com.vendorpov.User.exceptions.ResourceNotFoundException;
 import com.vendorpov.User.shared.AddressDto;
 import com.vendorpov.User.shared.RoleDto;
 import com.vendorpov.User.shared.UserDto;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,6 +38,8 @@ public class UserServiceImpl implements UserService {
 	UserRepository userRepository;
 	@Autowired
 	RoleRepository roleRepository;
+	@Autowired
+	AddressRepository addressRepository;
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
@@ -63,23 +69,42 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public UserDto createUser(UserDto userDetails) {
 		UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
 		userEntity.setExternalId(UUID.randomUUID().toString());
+		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
+		
+	    Collection<AddressDto> addresses = userDetails.getAddresses();
+	    if (addresses != null && !addresses.isEmpty()) {
+	        List<AddressEntity> addressesToPersist = new ArrayList<>();
+	        
+	        addresses.forEach((address) -> {
+	        	AddressEntity addressEntity = modelMapper.map(address, AddressEntity.class);
+	        	addressEntity.setExternalId(UUID.randomUUID().toString());
+	        	addressEntity.setUserDetails(userEntity);
+        		addressesToPersist.add(addressEntity);
+	        });
+	        
+	        userEntity.setAddresses(addressesToPersist);
+	    }
 		
 		Collection<RoleDto> roles = userDetails.getRoles();
-		List<RoleEntity> managedRoles = new ArrayList<>();
-		
-		roles.forEach((role) -> {
-			RoleEntity persistedRole = roleRepository.findByName(role.getName());
-			if (persistedRole != null) {
-				managedRoles.add(persistedRole);
-			} else {
-				throw new RuntimeException("Role '" + role.getName() + "' does not exist. Please create it first.");
-			}
-		});
-		
-		userEntity.setRoles(managedRoles);
+	    if (roles != null && !roles.isEmpty()) {
+	        List<RoleEntity> managedRoles = new ArrayList<>();
+	        
+	        roles.forEach((role) -> {
+	        	RoleEntity persistedRole = roleRepository.findByExternalId(role.getId());
+				if (persistedRole != null) {
+					// Update role memberships only; ignore modifications to existing role attributes.
+					managedRoles.add(persistedRole);
+				} else {
+					throw new ResourceNotFoundException("Role '" + role.getId() + "' does not exist. Please create it first.");
+				}
+	        });
+	        
+	        userEntity.setRoles(managedRoles);
+	    }
 		
 		userRepository.save(userEntity);
 		
@@ -88,7 +113,7 @@ public class UserServiceImpl implements UserService {
 	
 	public UserDto getUserByEmail(String email) throws UsernameNotFoundException {
 		UserEntity userEntity = userRepository.findByEmail(email);
-		if(userEntity==null) throw new UsernameNotFoundException(email);
+		if(userEntity==null) throw new ResourceNotFoundException(email);
 		UserDto dto = modelMapper.map(userEntity, UserDto.class);
 		return dto;
 	}
@@ -96,7 +121,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto getUserByExternalId(String id) throws UsernameNotFoundException {
 		UserEntity userEntity = userRepository.findByExternalId(id);
-		if(userEntity==null) throw new UsernameNotFoundException(id);
+		if(userEntity==null) throw new ResourceNotFoundException(id);
 		UserDto dto = modelMapper.map(userEntity, UserDto.class);
 		return dto;
 	}
@@ -117,20 +142,47 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto updateUser(String id, UserDto userDetails) {
 		UserEntity existingUser = userRepository.findByExternalId(id);
+		if(existingUser==null) throw new ResourceNotFoundException(id);
 
 		existingUser.setFirstName(userDetails.getFirstName());
 	    existingUser.setLastName(userDetails.getLastName());
 		
-	    if (userDetails.getAddresses() != null && !userDetails.getAddresses().isEmpty()) {
+	    Collection<AddressDto> addresses = userDetails.getAddresses();
+	    if (addresses != null && !addresses.isEmpty()) {
 	        List<AddressEntity> updatedAddresses = new ArrayList<>();
 	        
-	        for (AddressDto addressDto : userDetails.getAddresses()) {
-	            AddressEntity addressEntity = modelMapper.map(addressDto, AddressEntity.class);
-	            addressEntity.setUserDetails(existingUser); 
-	            updatedAddresses.add(addressEntity);
-	        }
+	        addresses.forEach((address) -> {
+	        	AddressEntity persistedAddress = addressRepository.findByExternalId(address.getId());
+	        	if (persistedAddress != null) {
+	        		persistedAddress.setCity(address.getCity());
+	        		persistedAddress.setCountry(address.getCountry());
+	        		persistedAddress.setAddressLine1(address.getAddressLine1());
+	        		persistedAddress.setAddressLine2(address.getAddressLine2());
+	        		persistedAddress.setPostalCode(address.getPostalCode());
+	        		updatedAddresses.add(persistedAddress);
+				} else {
+					throw new ResourceNotFoundException("Address" + address.getId() + "' does not exist. Please create it first.");
+				}
+	        });
 	        
 	        existingUser.setAddresses(updatedAddresses);
+	    }
+	    
+	    Collection<RoleDto> roles = userDetails.getRoles();
+	    if (roles != null && !roles.isEmpty()) {
+	        List<RoleEntity> managedRoles = new ArrayList<>();
+	        
+	        roles.forEach((role) -> {
+	        	RoleEntity persistedRole = roleRepository.findByExternalId(role.getId());
+				if (persistedRole != null) {
+					// Update role memberships only; ignore modifications to existing role attributes.
+					managedRoles.add(persistedRole);
+				} else {
+					throw new ResourceNotFoundException("Role '" + role.getId() + "' does not exist. Please create it first.");
+				}
+	        });
+	        
+	        existingUser.setRoles(managedRoles);
 	    }
 
 		UserEntity updatedUser = userRepository.save(existingUser);
@@ -143,6 +195,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteUser(String id) {
 		UserEntity userEntity = userRepository.findByExternalId(id);
+		if(userEntity==null) throw new ResourceNotFoundException(id);
 		userRepository.delete(userEntity);
 	}
 

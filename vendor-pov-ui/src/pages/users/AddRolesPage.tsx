@@ -9,14 +9,14 @@ import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import { create, getAll } from "../../utils/http";
 
-interface Role {
+interface Authority {
 	id: string;
 	name: string;
 }
 
-const AddUsersPage = () => {
+const AddRolesPage = () => {
 	const navigate = useNavigate();
-	const [roles, setRoles] = useState<Role[]>([]);
+	const [authorities, setAuthorities] = useState<Authority[]>([]);
 	const [notification, setNotification] = useState<{
 		message: string;
 		type: "success" | "error" | "info";
@@ -25,10 +25,10 @@ const AddUsersPage = () => {
 	const [nameError, setNameError] = useState<string | null>(null);
 
 	useEffect(() => {
-		const fetchRoles = async () => {
+		const fetchAuthorities = async () => {
 			try {
-				const response: Role[] = await getAll("roles");
-				setRoles(response);
+				const response: Authority[] = await getAll("authorities");
+				setAuthorities(response);
 			} catch (error) {
 				const msg = error instanceof Error ? error.message : String(error);
 				setNotification({
@@ -37,7 +37,7 @@ const AddUsersPage = () => {
 				});
 			}
 		};
-		fetchRoles();
+		fetchAuthorities();
 	}, []);
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -52,17 +52,17 @@ const AddUsersPage = () => {
 			setLoading(false);
 			return;
 		}
-		const selectedIds = formData.getAll("roles");
-		const selectedRoles = roles.filter((r) => selectedIds.includes(r.id));
-		const body = { name, roles: selectedRoles };
+		const selectedIds = formData.getAll("authorities");
+		const selectedAuthorities = authorities.filter((a) => selectedIds.includes(a.id));
+		const body = { name, authorities: selectedAuthorities };
 
 		try {
-			const response = await create("users", body);
+			const response = await create("roles", body);
 			setNotification({
-				message: `User ${response.name} created successfully`,
+				message: `Role ${response.name} created successfully`,
 				type: "success",
 			});
-			setTimeout(() => navigate("/users"), 1500);
+			setTimeout(() => navigate("/roles"), 1500);
 		} catch (error) {
 			const msg = error instanceof Error ? error.message : String(error);
 			setNotification({
@@ -84,13 +84,13 @@ const AddUsersPage = () => {
 				/>
 			)}
 			<div className="flex px-4 sm:px-6 lg:px-8 py-6 justify-between">
-				<h2>Add Users</h2>
+				<h2>Add Roles</h2>
 			</div>
 			<div className="p-4 sm:p-6 lg:p-8 max-w-3xl border mx-auto">
 				<form
 					onSubmit={handleSubmit}
 					className="flex flex-col gap-8"
-					aria-label="Add User Form"
+					aria-label="Add Role Form"
 				>
 					<FormControl>
 						<TextField
@@ -104,11 +104,11 @@ const AddUsersPage = () => {
 					</FormControl>
 					<FormGroup>
 						<FormLabel component="legend">Grant permissions</FormLabel>
-						{roles.map((role) => (
+						{authorities.map((authority) => (
 							<FormControlLabel
-								key={role.id}
-								control={<Checkbox name="roles" value={role.id} />}
-								label={role.name}
+								key={authority.id}
+								control={<Checkbox name="authorities" value={authority.id} />}
+								label={authority.name}
 							/>
 						))}
 					</FormGroup>
@@ -116,7 +116,7 @@ const AddUsersPage = () => {
 						<button
 							type="button"
 							className="bg-[#5d91b4] text-white px-4 py-2 rounded"
-							onClick={() => navigate("/users")}
+							onClick={() => navigate("/roles")}
 							disabled={loading}
 							aria-label="Cancel"
 						>
@@ -126,9 +126,9 @@ const AddUsersPage = () => {
 							type="submit"
 							className="bg-[#00b740] text-white px-4 py-2 rounded"
 							disabled={loading}
-							aria-label="Add User"
+							aria-label="Add Role"
 						>
-							{loading ? "Adding..." : "Add User"}
+							{loading ? "Adding..." : "Add Role"}
 						</button>
 					</div>
 				</form>
@@ -137,4 +137,4 @@ const AddUsersPage = () => {
 	);
 };
 
-export default AddUsersPage;
+export default AddRolesPage;

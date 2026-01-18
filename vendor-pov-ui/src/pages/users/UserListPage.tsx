@@ -1,45 +1,87 @@
-import { Fragment, useEffect, useState } from "react";
-import NotificationBanner from "../../components/common/NotificationBanner";
-import { fetchAvailableUsers } from "../../utils/http";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Tab from "@mui/material/Tab";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import IconButton from "@mui/material/IconButton";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Tabs from "@mui/material/Tabs";
+import type React from "react";
+import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
-import Button from "@mui/material/Button";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Link } from "react-router-dom";
+import { deleteResource, getAll } from "../../utils/http";
 
-function rowData(firstName: string, lastName: number, email: number) {
-	return {
-		firstName,
-		lastName,
-		email,
-	};
+interface User {
+	id: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+	dailyTarget: number;
+	weeklyTarget: number;
+	monthlyTarget: number;
 }
 
-function Row(props: { row: ReturnType<typeof rowData> }) {
-	const { row } = props;
-	const [open, setOpen] = useState(false);
+function TabNavigation() {
+	const navigate = useNavigate();
+
+	const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+		navigate(`/${newValue}`);
+	};
+
+	return (
+		<Box sx={{ width: "100%" }}>
+			<Tabs
+				value="users"
+				onChange={handleChange}
+				textColor="secondary"
+				indicatorColor="secondary"
+				aria-label="secondary tabs example"
+			>
+				<Tab value="users" label="Users" />
+				<Tab value="roles" label="Roles" />
+			</Tabs>
+		</Box>
+	);
+}
+
+function Row(props: { row: User; onDelete: (id: string) => void }) {
+	const { row, onDelete } = props;
+	const navigate = useNavigate();
+	// const [open, setOpen] = useState(false);
+
+	const handleDelete = () => {
+		if (
+			window.confirm(`Are you sure you want to delete user '${row.firstName} ${row.lastName}'?`)
+		) {
+			onDelete(row.id);
+		}
+	};
 
 	return (
 		<Fragment>
 			<TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-				<TableCell>
+				{/* <TableCell>
 					<IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
 						{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
 					</IconButton>
-				</TableCell>
+				</TableCell> */}
 				<TableCell component="th" scope="row" align="center">
 					{row.firstName}
 				</TableCell>
 				<TableCell align="center">{row.lastName}</TableCell>
 				<TableCell align="center">{row.email}</TableCell>
+				<TableCell align="center">{row.dailyTarget}</TableCell>
+				<TableCell align="center">{row.weeklyTarget}</TableCell>
+				<TableCell align="center">{row.monthlyTarget}</TableCell>
 				<TableCell align="center">
-					<Button><EditIcon /></Button>
-					<Button><DeleteIcon /></Button>
+					<Button onClick={() => navigate(`/users/${row.id}/edit`)}>
+						<EditIcon />
+					</Button>
+					<Button onClick={handleDelete} color="error">
+						<DeleteIcon />
+					</Button>
 				</TableCell>
 			</TableRow>
 			{/* <TableRow>
@@ -71,8 +113,9 @@ function Row(props: { row: ReturnType<typeof rowData> }) {
 }
 
 const UsersPage = () => {
-	const [users, setUsers] = useState<any[]>([]);
-	const [activeTab, setActiveTab] = useState("one");
+	const navigate = useNavigate();
+	const [users, setUsers] = useState<User[]>([]);
+	// const [activeTab, setActiveTab] = useState("one");
 	const [isFetching, setIsFetching] = useState(false);
 	const [notification, setNotification] = useState<{
 		message: string;
@@ -83,8 +126,8 @@ const UsersPage = () => {
 		setIsFetching(true);
 		const fetchUsers = async () => {
 			try {
-				const response = await fetchAvailableUsers();
-
+				const response = await getAll("users");
+				// console.log(response);
 				setUsers(response);
 				setNotification({
 					message: "Users loaded successfully",
@@ -102,22 +145,48 @@ const UsersPage = () => {
 		fetchUsers();
 	}, []);
 
-	const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-		console.log(event);
-		setActiveTab(newValue);
+	const handleDelete = async (id: string) => {
+		try {
+			await deleteResource(`users`, `${id}`);
+			setUsers((prev) => prev.filter((user) => user.id !== id));
+			setNotification({
+				message: `User deleted successfully`,
+				type: "success",
+			});
+		} catch (error) {
+			const msg = error instanceof Error ? error.message : String(error);
+			setNotification({
+				message: msg,
+				type: "error",
+			});
+		}
 	};
+
+	// const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+	// 	console.log(event);
+	// 	setActiveTab(newValue);
+	// };
 
 	return (
 		<div>
 			<div className="px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
 				<h1>Users</h1>
 			</div>
+			<div className="px-4">
+				<TabNavigation />
+			</div>
 			<div className="flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center">
 				<p>Add, view and edit your users all in one place.</p>
 				<div className="flex gap-2">
-					<button className="bg-[#5d91b4] text-white">Import</button>
-					<button className="bg-[#00b740] text-white">
-						<Link to={"/users/add"}>Add User</Link>
+					<button type="button" className="bg-[#5d91b4] text-white">
+						Import
+					</button>
+					<button
+						type="button"
+						className="bg-[#00b740] text-white px-4 py-2 rounded"
+						onClick={() => navigate("/users/add")}
+					>
+						Add
 					</button>
 				</div>
 			</div>
@@ -135,9 +204,16 @@ const UsersPage = () => {
 
 			{!isFetching && users.length > 0 && (
 				<ResourceTable
-					headers={["", "First Name", "Last Name", "Email"]}
+					headers={[
+						"First Name",
+						"Last Name",
+						"Email",
+						"Daily Target",
+						"Weekly Target",
+						"Monthly Target",
+					]}
 					items={users}
-					renderRow={(user) => <Row key={user.email} row={user} />}
+					renderRow={(user) => <Row key={user.email} row={user} onDelete={handleDelete} />}
 				></ResourceTable>
 			)}
 		</div>

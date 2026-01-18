@@ -1,12 +1,7 @@
 package com.vendorpov.User;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +10,6 @@ import com.vendorpov.User.data.AuthorityEntity;
 import com.vendorpov.User.data.BaseEntity;
 import com.vendorpov.User.data.RoleEntity;
 import com.vendorpov.User.data.UserEntity;
-import com.vendorpov.User.models.UserRequestModel;
 import com.vendorpov.User.shared.AddressDto;
 import com.vendorpov.User.shared.AuthorityDto;
 import com.vendorpov.User.shared.BaseDto;
@@ -91,27 +85,27 @@ public class ModelMapperConfig {
 
 		// Configure bidirectional mapping for List<String> roles to List<RoleDto>
 		// UserRequestModel <-> UserDto
-		modelMapper.typeMap(UserRequestModel.class, UserDto.class)
-				.addMappings(mapper -> mapper.using(new Converter<List<String>, List<RoleDto>>() {
-					@Override
-					public List<RoleDto> convert(MappingContext<List<String>, List<RoleDto>> context) {
-						List<String> roleNames = context.getSource();
-						if (roleNames == null)
-							return null;
-						return roleNames.stream().map(RoleDto::new).collect(Collectors.toList());
-					}
-				}).map(UserRequestModel::getRoles, UserDto::setRoles));
-
-		modelMapper.typeMap(UserDto.class, UserRequestModel.class)
-				.addMappings(mapper -> mapper.using(new Converter<List<RoleDto>, List<String>>() {
-					@Override
-					public List<String> convert(MappingContext<List<RoleDto>, List<String>> context) {
-						List<RoleDto> roles = context.getSource();
-						if (roles == null)
-							return null;
-						return roles.stream().map(RoleDto::getName).collect(Collectors.toList());
-					}
-				}).map(UserDto::getRoles, UserRequestModel::setRoles));
+//		modelMapper.typeMap(UserRequestModel.class, UserDto.class)
+//				.addMappings(mapper -> mapper.using(new Converter<List<String>, List<RoleDto>>() {
+//					@Override
+//					public List<RoleDto> convert(MappingContext<List<String>, List<RoleDto>> context) {
+//						List<String> roleNames = context.getSource();
+//						if (roleNames == null)
+//							return null;
+//						return roleNames.stream().map(RoleDto::new).collect(Collectors.toList());
+//					}
+//				}).map(UserRequestModel::getRoles, UserDto::setRoles));
+//
+//		modelMapper.typeMap(UserDto.class, UserRequestModel.class)
+//				.addMappings(mapper -> mapper.using(new Converter<List<RoleDto>, List<String>>() {
+//					@Override
+//					public List<String> convert(MappingContext<List<RoleDto>, List<String>> context) {
+//						List<RoleDto> roles = context.getSource();
+//						if (roles == null)
+//							return null;
+//						return roles.stream().map(RoleDto::getName).collect(Collectors.toList());
+//					}
+//				}).map(UserDto::getRoles, UserRequestModel::setRoles));
 
 		return modelMapper;
 	}

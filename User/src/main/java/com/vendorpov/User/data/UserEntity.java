@@ -1,6 +1,8 @@
 package com.vendorpov.User.data;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,6 +31,13 @@ public class UserEntity extends BaseEntity {
 	private String email;
 	@Column(nullable = false)
 	private String encryptedPassword;
+	@Column(precision = 19, scale = 2)
+	private BigDecimal dailyTarget;
+	@Column(precision = 19, scale = 2)
+	private BigDecimal weeklyTarget;
+	@Column(precision = 19, scale = 2)
+	private BigDecimal monthlyTarget;
+	private Currency currency;
 	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<AddressEntity> addresses;
@@ -70,6 +79,38 @@ public class UserEntity extends BaseEntity {
 
 	public void setEncryptedPassword(String encryptedPassword) {
 		this.encryptedPassword = encryptedPassword;
+	}
+
+	public BigDecimal getDailyTarget() {
+		return dailyTarget;
+	}
+
+	public void setDailyTarget(BigDecimal dailyTarget) {
+		this.dailyTarget = dailyTarget;
+	}
+
+	public BigDecimal getWeeklyTarget() {
+		return weeklyTarget;
+	}
+
+	public void setWeeklyTarget(BigDecimal weeklyTarget) {
+		this.weeklyTarget = weeklyTarget;
+	}
+
+	public BigDecimal getMonthlyTarget() {
+		return monthlyTarget;
+	}
+
+	public void setMonthlyTarget(BigDecimal monthlyTarget) {
+		this.monthlyTarget = monthlyTarget;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
 	}
 
 	public List<AddressEntity> getAddresses() {
