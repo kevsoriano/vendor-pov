@@ -4,15 +4,15 @@ import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentic
 import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
 // import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
-import AddProduct from "./pages/products/AddProduct";
+// import AddProduct from "./pages/products/AddProduct";
 import ProductDetail from "./pages/products/ProductDetailPage";
 import Products from "./pages/products/ProductListPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
-import TestProductVariants from "./pages/TestProductVariants";
 import AddRolesPage from "./pages/users/AddRolesPage";
 import AddUsersPage from "./pages/users/AddUsersPage";
 import RoleDetailsPage from "./pages/users/RoleDetailsPage";
 import RoleListPage from "./pages/users/RoleListPage";
+import UserDetailsPage from "./pages/users/UserDetailPage";
 import UsersPage from "./pages/users/UserListPage";
 import { checkAuthLoader, tokenLoader } from "./utils/auth";
 
@@ -50,6 +50,11 @@ export const router = createBrowserRouter([
 				loader: checkAuthLoader,
 			},
 			{
+				path: "users/:id/edit",
+				Component: UserDetailsPage,
+				loader: checkAuthLoader,
+			},
+			{
 				path: "/roles",
 				Component: RoleListPage,
 				loader: checkAuthLoader,
@@ -75,17 +80,8 @@ export const router = createBrowserRouter([
 				loader: checkAuthLoader,
 			},
 			{
-				path: "products/add",
-				Component: AddProduct,
-				loader: checkAuthLoader,
-			},
-			{
 				path: "test-creatable",
 				Component: TestCreatableSelect,
-			},
-			{
-				path: "test-product-variants",
-				Component: TestProductVariants,
 			},
 		],
 	},

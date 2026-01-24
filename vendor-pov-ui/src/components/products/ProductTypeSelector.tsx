@@ -1,5 +1,9 @@
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import type React from "react";
-import { RadioGroup } from "@headlessui/react";
 
 export type ProductType = "standard" | "variant" | "composite";
 
@@ -34,43 +38,31 @@ interface ProductTypeSelectorProps {
 
 const ProductTypeSelector: React.FC<ProductTypeSelectorProps> = ({ selectedType, onChange }) => {
 	return (
-		<div className="w-full">
-			<RadioGroup value={selectedType} onChange={onChange}>
-				<RadioGroup.Label className="sr-only">Product Type</RadioGroup.Label>
-				<div className="grid grid-cols-1 sm:grid-cols-3 ">
-					{productTypes.map((type) => (
-						<RadioGroup.Option
-							key={type.id}
-							value={type.id}
-							className={({ active, checked }) =>
-								`${active ? "border-indigo-600 ring-2 ring-indigo-600" : "border-gray-300"}
-                 ${checked ? "bg-indigo-50" : "bg-white hover:bg-gray-50"}
-                 box-border relative flex cursor-pointer p-4 shadow-sm focus:outline-none`
-							}
-						>
-							{() => (
-								<span className="flex flex-1">
-									<span className="flex flex-col">
-										<RadioGroup.Label
-											as="span"
-											className="block text-sm font-medium text-gray-900"
-										>
-											{type.title}
-										</RadioGroup.Label>
-										<RadioGroup.Description
-											as="span"
-											className="mt-1 flex items-center text-sm text-gray-500"
-										>
-											{type.description}
-										</RadioGroup.Description>
-									</span>
-								</span>
-							)}
-						</RadioGroup.Option>
-					))}
-				</div>
+		<FormControl component="fieldset" fullWidth>
+			<FormLabel component="legend">Product Type</FormLabel>
+			<RadioGroup
+				row
+				value={selectedType}
+				onChange={(e) => onChange(e.target.value as ProductType)}
+				aria-label="product-type"
+				name="product-type"
+			>
+				{productTypes.map((type) => (
+					<FormControlLabel
+						key={type.id}
+						value={type.id}
+						control={<Radio />}
+						label={
+							<div>
+								<div style={{ fontWeight: 500 }}>{type.title}</div>
+								<div style={{ fontSize: "0.85em", color: "#666" }}>{type.description}</div>
+							</div>
+						}
+						sx={{ flex: 1, m: 1, alignItems: "flex-start" }}
+					/>
+				))}
 			</RadioGroup>
-		</div>
+		</FormControl>
 	);
 };
 

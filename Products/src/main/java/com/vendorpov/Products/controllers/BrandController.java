@@ -52,7 +52,7 @@ public class BrandController {
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<BrandResponseModel> createOutlet(@Valid @RequestBody BrandRequestModel outlet) {
+	public ResponseEntity<BrandResponseModel> createBrand(@Valid @RequestBody BrandRequestModel outlet) {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		

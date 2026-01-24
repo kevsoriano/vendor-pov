@@ -146,6 +146,10 @@ public class UserServiceImpl implements UserService {
 
 		existingUser.setFirstName(userDetails.getFirstName());
 	    existingUser.setLastName(userDetails.getLastName());
+	    existingUser.setDailyTarget(userDetails.getDailyTarget());
+	    existingUser.setWeeklyTarget(userDetails.getWeeklyTarget());
+	    existingUser.setMonthlyTarget(userDetails.getMonthlyTarget());
+	    existingUser.setCurrency(userDetails.getCurrency());
 		
 	    Collection<AddressDto> addresses = userDetails.getAddresses();
 	    if (addresses != null && !addresses.isEmpty()) {
