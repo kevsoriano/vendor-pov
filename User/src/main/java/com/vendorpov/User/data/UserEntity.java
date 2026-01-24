@@ -3,7 +3,7 @@ package com.vendorpov.User.data;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
-import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
@@ -40,10 +40,10 @@ public class UserEntity extends BaseEntity {
 	private Currency currency;
 	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<AddressEntity> addresses;
+	private Set<AddressEntity> addresses;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
-	private List<RoleEntity> roles;
+	private Set<RoleEntity> roles;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -113,19 +113,19 @@ public class UserEntity extends BaseEntity {
 		this.currency = currency;
 	}
 
-	public List<AddressEntity> getAddresses() {
+	public Set<AddressEntity> getAddresses() {
 		return addresses;
 	}
 
-	public void setAddresses(List<AddressEntity> addresses) {
+	public void setAddresses(Set<AddressEntity> addresses) {
 		this.addresses = addresses;
 	}
 
-	public List<RoleEntity> getRoles() {
+	public Set<RoleEntity> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<RoleEntity> roles) {
+	public void setRoles(Set<RoleEntity> roles) {
 		this.roles = roles;
 	}
 

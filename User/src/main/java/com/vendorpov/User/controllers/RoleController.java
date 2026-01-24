@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vendorpov.User.models.RoleRequestModel;
 import com.vendorpov.User.models.RoleResponseModel;
 import com.vendorpov.User.services.RoleService;
+import com.vendorpov.User.shared.RoleCountDto;
 import com.vendorpov.User.shared.RoleDto;
 
 import jakarta.validation.Valid;
@@ -59,6 +60,14 @@ public class RoleController {
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+	}
+	
+	@GetMapping("/user-count")
+	public ResponseEntity<List<RoleCountDto>> getRolesWithUserCount(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String sort) {
+		List<RoleCountDto> roles = roleService.getRolesWithUserCount(page, limit);
+
+		return ResponseEntity.status(HttpStatus.OK).body(roles);
 	}
 
 	@GetMapping(value="/{roleId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })

@@ -24,7 +24,7 @@ interface Role {
 	name: string;
 }
 
-const AddUsersPage = () => {
+export default function UserAddPage() {
 	const navigate = useNavigate();
 	const [roles, setRoles] = useState<Role[]>([]);
 	// Static lists for demo; TODO: replace with dynamic data
@@ -372,5 +372,3 @@ const AddUsersPage = () => {
 		</div>
 	);
 };
-
-export default AddUsersPage;

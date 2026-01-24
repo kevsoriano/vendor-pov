@@ -112,7 +112,7 @@ function Row(props: { row: User; onDelete: (id: string) => void }) {
 	);
 }
 
-const UsersPage = () => {
+const UserListPage = () => {
 	const navigate = useNavigate();
 	const [users, setUsers] = useState<User[]>([]);
 	// const [activeTab, setActiveTab] = useState("one");
@@ -202,7 +202,7 @@ const UsersPage = () => {
 
 			{!isFetching && users.length === 0 && <div>No users found.</div>}
 
-			{!isFetching && users.length > 0 && (
+			{!isFetching && (
 				<ResourceTable
 					headers={[
 						"First Name",
@@ -214,10 +214,11 @@ const UsersPage = () => {
 					]}
 					items={users}
 					renderRow={(user) => <Row key={user.email} row={user} onDelete={handleDelete} />}
+					isActionsAvailable={true}
 				></ResourceTable>
 			)}
 		</div>
 	);
 };
 
-export default UsersPage;
+export default UserListPage;

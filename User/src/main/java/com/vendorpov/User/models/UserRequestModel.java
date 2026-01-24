@@ -1,8 +1,8 @@
 package com.vendorpov.User.models;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Currency;
+import java.util.Set;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -27,8 +27,8 @@ public class UserRequestModel {
 	private BigDecimal monthlyTarget;
 	private Currency currency;
 	@Valid // Validate each address too
-	private Collection<AddressRequestModel> addresses;
-	private Collection<RoleRequestModel> roles;
+	private Set<AddressRequestModel> addresses;
+	private Set<RoleRequestModel> roles;
 
 	public String getFirstName() {
 		return firstName;
@@ -94,19 +94,19 @@ public class UserRequestModel {
 		this.currency = currency;
 	}
 
-	public Collection<AddressRequestModel> getAddresses() {
+	public Set<AddressRequestModel> getAddresses() {
 		return addresses;
 	}
 
-	public void setAddresses(Collection<AddressRequestModel> addresses) {
+	public void setAddresses(Set<AddressRequestModel> addresses) {
 		this.addresses = addresses;
 	}
 
-	public Collection<RoleRequestModel> getRoles() {
+	public Set<RoleRequestModel> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Collection<RoleRequestModel> roles) {
+	public void setRoles(Set<RoleRequestModel> roles) {
 		this.roles = roles;
 	}
 

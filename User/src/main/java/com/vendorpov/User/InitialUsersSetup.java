@@ -1,7 +1,8 @@
 package com.vendorpov.User;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +47,8 @@ public class InitialUsersSetup {
 		AuthorityEntity writeAuthority = createAuthority("WRITE");
 		AuthorityEntity deleteAuthority = createAuthority("DELETE");
 		
-		createRole(RolesEnum.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority));
-		RoleEntity roleAdmin = createRole(RolesEnum.ROLE_ADMIN.name(), Arrays.asList(readAuthority, writeAuthority, deleteAuthority));
+		createRole(RolesEnum.ROLE_USER.name(), new HashSet<>(Arrays.asList(readAuthority, writeAuthority)));
+		RoleEntity roleAdmin = createRole(RolesEnum.ROLE_ADMIN.name(), new HashSet<>(Arrays.asList(readAuthority, writeAuthority, deleteAuthority)));
 		
 		if(roleAdmin == null) return;
 		
@@ -56,7 +57,7 @@ public class InitialUsersSetup {
 		adminUser.setLastName("admin");
 		adminUser.setEmail("admin@test.com");
 		adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("12345678"));
-		adminUser.setRoles(Arrays.asList(roleAdmin));
+		adminUser.setRoles(new HashSet<>(Arrays.asList(roleAdmin)));
 		
 		UserEntity storedAdminUser = usersRepository.findByEmail("admin@test.com");
 		
@@ -80,7 +81,7 @@ public class InitialUsersSetup {
 	}
 	
 	@Transactional
-	private RoleEntity createRole(String name, Collection<AuthorityEntity> authorities) {
+	private RoleEntity createRole(String name, Set<AuthorityEntity> authorities) {
 		
 		RoleEntity role = roleRepository.findByName(name);
 		

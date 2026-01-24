@@ -1,13 +1,13 @@
 package com.vendorpov.User.shared;
 
-import java.util.Collection;
+import java.util.Set;
 
 public class RoleDto extends BaseDto {
 
 	private static final long serialVersionUID = 6713234421453163257L;
 	private String id;
 	private String name;
-	private Collection<AuthorityDto> authorities;
+	private Set<AuthorityDto> authorities;
 
 	public RoleDto() {
 	}
@@ -32,11 +32,11 @@ public class RoleDto extends BaseDto {
 		this.name = name;
 	}
 
-	public Collection<AuthorityDto> getAuthorities() {
+	public Set<AuthorityDto> getAuthorities() {
 		return authorities;
 	}
 
-	public void setAuthorities(Collection<AuthorityDto> authorities) {
+	public void setAuthorities(Set<AuthorityDto> authorities) {
 		this.authorities = authorities;
 	}
 

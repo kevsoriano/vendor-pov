@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import { get, getAll, update } from "../../utils/http";
-import type { CreatableSelectOption } from "./AddUsersPage";
+import type { CreatableSelectOption } from "./UserAddPage";
 
 interface Role {
 	id: string;

@@ -29,12 +29,11 @@ import com.vendorpov.User.shared.UserDto;
 
 import jakarta.validation.Valid;
 
-
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/users")
 public class UserController {
-	
+
 	@Autowired
 	UserService userService;
 	@Autowired
@@ -42,26 +41,25 @@ public class UserController {
 	@Autowired
 	ModelMapper modelMapper;
 
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
-			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<UserResponseModel> createUser(@Valid @RequestBody UserRequestModel user) {
 		UserDto userDto = modelMapper.map(user, UserDto.class);
 		UserDto createdUser = userService.createUser(userDto);
-		
+
 		UserResponseModel returnValue = modelMapper.map(createdUser, UserResponseModel.class);
 		// Ensure response id reflects the externalId coming from UserDto
 		returnValue.setId(createdUser.getId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
-	
+
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<List<UserResponseModel>> getUsers(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "50") int limit,
-			@RequestParam(required = false) String sort) {
+			@RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String sort) {
 		List<UserResponseModel> returnValue = new ArrayList<>();
 		List<UserDto> users = userService.getUsers(page, limit);
 
-		for(UserDto user: users) {
+		for (UserDto user : users) {
 			UserResponseModel userDetails = modelMapper.map(user, UserResponseModel.class);
 			userDetails.setId(user.getId());
 			returnValue.add(userDetails);
@@ -69,8 +67,25 @@ public class UserController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
-	
-	@GetMapping(value="/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+
+	@GetMapping(value = "roles/{roleId}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<List<UserResponseModel>> getUsersByRoleId(@PathVariable String roleId,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int limit,
+			@RequestParam(required = false) String sort) {
+		List<UserResponseModel> returnValue = new ArrayList<>();
+		List<UserDto> users = userService.getUsersByRole(roleId, page, limit);
+
+		for (UserDto user : users) {
+			UserResponseModel userDetails = modelMapper.map(user, UserResponseModel.class);
+			userDetails.setId(user.getId());
+			returnValue.add(userDetails);
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+	}
+
+	@GetMapping(value = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 //	@PreAuthorize("principal==#userId")
 //	@PostAuthorize("principal==returnObject.body.userId")
 //	@PreAuthorize("hasRole('ADMIN') or principal==#userId")
@@ -80,11 +95,12 @@ public class UserController {
 		returnValue.setId(userDto.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
-	
-	
-	@PutMapping(value="/{userId}", consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
-			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<UserResponseModel> updateUser(@PathVariable String userId, @RequestBody UpdateUserRequestModel userDetails) {
+
+	@PutMapping(value = "/{userId}", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<UserResponseModel> updateUser(@PathVariable String userId,
+			@RequestBody UpdateUserRequestModel userDetails) {
 		UserDto userDto = modelMapper.map(userDetails, UserDto.class);
 		UserDto updatedUser = userService.updateUser(userId, userDto);
 
@@ -92,8 +108,9 @@ public class UserController {
 		returnValue.setId(updatedUser.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
-	
-	@DeleteMapping(value = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+
+	@DeleteMapping(value = "/{userId}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	@PreAuthorize("hasAuthority('PROFILE_DELETE') or hasRole('ADMIN') or principal == #userId")
 	public HttpStatus deleteUser(@PathVariable String userId) {
 		userService.deleteUser(userId);

@@ -11,9 +11,15 @@ export interface ResourceTableProps<T> {
 	headers: string[];
 	items: T[];
 	renderRow: (item: T, index: number) => ReactNode;
+	isActionsAvailable: boolean;
 }
 
-export default function ResourceTable<T>({ headers, items, renderRow }: ResourceTableProps<T>) {
+export default function ResourceTable<T>({
+	headers,
+	items,
+	renderRow,
+	isActionsAvailable,
+}: ResourceTableProps<T>) {
 	return (
 		<TableContainer component={Paper}>
 			<Table sx={{ minWidth: 650 }} aria-label="resource table">
@@ -24,7 +30,7 @@ export default function ResourceTable<T>({ headers, items, renderRow }: Resource
 								{header}
 							</TableCell>
 						))}
-						<TableCell align="center">Actions</TableCell>
+						{isActionsAvailable && <TableCell align="center">Actions</TableCell>}
 					</TableRow>
 				</TableHead>
 				<TableBody>{items.map((item, index) => renderRow(item, index))}</TableBody>

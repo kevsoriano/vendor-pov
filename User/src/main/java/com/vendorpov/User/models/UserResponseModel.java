@@ -1,8 +1,8 @@
 package com.vendorpov.User.models;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Currency;
+import java.util.Set;
 
 public class UserResponseModel {
 	private String id;
@@ -13,8 +13,8 @@ public class UserResponseModel {
 	private BigDecimal weeklyTarget;
 	private BigDecimal monthlyTarget;
 	private Currency currency;
-	private Collection<AddressResponseModel> addresses;
-	private Collection<RoleResponseModel> roles;
+	private Set<AddressResponseModel> addresses;
+	private Set<RoleResponseModel> roles;
 
 	public String getId() {
 		return id;
@@ -80,19 +80,19 @@ public class UserResponseModel {
 		this.currency = currency;
 	}
 
-	public Collection<AddressResponseModel> getAddresses() {
+	public Set<AddressResponseModel> getAddresses() {
 		return addresses;
 	}
 
-	public void setAddresses(Collection<AddressResponseModel> addresses) {
+	public void setAddresses(Set<AddressResponseModel> addresses) {
 		this.addresses = addresses;
 	}
 
-	public Collection<RoleResponseModel> getRoles() {
+	public Set<RoleResponseModel> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Collection<RoleResponseModel> roles) {
+	public void setRoles(Set<RoleResponseModel> roles) {
 		this.roles = roles;
 	}
 

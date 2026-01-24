@@ -2,7 +2,9 @@ package com.vendorpov.User.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -75,9 +77,9 @@ public class UserServiceImpl implements UserService {
 		userEntity.setExternalId(UUID.randomUUID().toString());
 		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
 		
-	    Collection<AddressDto> addresses = userDetails.getAddresses();
+		Set<AddressDto> addresses = userDetails.getAddresses();
 	    if (addresses != null && !addresses.isEmpty()) {
-	        List<AddressEntity> addressesToPersist = new ArrayList<>();
+	    	Set<AddressEntity> addressesToPersist = new HashSet<>();
 	        
 	        addresses.forEach((address) -> {
 	        	AddressEntity addressEntity = modelMapper.map(address, AddressEntity.class);
@@ -89,9 +91,9 @@ public class UserServiceImpl implements UserService {
 	        userEntity.setAddresses(addressesToPersist);
 	    }
 		
-		Collection<RoleDto> roles = userDetails.getRoles();
+	    Set<RoleDto> roles = userDetails.getRoles();
 	    if (roles != null && !roles.isEmpty()) {
-	        List<RoleEntity> managedRoles = new ArrayList<>();
+	    	Set<RoleEntity> managedRoles = new HashSet<>();
 	        
 	        roles.forEach((role) -> {
 	        	RoleEntity persistedRole = roleRepository.findByExternalId(role.getId());
@@ -130,8 +132,21 @@ public class UserServiceImpl implements UserService {
 	public List<UserDto> getUsers(int page, int limit) {
 		List<UserDto> returnValue = new ArrayList<>();
 		Pageable pageRequest = PageRequest.of(page, limit);
-		Page<UserEntity> userPage = userRepository.findAll(pageRequest);
-		List<UserEntity> users = userPage.getContent();
+		Page<UserEntity> usersPage = userRepository.findAll(pageRequest);
+		List<UserEntity> users = usersPage.getContent();
+		for(UserEntity user: users) {
+			UserDto userDto = modelMapper.map(user, UserDto.class);
+			returnValue.add(userDto);
+		}
+		return returnValue;
+	}
+	
+	@Override
+	public List<UserDto> getUsersByRole(String roleId, int page, int limit) throws UsernameNotFoundException {
+		List<UserDto> returnValue = new ArrayList<>();
+		Pageable pageRequest = PageRequest.of(page, limit);
+		Page<UserEntity> usersPage = userRepository.findByRoles_ExternalId(roleId, pageRequest);
+		List<UserEntity> users = usersPage.getContent();
 		for(UserEntity user: users) {
 			UserDto userDto = modelMapper.map(user, UserDto.class);
 			returnValue.add(userDto);
@@ -151,9 +166,9 @@ public class UserServiceImpl implements UserService {
 	    existingUser.setMonthlyTarget(userDetails.getMonthlyTarget());
 	    existingUser.setCurrency(userDetails.getCurrency());
 		
-	    Collection<AddressDto> addresses = userDetails.getAddresses();
+	    Set<AddressDto> addresses = userDetails.getAddresses();
 	    if (addresses != null && !addresses.isEmpty()) {
-	        List<AddressEntity> updatedAddresses = new ArrayList<>();
+	    	Set<AddressEntity> updatedAddresses = new HashSet<>();
 	        
 	        addresses.forEach((address) -> {
 	        	AddressEntity persistedAddress = addressRepository.findByExternalId(address.getId());
@@ -172,9 +187,9 @@ public class UserServiceImpl implements UserService {
 	        existingUser.setAddresses(updatedAddresses);
 	    }
 	    
-	    Collection<RoleDto> roles = userDetails.getRoles();
+	    Set<RoleDto> roles = userDetails.getRoles();
 	    if (roles != null && !roles.isEmpty()) {
-	        List<RoleEntity> managedRoles = new ArrayList<>();
+	    	Set<RoleEntity> managedRoles = new HashSet<>();
 	        
 	        roles.forEach((role) -> {
 	        	RoleEntity persistedRole = roleRepository.findByExternalId(role.getId());

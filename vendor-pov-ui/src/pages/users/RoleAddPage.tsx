@@ -14,7 +14,7 @@ interface Authority {
 	name: string;
 }
 
-const AddRolesPage = () => {
+export default function RoleAddPage() {
 	const navigate = useNavigate();
 	const [authorities, setAuthorities] = useState<Authority[]>([]);
 	const [notification, setNotification] = useState<{
@@ -136,5 +136,3 @@ const AddRolesPage = () => {
 		</div>
 	);
 };
-
-export default AddRolesPage;

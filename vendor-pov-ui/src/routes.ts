@@ -8,12 +8,13 @@ import HomePage from "./pages/HomePage";
 import ProductDetail from "./pages/products/ProductDetailPage";
 import Products from "./pages/products/ProductListPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
-import AddRolesPage from "./pages/users/AddRolesPage";
-import AddUsersPage from "./pages/users/AddUsersPage";
+import RoleAddPage from "./pages/users/RoleAddPage";
 import RoleDetailsPage from "./pages/users/RoleDetailsPage";
 import RoleListPage from "./pages/users/RoleListPage";
+import RoleMembersPage from "./pages/users/RoleMembersPage";
+import UserAddPage from "./pages/users/UserAddPage";
 import UserDetailsPage from "./pages/users/UserDetailPage";
-import UsersPage from "./pages/users/UserListPage";
+import UserListPage from "./pages/users/UserListPage";
 import { checkAuthLoader, tokenLoader } from "./utils/auth";
 
 export const router = createBrowserRouter([
@@ -41,12 +42,12 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "/users",
-				Component: UsersPage,
+				Component: UserListPage,
 				loader: checkAuthLoader,
 			},
 			{
 				path: "/users/add",
-				Component: AddUsersPage,
+				Component: UserAddPage,
 				loader: checkAuthLoader,
 			},
 			{
@@ -61,12 +62,17 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "/roles/add",
-				Component: AddRolesPage,
+				Component: RoleAddPage,
 				loader: checkAuthLoader,
 			},
 			{
 				path: "roles/:id/edit",
 				Component: RoleDetailsPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "roles/:id/members",
+				Component: RoleMembersPage,
 				loader: checkAuthLoader,
 			},
 			{

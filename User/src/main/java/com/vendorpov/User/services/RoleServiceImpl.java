@@ -2,7 +2,9 @@ package com.vendorpov.User.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -18,6 +20,7 @@ import com.vendorpov.User.data.RoleEntity;
 import com.vendorpov.User.data.RoleRepository;
 import com.vendorpov.User.exceptions.ResourceNotFoundException;
 import com.vendorpov.User.shared.AuthorityDto;
+import com.vendorpov.User.shared.RoleCountDto;
 import com.vendorpov.User.shared.RoleDto;
 
 @Service
@@ -35,8 +38,8 @@ public class RoleServiceImpl implements RoleService {
 		RoleEntity roleEntity = modelMapper.map(roleDetails, RoleEntity.class);
 		roleEntity.setExternalId(UUID.randomUUID().toString());
 		
-		Collection<AuthorityDto> authorities = roleDetails.getAuthorities();
-		List<AuthorityEntity> managedAuthorities = new ArrayList<>();
+		Set<AuthorityDto> authorities = roleDetails.getAuthorities();
+		Set<AuthorityEntity> managedAuthorities = new HashSet<>();
 		
 		authorities.forEach((authority) -> {
 			AuthorityEntity persistedAuthority = authorityRepository.findByName(authority.getName());
@@ -66,6 +69,14 @@ public class RoleServiceImpl implements RoleService {
 		}
 		return returnValue;
 	}
+	
+	@Override
+	public List<RoleCountDto> getRolesWithUserCount(int page, int limit) {
+		Pageable pageRequest = PageRequest.of(page, limit);
+		Page<RoleCountDto> rolePage = roleRepository.findAllRolesWithUserCounts(pageRequest);
+		List<RoleCountDto> roles = rolePage.getContent();
+		return roles;
+	}
 
 	@Override
 	public RoleDto getRoleByExternalId(String id) {
@@ -83,9 +94,9 @@ public class RoleServiceImpl implements RoleService {
 
 		existingRole.setName(roleDetails.getName());
 		
-		Collection<AuthorityDto> authorities = roleDetails.getAuthorities();
+		Set<AuthorityDto> authorities = roleDetails.getAuthorities();
 	    if (authorities != null && !authorities.isEmpty()) {
-			List<AuthorityEntity> managedAuthorities = new ArrayList<>();
+	    	Set<AuthorityEntity> managedAuthorities = new HashSet<>();
 			authorities.forEach((authority) -> {
 				AuthorityEntity persistedAuthority = authorityRepository.findByExternalId(authority.getId());
 				if (persistedAuthority != null) {

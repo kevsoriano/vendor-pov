@@ -1,7 +1,7 @@
 package com.vendorpov.User.data;
 
 import java.time.Instant;
-import java.util.Collection;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,10 +21,10 @@ public class RoleEntity extends BaseEntity {
 	@Column(nullable = false, unique = true, length = 20)
 	private String name;
 	@ManyToMany(mappedBy = "roles")
-	private Collection<UserEntity> users;
+	private Set<UserEntity> users;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "role_authorities", joinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "authorities_id", referencedColumnName = "id"))
-	private Collection<AuthorityEntity> authorities;
+	private Set<AuthorityEntity> authorities;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -33,7 +33,7 @@ public class RoleEntity extends BaseEntity {
 	public RoleEntity() {
 	}
 
-	public RoleEntity(String name, Collection<AuthorityEntity> authorities) {
+	public RoleEntity(String name, Set<AuthorityEntity> authorities) {
 		this.name = name;
 		this.authorities = authorities;
 	}
@@ -46,19 +46,19 @@ public class RoleEntity extends BaseEntity {
 		this.name = name;
 	}
 
-	public Collection<UserEntity> getUsers() {
+	public Set<UserEntity> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Collection<UserEntity> users) {
+	public void setUsers(Set<UserEntity> users) {
 		this.users = users;
 	}
 
-	public Collection<AuthorityEntity> getAuthorities() {
+	public Set<AuthorityEntity> getAuthorities() {
 		return authorities;
 	}
 
-	public void setAuthorities(Collection<AuthorityEntity> authorities) {
+	public void setAuthorities(Set<AuthorityEntity> authorities) {
 		this.authorities = authorities;
 	}
 

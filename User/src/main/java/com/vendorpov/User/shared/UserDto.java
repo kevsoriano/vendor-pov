@@ -1,8 +1,8 @@
 package com.vendorpov.User.shared;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Currency;
+import java.util.Set;
 
 public class UserDto extends BaseDto {
 
@@ -17,8 +17,8 @@ public class UserDto extends BaseDto {
 	private BigDecimal weeklyTarget;
 	private BigDecimal monthlyTarget;
 	private Currency currency;
-	private Collection<AddressDto> addresses;
-	private Collection<RoleDto> roles;
+	private Set<AddressDto> addresses;
+	private Set<RoleDto> roles;
 
 	public String getId() {
 		return id;
@@ -100,19 +100,19 @@ public class UserDto extends BaseDto {
 		this.currency = currency;
 	}
 
-	public Collection<AddressDto> getAddresses() {
+	public Set<AddressDto> getAddresses() {
 		return addresses;
 	}
 
-	public void setAddresses(Collection<AddressDto> addresses) {
+	public void setAddresses(Set<AddressDto> addresses) {
 		this.addresses = addresses;
 	}
 
-	public Collection<RoleDto> getRoles() {
+	public Set<RoleDto> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Collection<RoleDto> roles) {
+	public void setRoles(Set<RoleDto> roles) {
 		this.roles = roles;
 	}
 

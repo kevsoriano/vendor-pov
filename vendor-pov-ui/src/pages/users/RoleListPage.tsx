@@ -1,5 +1,3 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Tab from "@mui/material/Tab";
@@ -11,11 +9,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
-import { deleteResource, getAll } from "../../utils/http";
+import { getAll } from "../../utils/http";
 
 interface Role {
 	id: string;
 	name: string;
+	userCount: number;
 }
 
 function TabNavigation() {
@@ -41,28 +40,17 @@ function TabNavigation() {
 	);
 }
 
-function Row(props: { row: Role; onDelete: (id: string) => void }) {
-	const { row, onDelete } = props;
+function Row(props: { row: Role }) {
+	const { row } = props;
 	const navigate = useNavigate();
-
-	const handleDelete = () => {
-		if (window.confirm(`Are you sure you want to delete role '${row.name}'?`)) {
-			onDelete(row.id);
-		}
-	};
 
 	return (
 		<TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
 			<TableCell component="th" scope="row" align="center">
-				{row.name}
+				<Button onClick={() => navigate(`/roles/${row.id}/edit`)}>{row.name}</Button>
 			</TableCell>
-			<TableCell align="center">
-				<Button onClick={() => navigate(`/roles/${row.id}/edit`)}>
-					<EditIcon />
-				</Button>
-				<Button onClick={handleDelete} color="error">
-					<DeleteIcon />
-				</Button>
+			<TableCell component="th" scope="row" align="center">
+				<Button onClick={() => navigate(`/roles/${row.id}/members`)}>{row.userCount}</Button>
 			</TableCell>
 		</TableRow>
 	);
@@ -81,7 +69,7 @@ const RoleListPage = () => {
 		setIsFetching(true);
 		const fetchRoles = async () => {
 			try {
-				const response = await getAll("roles");
+				const response = await getAll("roles/user-count");
 				setRoles(response);
 				setNotification({
 					message: "Roles loaded successfully",
@@ -99,23 +87,6 @@ const RoleListPage = () => {
 		};
 		fetchRoles();
 	}, []);
-
-	const handleDelete = async (id: string) => {
-		try {
-			await deleteResource(`roles`, `${id}`);
-			setRoles((prev) => prev.filter((role) => role.id !== id));
-			setNotification({
-				message: `Role deleted successfully`,
-				type: "success",
-			});
-		} catch (error) {
-			const msg = error instanceof Error ? error.message : String(error);
-			setNotification({
-				message: msg,
-				type: "error",
-			});
-		}
-	};
 
 	return (
 		<div>
@@ -154,9 +125,10 @@ const RoleListPage = () => {
 
 			{!isFetching && roles.length > 0 && (
 				<ResourceTable
-					headers={["Name"]}
+					headers={["Name", "User Count"]}
 					items={roles}
-					renderRow={(role) => <Row key={role.id} row={role} onDelete={handleDelete} />}
+					renderRow={(role) => <Row key={role.name} row={role} />}
+					isActionsAvailable={false}
 				></ResourceTable>
 			)}
 		</div>
