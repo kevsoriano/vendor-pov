@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface ProductTagRepository extends CrudRepository<ProductTagEntity, Long>, PagingAndSortingRepository<ProductTagEntity, Long> {
 	List<ProductTagEntity> findByNameIn(List<String> names);
 	ProductTagEntity findByName(String name);
+	ProductTagEntity findByExternalId(String id);
 }

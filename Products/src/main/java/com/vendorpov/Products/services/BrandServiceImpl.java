@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.vendorpov.Products.data.BrandEntity;
 import com.vendorpov.Products.data.BrandRepository;
 import com.vendorpov.Products.shared.BrandDto;
+import com.vendorpov.Products.shared.ProductCountDto;
 
 @Service
 public class BrandServiceImpl implements BrandService {
@@ -75,6 +76,14 @@ public class BrandServiceImpl implements BrandService {
 	public void deleteBrand(String id) {
 		BrandEntity brandEntity = brandRepository.findByExternalId(id);
 		brandRepository.delete(brandEntity);
+	}
+
+	@Override
+	public List<ProductCountDto> getBrandsWithProductCount(int page, int limit) {
+		Pageable pageRequest = PageRequest.of(page, limit);
+		Page<ProductCountDto> brandPage = brandRepository.findAllBrandsWithProductCounts(pageRequest);
+		List<ProductCountDto> brands = brandPage.getContent();
+		return brands;
 	}
 
 }

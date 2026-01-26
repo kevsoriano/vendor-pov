@@ -18,6 +18,8 @@ public class SupplierEntity extends BaseEntity {
 	private static final long serialVersionUID = 5027515860634704602L;
 	@Column(length = 50, nullable = false)
 	private String name;
+	@Column(length = 100, nullable = false)
+	private String description;
 	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<SupplierProductVariantEntity> supplierProductVariant;
 	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,6 +35,14 @@ public class SupplierEntity extends BaseEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Set<SupplierProductVariantEntity> getSupplierProductVariant() {

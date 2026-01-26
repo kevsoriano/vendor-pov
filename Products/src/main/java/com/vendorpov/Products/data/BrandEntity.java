@@ -1,13 +1,15 @@
 package com.vendorpov.Products.data;
 
 import java.time.Instant;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity(name = "brands")
 public class BrandEntity extends BaseEntity {
@@ -15,8 +17,10 @@ public class BrandEntity extends BaseEntity {
 	private static final long serialVersionUID = 8950907501509756560L;
 	@Column
 	private String name;
-	@OneToOne(mappedBy = "brand")
-	private ProductEntity product;
+	@Column(length = 100, nullable = false)
+	private String description;
+	@OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ProductEntity> product;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -30,11 +34,19 @@ public class BrandEntity extends BaseEntity {
 		this.name = name;
 	}
 
-	public ProductEntity getProduct() {
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Set<ProductEntity> getProduct() {
 		return product;
 	}
 
-	public void setProduct(ProductEntity product) {
+	public void setProduct(Set<ProductEntity> product) {
 		this.product = product;
 	}
 

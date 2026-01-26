@@ -14,8 +14,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Entity(name = "products")
 public class ProductEntity extends BaseEntity {
@@ -26,7 +26,7 @@ public class ProductEntity extends BaseEntity {
 	private String name;
 	@Column
 	private String description;
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "brand_id", referencedColumnName = "id")
 	private BrandEntity brand;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)

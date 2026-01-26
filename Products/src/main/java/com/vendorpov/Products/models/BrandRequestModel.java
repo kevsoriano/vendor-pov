@@ -3,6 +3,7 @@ package com.vendorpov.Products.models;
 public class BrandRequestModel {
 	public String id;
 	public String name;
+	public String description;
 
 	public String getId() {
 		return id;
@@ -18,6 +19,14 @@ public class BrandRequestModel {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
