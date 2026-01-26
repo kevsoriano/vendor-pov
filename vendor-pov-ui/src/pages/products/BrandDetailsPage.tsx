@@ -1,49 +1,34 @@
-import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
-import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import { deleteResource, get, getAll, update } from "../../utils/http";
+import { deleteResource, get, update } from "../../utils/http";
 
-interface Authority {
+interface Brand {
 	id: string;
 	name: string;
 }
 
-interface Role {
-	id: string;
-	name: string;
-	authorities: Authority[];
-}
-
-const RoleDetailsPage = () => {
+export default function BrandDetailsPage() {
 	const navigate = useNavigate();
 	const { id } = useParams<{ id: string }>();
-	const [role, setRole] = useState<Role | null>(null);
-	const [authorities, setAuthorities] = useState<Authority[]>([]);
-	const [selectedAuthorityIds, setSelectedAuthorityIds] = useState<string[]>([]);
-	const [roleName, setRoleName] = useState("");
+	const [brand, setBrand] = useState<Brand | null>(null);
 	const [isFetching, setIsFetching] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [notification, setNotification] = useState<{
 		message: string;
 		type: "success" | "error" | "info";
 	} | null>(null);
+	const [brandName, setBrandName] = useState("");
 
 	useEffect(() => {
 		if (!id) return;
 		setIsFetching(true);
-		const fetchRole = async () => {
+		const fetchBrand = async () => {
 			try {
-				const role = await get("roles", id);
-				const availableAuthorities = await getAll("authorities");
-				setRole(role);
-				setAuthorities(availableAuthorities);
-				setSelectedAuthorityIds(role.authorities.map((a: Authority) => a.id));
+				const brand = await get("brands", id);
+				setBrand(brand);
 			} catch (error) {
 				const msg = error instanceof Error ? error.message : String(error);
 				setNotification({
@@ -54,22 +39,15 @@ const RoleDetailsPage = () => {
 				setIsFetching(false);
 			}
 		};
-		fetchRole();
+		fetchBrand();
 	}, [id]);
 
 	useEffect(() => {
-		if (role) setRoleName(role.name);
-	}, [role]);
+		if (brand) setBrandName(brand.name);
+	}, [brand]);
 
 	function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-		setRoleName(event.target.value);
-	}
-
-	function handleAuthorityChange(event: React.ChangeEvent<HTMLInputElement>) {
-		const id = event.target.value;
-		setSelectedAuthorityIds((prev) =>
-			event.target.checked ? [...prev, id] : prev.filter((aid) => aid !== id),
-		);
+		setBrandName(event.target.value);
 	}
 
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -77,22 +55,21 @@ const RoleDetailsPage = () => {
 		setIsSubmitting(true);
 		try {
 			const body = {
-				name: roleName,
-				authorities: authorities.filter((a) => selectedAuthorityIds.includes(a.id)),
+				name: brandName,
 			};
 			if (!id) {
 				setNotification({
-					message: "Role ID is missing.",
+					message: "Brand ID is missing.",
 					type: "error",
 				});
 				return;
 			}
-			const response = await update("roles", id, body);
+			const response = await update("brands", id, body);
 			setNotification({
-				message: `Role ${response.name} updated successfully`,
+				message: `Brand ${response.name} updated successfully`,
 				type: "success",
 			});
-			setTimeout(() => navigate("/roles"), 1500);
+			setTimeout(() => navigate("/brands"), 1500);
 		} catch (error) {
 			const msg = error instanceof Error ? error.message : String(error);
 			setNotification({
@@ -106,13 +83,13 @@ const RoleDetailsPage = () => {
 
 	const handleDelete = async (id: string) => {
 		try {
-			await deleteResource(`roles`, `${id}`);
-			setRole(null);
+			await deleteResource(`brands`, `${id}`);
+			setBrand(null);
 			setNotification({
-				message: `Role deleted successfully`,
+				message: `Brand deleted successfully`,
 				type: "success",
 			});
-			setTimeout(() => navigate("/roles"), 1500);
+			setTimeout(() => navigate("/brands"), 1500);
 		} catch (error) {
 			const msg = error instanceof Error ? error.message : String(error);
 			setNotification({
@@ -125,7 +102,7 @@ const RoleDetailsPage = () => {
 	return (
 		<div>
 			<div className="px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
-				<h1>Users</h1>
+				<h1>Brand</h1>
 			</div>
 			{notification && (
 				<NotificationBanner
@@ -135,14 +112,14 @@ const RoleDetailsPage = () => {
 				/>
 			)}
 
-			{isFetching && <div>Loading role…</div>}
+			{isFetching && <div>Loading brand…</div>}
 
-			{!isFetching && role === null && <div>Role not found.</div>}
+			{!isFetching && brand === null && <div>Brand not found.</div>}
 
 			{!isFetching && (
 				<div>
 					<div className="flex px-4 sm:px-6 lg:px-8 py-6 justify-between">
-						<h2>Edit Role</h2>
+						<h2>Edit Brand</h2>
 					</div>
 					<div className="p-4 sm:p-6 lg:p-8 max-w-3xl border mx-auto">
 						<form onSubmit={handleSubmit} className="flex flex-col gap-8">
@@ -151,34 +128,16 @@ const RoleDetailsPage = () => {
 									label="Name"
 									focused
 									name="name"
-									value={roleName}
+									value={brandName}
 									onChange={handleNameChange}
 									disabled={isFetching || isSubmitting}
 								/>
 							</FormControl>
-							<FormGroup>
-								<FormLabel component="legend">Grant permissions</FormLabel>
-								{authorities.map((authority) => (
-									<FormControlLabel
-										key={authority.id}
-										control={
-											<Checkbox
-												name="authorities"
-												value={authority.id}
-												checked={selectedAuthorityIds.includes(authority.id)}
-												onChange={handleAuthorityChange}
-												disabled={isFetching || isSubmitting}
-											/>
-										}
-										label={authority.name}
-									/>
-								))}
-							</FormGroup>
 							<div className="flex gap-4">
 								<button
 									type="button"
 									className="bg-[#5d91b4] text-white px-4 py-2 rounded"
-									onClick={() => navigate("/roles")}
+									onClick={() => navigate("/brands")}
 									disabled={isFetching || isSubmitting}
 								>
 									Cancel
@@ -205,6 +164,4 @@ const RoleDetailsPage = () => {
 			)}
 		</div>
 	);
-};
-
-export default RoleDetailsPage;
+}

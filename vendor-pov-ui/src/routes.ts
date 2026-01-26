@@ -4,16 +4,19 @@ import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentic
 import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
 // import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
+import BrandAddPage from "./pages/products/BrandAddPage";
+import BrandDetailsPage from "./pages/products/BrandDetailsPage";
+import BrandListPage from "./pages/products/BrandListPage";
 // import AddProduct from "./pages/products/AddProduct";
-import ProductDetail from "./pages/products/ProductDetailPage";
 import Products from "./pages/products/ProductListPage";
+import QAPromptTester from "./pages/QAPromptTester";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
 import RoleAddPage from "./pages/users/RoleAddPage";
 import RoleDetailsPage from "./pages/users/RoleDetailsPage";
 import RoleListPage from "./pages/users/RoleListPage";
 import RoleMembersPage from "./pages/users/RoleMembersPage";
 import UserAddPage from "./pages/users/UserAddPage";
-import UserDetailsPage from "./pages/users/UserDetailPage";
+import UserDetailsPage from "./pages/users/UserDetailsPage";
 import UserListPage from "./pages/users/UserListPage";
 import { checkAuthLoader, tokenLoader } from "./utils/auth";
 
@@ -76,18 +79,32 @@ export const router = createBrowserRouter([
 				loader: checkAuthLoader,
 			},
 			{
+				path: "brands",
+				Component: BrandListPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "brands/add",
+				Component: BrandAddPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "brands/:id/edit",
+				Component: BrandDetailsPage,
+				loader: checkAuthLoader,
+			},
+			{
 				path: "products",
 				Component: Products,
 				loader: checkAuthLoader,
 			},
 			{
-				path: "products/:id/edit",
-				Component: ProductDetail,
-				loader: checkAuthLoader,
-			},
-			{
 				path: "test-creatable",
 				Component: TestCreatableSelect,
+			},
+			{
+				path: "qa-prompts",
+				Component: QAPromptTester,
 			},
 		],
 	},

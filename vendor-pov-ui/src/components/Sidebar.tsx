@@ -1,15 +1,22 @@
 import { useState } from "react";
-import HomeIcon from "../assets/home.png";
-import SellIcon from "../assets/sell.png";
-import SalesLedgerIcon from "../assets/sales-ledger.png";
-import ReportingIcon from "../assets/reporting.png";
-import ProductIcon from "../assets/product.png";
 import CustomersIcon from "../assets/customers.png";
+import HomeIcon from "../assets/home.png";
+import ProductIcon from "../assets/product.png";
+import ReportingIcon from "../assets/reporting.png";
+import SalesLedgerIcon from "../assets/sales-ledger.png";
+import SellIcon from "../assets/sell.png";
 import SetupIcon from "../assets/setup.png";
 import "../App.css";
 import { Link } from "react-router-dom";
 
 const initialNavigation = [
+	{
+		name: "QA",
+		link: "/qa-prompts",
+		icon: "https://img.icons8.com/ios-filled/50/000000/inspection.png", // placeholder icon
+		current: false,
+		children: [],
+	},
 	{
 		name: "Home",
 		link: "/",
@@ -292,47 +299,57 @@ export default function Sidebar() {
 		<>
 			<div className="bg-[#e4eaee]">
 				<ul>
-					{navigation &&
-						navigation.map((item, index) => (
-							<Link to={item.link} key={item.name}>
-								<li
-									className={`text-center p-2 text-xs ${item.current ? "bg-[#ffffff]" : "bg-[#e4eaee]"}`}
-									onClick={() => handleMenuClick(index)}
-								>
-									<img
-										src={item.icon}
-										alt=""
-										style={{ width: "28px", height: "24px", margin: "auto" }}
-									/>
-									<div className="mt-2">{item.name}</div>
-								</li>
-							</Link>
-						))}
+					{navigation?.map((item, index) => (
+						<Link to={item.link} key={item.name}>
+							<li
+								className={`text-center p-2 text-xs ${item.current ? "bg-[#ffffff]" : "bg-[#e4eaee]"}`}
+								onClick={() => handleMenuClick(index)}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										handleMenuClick(index);
+									}
+								}}
+							>
+								<img
+									src={item.icon}
+									alt=""
+									style={{ width: "28px", height: "24px", margin: "auto" }}
+								/>
+								<div className="mt-2">{item.name}</div>
+							</li>
+						</Link>
+					))}
 				</ul>
 			</div>
 
-			{navigation &&
-				navigation.map((item) => {
-					if (item.current === true && item.children?.length !== 0) {
-						return (
-							<aside key={item.name + "active"} className={`aside show`}>
-								<ul>
-									{item.children?.map((submenu, index) => (
-										<Link to={submenu.link}>
-											<li
-												key={submenu.name}
-												className={`aside-item text-xs ${submenu.current ? "bg-[#eff4f4]" : ""}`}
-												onClick={() => handleSubMenuClick(index)}
-											>
-												{submenu.name}
-											</li>
-										</Link>
-									))}
-								</ul>
-							</aside>
-						);
-					}
-				})}
+			{navigation?.map((item) => {
+				if (item.current === true && item.children?.length !== 0) {
+					return (
+						<aside key={`${item.name}-active`} className={`aside show`}>
+							<ul>
+								{item.children?.map((submenu, index) => (
+									<Link to={submenu.link} key={submenu.name}>
+										<li
+											key={submenu.name}
+											className={`aside-item text-xs ${submenu.current ? "bg-[#eff4f4]" : ""}`}
+											onClick={() => handleSubMenuClick(index)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													handleSubMenuClick(index);
+												}
+											}}
+										>
+											{submenu.name}
+										</li>
+									</Link>
+								))}
+							</ul>
+						</aside>
+					);
+				} else {
+					return null;
+				}
+			})}
 		</>
 	);
 }
