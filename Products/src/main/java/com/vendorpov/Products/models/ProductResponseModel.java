@@ -6,6 +6,7 @@ public class ProductResponseModel {
 	private String id;
 	private String name;
 	private String description;
+	private BrandResponseModel brand;
 	private List<ProductTagResponseModel> productTags;
 	private List<ProductAttributeResponseModel> productAttributes;
 	private List<ProductVariantResponseModel> productVariants;
@@ -32,6 +33,14 @@ public class ProductResponseModel {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public BrandResponseModel getBrand() {
+		return brand;
+	}
+
+	public void setBrand(BrandResponseModel brand) {
+		this.brand = brand;
 	}
 
 	public List<ProductTagResponseModel> getProductTags() {

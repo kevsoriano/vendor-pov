@@ -1,14 +1,12 @@
 package com.vendorpov.Products.shared;
 
-import java.util.List;
-
 public class ProductAttributeDto extends BaseDto {
 
 	private static final long serialVersionUID = 1606648737691142644L;
 	private String attributeKey;
 	private String attributeValue;
 	private ProductDto product;
-	private List<ProductVariantDto> productVariants;
+//	private List<ProductVariantDto> productVariants;
 
 	public String getAttributeKey() {
 		return attributeKey;
@@ -34,12 +32,12 @@ public class ProductAttributeDto extends BaseDto {
 		this.product = product;
 	}
 
-	public List<ProductVariantDto> getProductVariants() {
-		return productVariants;
-	}
-
-	public void setProductVariants(List<ProductVariantDto> productVariants) {
-		this.productVariants = productVariants;
-	}
+//	public List<ProductVariantDto> getProductVariants() {
+//		return productVariants;
+//	}
+//
+//	public void setProductVariants(List<ProductVariantDto> productVariants) {
+//		this.productVariants = productVariants;
+//	}
 
 }

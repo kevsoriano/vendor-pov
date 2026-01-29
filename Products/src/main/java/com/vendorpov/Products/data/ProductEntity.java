@@ -14,7 +14,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "products")
@@ -26,15 +25,11 @@ public class ProductEntity extends BaseEntity {
 	private String name;
 	@Column
 	private String description;
-	@ManyToOne
-	@JoinColumn(name = "brand_id", referencedColumnName = "id")
-	private BrandEntity brand;
+//	@ManyToOne(cascade = CascadeType.PERSIST)
+//	@JoinColumn(name = "brand_id")
+//	private BrandEntity brand;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	@JoinTable(
-			name = "product_tag_assignments", 
-			joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), 
-			inverseJoinColumns = @JoinColumn(name = "product_tag_id", referencedColumnName = "id")
-	)
+	@JoinTable(name = "product_tag_assignments", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_tag_id", referencedColumnName = "id"))
 	private Collection<ProductTagEntity> productTags;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttributeEntity> productAttributes;
@@ -61,13 +56,13 @@ public class ProductEntity extends BaseEntity {
 		this.description = description;
 	}
 
-	public BrandEntity getBrand() {
-		return brand;
-	}
-
-	public void setBrand(BrandEntity brand) {
-		this.brand = brand;
-	}
+//	public BrandEntity getBrand() {
+//		return brand;
+//	}
+//
+//	public void setBrand(BrandEntity brand) {
+//		this.brand = brand;
+//	}
 
 	public Collection<ProductTagEntity> getProductTags() {
 		return productTags;

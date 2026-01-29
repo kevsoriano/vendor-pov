@@ -34,13 +34,12 @@ public class ProductController {
 	
 	@Autowired
 	ProductService productService;
+	@Autowired
+	ModelMapper modelMapper;
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<ProductResponseModel> createProduct(@Valid @RequestBody ProductRequestModel product) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		ProductDto productDto = modelMapper.map(product, ProductDto.class);
 		ProductDto createdProduct = productService.createProduct(productDto);
 		
@@ -57,9 +56,6 @@ public class ProductController {
 		List<ProductDto> products = productService.getProducts(page, limit);
 
 		for(ProductDto product: products) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 			ProductResponseModel productDetails = modelMapper.map(product, ProductResponseModel.class);
 			returnValue.add(productDetails);
 		}
@@ -70,16 +66,13 @@ public class ProductController {
 	@GetMapping(value="/{productId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<ProductResponseModel> getProduct(@PathVariable String productId) {
 		ProductDto productDto = productService.getProductByExternalId(productId);
-		ProductResponseModel returnValue = new ModelMapper().map(productDto, ProductResponseModel.class);
+		ProductResponseModel returnValue = modelMapper.map(productDto, ProductResponseModel.class);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@PutMapping(value="/{productId}", consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<ProductResponseModel> updateProduct(@PathVariable String productId, @RequestBody ProductRequestModel productDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
 		ProductDto productDto = modelMapper.map(productDetails, ProductDto.class);
 		ProductDto updatedProduct = productService.updateProduct(productId, productDto);
 

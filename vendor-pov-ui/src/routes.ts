@@ -9,7 +9,6 @@ import BrandDetailsPage from "./pages/products/BrandDetailsPage";
 import BrandListPage from "./pages/products/BrandListPage";
 // import AddProduct from "./pages/products/AddProduct";
 import Products from "./pages/products/ProductListPage";
-import QAPromptTester from "./pages/QAPromptTester";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
 import RoleAddPage from "./pages/users/RoleAddPage";
 import RoleDetailsPage from "./pages/users/RoleDetailsPage";
@@ -101,10 +100,6 @@ export const router = createBrowserRouter([
 			{
 				path: "test-creatable",
 				Component: TestCreatableSelect,
-			},
-			{
-				path: "qa-prompts",
-				Component: QAPromptTester,
 			},
 		],
 	},

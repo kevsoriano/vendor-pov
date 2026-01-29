@@ -1,6 +1,6 @@
 package com.vendorpov.Products.shared;
 
-public class SupplierDto extends BaseDto{
+public class SupplierDto extends BaseDto {
 
 	private static final long serialVersionUID = -5974382456613182285L;
 	private String name;

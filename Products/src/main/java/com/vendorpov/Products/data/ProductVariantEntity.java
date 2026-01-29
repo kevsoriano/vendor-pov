@@ -34,8 +34,8 @@ public class ProductVariantEntity extends BaseEntity {
 	private List<SupplierProductVariantEntity> supplierProductVariants;
 	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<InventoryEntity> inventories;
-	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SaleLineItemEntity> saleLineItems;
+//	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<SaleLineItemEntity> saleLineItems;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -81,13 +81,13 @@ public class ProductVariantEntity extends BaseEntity {
 		this.inventories = inventories;
 	}
 
-	public List<SaleLineItemEntity> getSaleLineItems() {
-		return saleLineItems;
-	}
-
-	public void setSaleLineItems(List<SaleLineItemEntity> saleLineItems) {
-		this.saleLineItems = saleLineItems;
-	}
+//	public List<SaleLineItemEntity> getSaleLineItems() {
+//		return saleLineItems;
+//	}
+//
+//	public void setSaleLineItems(List<SaleLineItemEntity> saleLineItems) {
+//		this.saleLineItems = saleLineItems;
+//	}
 
 	public Instant getCreatedOn() {
 		return createdOn;

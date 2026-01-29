@@ -20,19 +20,7 @@ public class ProductTagServiceImpl implements ProductTagService {
 	@Autowired
 	ProductTagRepository productTagRepository;
 	@Autowired
-	ModelMapper modelMapper;
-	
-	@Override
-	public ProductTagDto createProductTag(ProductTagDto productTagDetails) {
-		ProductTagEntity productTagEntity = modelMapper.map(productTagDetails, ProductTagEntity.class);
-		productTagEntity.setExternalId(UUID.randomUUID().toString());
-		productTagRepository.save(productTagEntity);
-		
-		ProductTagDto returnValue = modelMapper.map(productTagEntity, ProductTagDto.class);
-		returnValue.setId(productTagEntity.getExternalId());
-		
-		return returnValue;
-	}
+	private ModelMapper modelMapper;
 
 	@Override
 	public List<ProductTagDto> getProductTags(int page, int limit) {
@@ -49,14 +37,21 @@ public class ProductTagServiceImpl implements ProductTagService {
 	}
 
 	@Override
-	public List<ProductTagDto> getProductTagsWithProductCount(int page, int limit) {
-		// TODO Auto-generated method stub
-		return null;
+	public ProductTagDto createProductTag(ProductTagDto productTagDetails) {
+		ProductTagEntity productTagEntity = modelMapper.map(productTagDetails, ProductTagEntity.class);
+		productTagEntity.setExternalId(UUID.randomUUID().toString());
+		productTagRepository.save(productTagEntity);
+		
+		ProductTagDto returnValue = modelMapper.map(productTagEntity, ProductTagDto.class);
+		returnValue.setId(productTagEntity.getExternalId());
+		
+		return returnValue;
 	}
 
 	@Override
 	public ProductTagDto getProductTagByExternalId(String id) {
 		ProductTagEntity productTagEntity = productTagRepository.findByExternalId(id);
+//		if(brandEntity==null) throw new UsernameNotFoundException(id);
 		ProductTagDto returnValue = modelMapper.map(productTagEntity, ProductTagDto.class);
 		returnValue.setId(productTagEntity.getExternalId());
 		return returnValue;

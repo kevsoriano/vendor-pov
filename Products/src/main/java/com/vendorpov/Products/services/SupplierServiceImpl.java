@@ -15,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.vendorpov.Products.data.SupplierEntity;
 import com.vendorpov.Products.data.SupplierRepository;
-import com.vendorpov.Products.shared.ProductVariantCountDto;
 import com.vendorpov.Products.shared.SupplierDto;
 
 @Service
@@ -82,11 +81,11 @@ public class SupplierServiceImpl implements SupplierService {
 		supplierRepository.delete(supplierEntity);
 	}
 
-	@Override
-	public List<ProductVariantCountDto> getSuppliersWithProductCount(int page, int limit) {
-		Pageable pageRequest = PageRequest.of(page, limit);
-		Page<ProductVariantCountDto> supplierPage = supplierRepository.findAllSuppliersWithProductCounts(pageRequest);
-		List<ProductVariantCountDto> suppliers = supplierPage.getContent();
-		return suppliers;
-	}
+//	@Override
+//	public List<ProductVariantCountDto> getSuppliersWithProductCount(int page, int limit) {
+//		Pageable pageRequest = PageRequest.of(page, limit);
+//		Page<ProductVariantCountDto> supplierPage = supplierRepository.findAllSuppliersWithProductCounts(pageRequest);
+//		List<ProductVariantCountDto> suppliers = supplierPage.getContent();
+//		return suppliers;
+//	}
 }
