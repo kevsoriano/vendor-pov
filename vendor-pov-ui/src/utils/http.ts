@@ -32,7 +32,7 @@ export async function getAll(path: string) {
 	const resData = await response.json();
 
 	if (!response.ok) {
-		throw new Error(resData.message || "Failed to fetch users.");
+		throw new Error(resData.message || "Failed to fetch resources.");
 	}
 
 	return resData;
@@ -50,7 +50,7 @@ export async function get(path: string, id: string) {
 	const resData = await response.json();
 
 	if (!response.ok) {
-		throw new Error(resData.message || "Failed to fetch users.");
+		throw new Error(resData.message || "Failed to fetch resources.");
 	}
 
 	return resData;

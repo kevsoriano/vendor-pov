@@ -1,11 +1,11 @@
 import Button from "@mui/material/Button";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import ResourceTable from "../../components/common/ResourceTable";
-import { getAll } from "../../utils/http";
+import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
+import ResourceTable from "../../../components/common/ResourceTable";
+import { getAll } from "../../../utils/http";
 
 interface Brand {
 	id: string;
@@ -32,31 +32,17 @@ function Row(props: { row: Brand }) {
 }
 export default function BrandListPage() {
 	const navigate = useNavigate();
-	const [brands, setBrands] = useState<Brand[]>([]);
-	const [isFetching, setIsFetching] = useState(false);
-	const [notification, setNotification] = useState<{
-		message: string;
-		type: "success" | "error" | "info";
-	} | null>(null);
-
-	useEffect(() => {
-		setIsFetching(true);
-		const fetchBrands = async () => {
-			try {
-				const response = await getAll("brands/product-count");
-				setBrands(response);
-			} catch (error) {
-				const msg = error instanceof Error ? error.message : String(error);
-				setNotification({
-					message: msg,
-					type: "error",
-				});
-			} finally {
-				setIsFetching(false);
-			}
-		};
-		fetchBrands();
-	}, []);
+	const {
+		data: brands = [],
+		isPending,
+		isError,
+		error,
+	} = useQuery<Brand[]>({
+		queryKey: ["brands"],
+		queryFn: () => getAll("brands"),
+		staleTime: 0,
+		// gcTime: 30000,
+	});
 
 	return (
 		<div>
@@ -78,19 +64,20 @@ export default function BrandListPage() {
 					</button>
 				</div>
 			</div>
-			{notification && (
+
+			{isError && (
 				<NotificationBanner
-					message={notification.message}
-					type={notification.type}
-					onClose={() => setNotification(null)}
+					message={error instanceof Error ? error.message : "Failed to load"}
+					type="error"
+					onClose={() => {}} // Usually managed via query invalidation or local state if needed
 				/>
 			)}
 
-			{isFetching && <div>Loading brands…</div>}
+			{isPending && <div>Loading brands…</div>}
 
-			{!isFetching && brands.length === 0 && <div>No brands found.</div>}
+			{!isPending && brands.length === 0 && <div>No brands found.</div>}
 
-			{!isFetching && brands.length > 0 && (
+			{!isPending && brands.length > 0 && (
 				<ResourceTable
 					headers={["Name", "Product Count"]}
 					items={brands}

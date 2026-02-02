@@ -3,8 +3,6 @@ package com.vendorpov.Products.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vendorpov.Products.models.OutletRequestModel;
-import com.vendorpov.Products.models.OutletResponseModel;
 import com.vendorpov.Products.services.OutletService;
 import com.vendorpov.Products.shared.OutletDto;
 
@@ -37,52 +33,33 @@ public class OutletController {
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<OutletResponseModel> createOutlet(@Valid @RequestBody OutletRequestModel outlet) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
-		OutletDto outletDto = modelMapper.map(outlet, OutletDto.class);
-		OutletDto createdOutlet = outletService.createOutlet(outletDto);
-		
-		OutletResponseModel returnValue = modelMapper.map(createdOutlet, OutletResponseModel.class);
+	public ResponseEntity<OutletDto> createOutlet(@Valid @RequestBody OutletDto outlet) {
+		OutletDto returnValue = outletService.createOutlet(outlet);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<List<OutletResponseModel>> getOutlets(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<OutletDto>> getOutlets(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestParam(required = false) String sort) {
-		List<OutletResponseModel> returnValue = new ArrayList<>();
+		List<OutletDto> returnValue = new ArrayList<>();
+		
 		List<OutletDto> outlets = outletService.getOutlets(page, limit);
-
-		for(OutletDto outlet: outlets) {
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-			OutletResponseModel outletDetails = modelMapper.map(outlet, OutletResponseModel.class);
-			returnValue.add(outletDetails);
-		}
+		outlets.forEach(outlet -> returnValue.add(outlet));
 
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@GetMapping(value="/{outletId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<OutletResponseModel> getOutlet(@PathVariable String outletId) {
-		OutletDto outletDto = outletService.getOutletByExternalId(outletId);
-		OutletResponseModel returnValue = new ModelMapper().map(outletDto, OutletResponseModel.class);
+	public ResponseEntity<OutletDto> getOutlet(@PathVariable String outletId) {
+		OutletDto returnValue = outletService.getOutletByExternalId(outletId);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@PutMapping(value="/{outletId}", consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<OutletResponseModel> updateOutlet(@PathVariable String outletId, @RequestBody OutletRequestModel outletDetails) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-		OutletDto outletDto = modelMapper.map(outletDetails, OutletDto.class);
-		OutletDto updatedOutlet = outletService.updateOutlet(outletId, outletDto);
-
-		OutletResponseModel returnValue = modelMapper.map(updatedOutlet, OutletResponseModel.class);
+	public ResponseEntity<OutletDto> updateOutlet(@PathVariable String outletId, @RequestBody OutletDto outletDetails) {
+		OutletDto returnValue = outletService.updateOutlet(outletId, outletDetails);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	

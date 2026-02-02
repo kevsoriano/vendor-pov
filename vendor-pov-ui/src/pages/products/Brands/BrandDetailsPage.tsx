@@ -2,8 +2,8 @@ import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import { deleteResource, get, update } from "../../utils/http";
+import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
+import { deleteResource, get, update } from "../../../utils/http";
 
 interface Brand {
 	id: string;

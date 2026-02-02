@@ -4,8 +4,8 @@ import Tab from "@mui/material/Tab";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Tabs from "@mui/material/Tabs";
+import { useQuery } from "@tanstack/react-query";
 import type React from "react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
@@ -58,31 +58,17 @@ function Row(props: { row: Role }) {
 
 const RoleListPage = () => {
 	const navigate = useNavigate();
-	const [roles, setRoles] = useState<Role[]>([]);
-	const [isFetching, setIsFetching] = useState(false);
-	const [notification, setNotification] = useState<{
-		message: string;
-		type: "success" | "error" | "info";
-	} | null>(null);
-
-	useEffect(() => {
-		setIsFetching(true);
-		const fetchRoles = async () => {
-			try {
-				const response = await getAll("roles/user-count");
-				setRoles(response);
-			} catch (error) {
-				const msg = error instanceof Error ? error.message : String(error);
-				setNotification({
-					message: msg,
-					type: "error",
-				});
-			} finally {
-				setIsFetching(false);
-			}
-		};
-		fetchRoles();
-	}, []);
+	const {
+		data: roles = [],
+		isPending,
+		isError,
+		error,
+	} = useQuery<Role[]>({
+		queryKey: ["roles"],
+		queryFn: () => getAll("roles"),
+		staleTime: 0,
+		// gcTime: 30000,
+	});
 
 	return (
 		<div>
@@ -107,19 +93,20 @@ const RoleListPage = () => {
 					</button>
 				</div>
 			</div>
-			{notification && (
+
+			{isError && (
 				<NotificationBanner
-					message={notification.message}
-					type={notification.type}
-					onClose={() => setNotification(null)}
+					message={error instanceof Error ? error.message : "Failed to load"}
+					type="error"
+					onClose={() => {}} // Usually managed via query invalidation or local state if needed
 				/>
 			)}
 
-			{isFetching && <div>Loading roles…</div>}
+			{isPending && <div>Loading roles…</div>}
 
-			{!isFetching && roles.length === 0 && <div>No roles found.</div>}
+			{!isPending && roles.length === 0 && <div>No roles found.</div>}
 
-			{!isFetching && roles.length > 0 && (
+			{!isPending && roles.length > 0 && (
 				<ResourceTable
 					headers={["Name", "User Count"]}
 					items={roles}

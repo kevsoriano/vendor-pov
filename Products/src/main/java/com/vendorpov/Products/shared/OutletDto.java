@@ -1,12 +1,12 @@
 package com.vendorpov.Products.shared;
 
-import java.util.List;
+import java.util.Set;
 
 public class OutletDto extends BaseDto {
 
 	private static final long serialVersionUID = -2662917872807890283L;
 	private String name;
-	private List<InventoryDto> inventories;
+	private Set<InventoryDto> inventories;
 
 	public String getName() {
 		return name;
@@ -16,11 +16,11 @@ public class OutletDto extends BaseDto {
 		this.name = name;
 	}
 
-	public List<InventoryDto> getInventories() {
+	public Set<InventoryDto> getInventories() {
 		return inventories;
 	}
 
-	public void setInventories(List<InventoryDto> inventories) {
+	public void setInventories(Set<InventoryDto> inventories) {
 		this.inventories = inventories;
 	}
 

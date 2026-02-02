@@ -1,11 +1,7 @@
 package com.vendorpov.Products.data;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,10 +32,6 @@ public class ProductVariantEntity extends BaseEntity {
 	private List<InventoryEntity> inventories;
 //	@OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
 //	private List<SaleLineItemEntity> saleLineItems;
-	@CreationTimestamp
-	private Instant createdOn;
-	@UpdateTimestamp
-	private Instant lastUpdatedOn;
 
 	public String getVariantSku() {
 		return variantSku;
@@ -88,21 +80,5 @@ public class ProductVariantEntity extends BaseEntity {
 //	public void setSaleLineItems(List<SaleLineItemEntity> saleLineItems) {
 //		this.saleLineItems = saleLineItems;
 //	}
-
-	public Instant getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Instant createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Instant getLastUpdatedOn() {
-		return lastUpdatedOn;
-	}
-
-	public void setLastUpdatedOn(Instant lastUpdatedOn) {
-		this.lastUpdatedOn = lastUpdatedOn;
-	}
 
 }

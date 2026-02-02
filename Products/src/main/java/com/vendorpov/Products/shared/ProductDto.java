@@ -1,7 +1,7 @@
 package com.vendorpov.Products.shared;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
 public class ProductDto extends BaseDto {
 
@@ -9,9 +9,9 @@ public class ProductDto extends BaseDto {
 	private String name;
 	private String description;
 	private BrandDto brand;
-	private List<ProductTagDto> productTags;
-	private List<ProductAttributeDto> productAttributes;
-	private List<ProductVariantDto> productVariants;
+	private Set<ProductTagDto> productTags;
+	private Set<ProductAttributeDto> productAttributes;
+	private Set<ProductVariantDto> productVariants;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
 
@@ -39,27 +39,27 @@ public class ProductDto extends BaseDto {
 		this.brand = brand;
 	}
 
-	public List<ProductTagDto> getProductTags() {
+	public Set<ProductTagDto> getProductTags() {
 		return productTags;
 	}
 
-	public void setProductTags(List<ProductTagDto> productTags) {
+	public void setProductTags(Set<ProductTagDto> productTags) {
 		this.productTags = productTags;
 	}
 
-	public List<ProductAttributeDto> getProductAttributes() {
+	public Set<ProductAttributeDto> getProductAttributes() {
 		return productAttributes;
 	}
 
-	public void setProductAttributes(List<ProductAttributeDto> productAttributes) {
+	public void setProductAttributes(Set<ProductAttributeDto> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
 
-	public List<ProductVariantDto> getProductVariants() {
+	public Set<ProductVariantDto> getProductVariants() {
 		return productVariants;
 	}
 
-	public void setProductVariants(List<ProductVariantDto> productVariants) {
+	public void setProductVariants(Set<ProductVariantDto> productVariants) {
 		this.productVariants = productVariants;
 	}
 

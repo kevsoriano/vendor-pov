@@ -1,11 +1,6 @@
 package com.vendorpov.Products.data;
 
-import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -14,31 +9,27 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "products")
 public class ProductEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 5807974061282671674L;
-
-	@Column(length = 50, nullable = false)
+	@Column(unique = true, length = 50, nullable = false)
 	private String name;
 	@Column
 	private String description;
-//	@ManyToOne(cascade = CascadeType.PERSIST)
-//	@JoinColumn(name = "brand_id")
-//	private BrandEntity brand;
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "brand_id", referencedColumnName = "externalId", nullable = false)
+	private BrandEntity brand;
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@JoinTable(name = "product_tag_assignments", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_tag_id", referencedColumnName = "id"))
-	private Collection<ProductTagEntity> productTags;
+	private Set<ProductTagEntity> productTags;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProductAttributeEntity> productAttributes;
+	private Set<ProductAttributeEntity> productAttributes;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProductVariantEntity> productVariants;
-	@CreationTimestamp
-	private Instant createdOn;
-	@UpdateTimestamp
-	private Instant lastUpdatedOn;
+	private Set<ProductVariantEntity> productVariants;
 
 	public String getName() {
 		return name;
@@ -56,52 +47,36 @@ public class ProductEntity extends BaseEntity {
 		this.description = description;
 	}
 
-//	public BrandEntity getBrand() {
-//		return brand;
-//	}
-//
-//	public void setBrand(BrandEntity brand) {
-//		this.brand = brand;
-//	}
+	public BrandEntity getBrand() {
+		return brand;
+	}
 
-	public Collection<ProductTagEntity> getProductTags() {
+	public void setBrand(BrandEntity brand) {
+		this.brand = brand;
+	}
+
+	public Set<ProductTagEntity> getProductTags() {
 		return productTags;
 	}
 
-	public void setProductTags(Collection<ProductTagEntity> productTags) {
+	public void setProductTags(Set<ProductTagEntity> productTags) {
 		this.productTags = productTags;
 	}
 
-	public List<ProductAttributeEntity> getProductAttributes() {
+	public Set<ProductAttributeEntity> getProductAttributes() {
 		return productAttributes;
 	}
 
-	public void setProductAttributes(List<ProductAttributeEntity> productAttributes) {
+	public void setProductAttributes(Set<ProductAttributeEntity> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
 
-	public List<ProductVariantEntity> getProductVariants() {
+	public Set<ProductVariantEntity> getProductVariants() {
 		return productVariants;
 	}
 
-	public void setProductVariants(List<ProductVariantEntity> productVariants) {
+	public void setProductVariants(Set<ProductVariantEntity> productVariants) {
 		this.productVariants = productVariants;
-	}
-
-	public Instant getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Instant createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Instant getLastUpdatedOn() {
-		return lastUpdatedOn;
-	}
-
-	public void setLastUpdatedOn(Instant lastUpdatedOn) {
-		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

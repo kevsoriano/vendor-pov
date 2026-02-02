@@ -2,17 +2,19 @@ package com.vendorpov.Products.models;
 
 import java.math.BigDecimal;
 
+import com.vendorpov.Products.shared.SupplierDto;
+
 public class SupplierProductVariantRequestModel {
 
-	private SupplierRequestModel supplier;
+	private SupplierDto supplier;
 	private BigDecimal supplierPrice;
 	private BigDecimal taxRate;
 
-	public SupplierRequestModel getSupplier() {
+	public SupplierDto getSupplier() {
 		return supplier;
 	}
 
-	public void setSupplier(SupplierRequestModel supplier) {
+	public void setSupplier(SupplierDto supplier) {
 		this.supplier = supplier;
 	}
 

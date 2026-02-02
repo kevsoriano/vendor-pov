@@ -1,7 +1,6 @@
 package com.vendorpov.User.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +10,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import com.vendorpov.JwtAuthorities.JwtClaimsParser;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

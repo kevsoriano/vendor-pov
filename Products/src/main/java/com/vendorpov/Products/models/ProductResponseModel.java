@@ -2,12 +2,15 @@ package com.vendorpov.Products.models;
 
 import java.util.List;
 
+import com.vendorpov.Products.shared.BrandDto;
+import com.vendorpov.Products.shared.ProductTagDto;
+
 public class ProductResponseModel {
 	private String id;
 	private String name;
 	private String description;
-	private BrandResponseModel brand;
-	private List<ProductTagResponseModel> productTags;
+	private BrandDto brand;
+	private List<ProductTagDto> productTags;
 	private List<ProductAttributeResponseModel> productAttributes;
 	private List<ProductVariantResponseModel> productVariants;
 
@@ -35,19 +38,19 @@ public class ProductResponseModel {
 		this.description = description;
 	}
 
-	public BrandResponseModel getBrand() {
+	public BrandDto getBrand() {
 		return brand;
 	}
 
-	public void setBrand(BrandResponseModel brand) {
+	public void setBrand(BrandDto brand) {
 		this.brand = brand;
 	}
 
-	public List<ProductTagResponseModel> getProductTags() {
+	public List<ProductTagDto> getProductTags() {
 		return productTags;
 	}
 
-	public void setProductTags(List<ProductTagResponseModel> productTags) {
+	public void setProductTags(List<ProductTagDto> productTags) {
 		this.productTags = productTags;
 	}
 

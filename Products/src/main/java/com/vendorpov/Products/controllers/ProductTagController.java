@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vendorpov.Products.models.ProductTagRequestModel;
-import com.vendorpov.Products.models.ProductTagResponseModel;
 import com.vendorpov.Products.services.ProductTagService;
 import com.vendorpov.Products.shared.ProductTagDto;
 
@@ -38,46 +36,34 @@ public class ProductTagController {
 
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<ProductTagResponseModel> createProductTag(@Valid @RequestBody ProductTagRequestModel outlet) {
-		ProductTagDto productTagDto = modelMapper.map(outlet, ProductTagDto.class);
-		ProductTagDto createdOutlet = productTagService.createProductTag(productTagDto);
-
-		ProductTagResponseModel returnValue = modelMapper.map(createdOutlet, ProductTagResponseModel.class);
+	public ResponseEntity<ProductTagDto> createProductTag(@Valid @RequestBody ProductTagDto productTag) {
+		ProductTagDto returnValue = productTagService.createProductTag(productTag);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<List<ProductTagResponseModel>> getProductTags(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<ProductTagDto>> getProductTags(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String sort) {
-		List<ProductTagResponseModel> returnValue = new ArrayList<>();
+		List<ProductTagDto> returnValue = new ArrayList<>();
+		
 		List<ProductTagDto> productTags = productTagService.getProductTags(page, limit);
-
-		for (ProductTagDto productTag : productTags) {
-			ProductTagResponseModel outletDetails = modelMapper.map(productTag, ProductTagResponseModel.class);
-			returnValue.add(outletDetails);
-		}
+		productTags.forEach(productTag -> returnValue.add(productTag));
 		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@GetMapping(value = "/{productTagId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<ProductTagResponseModel> getProductTag(@PathVariable String productTagId) {
-		ProductTagDto productTagDto = productTagService.getProductTagByExternalId(productTagId);
-		ProductTagResponseModel returnValue = modelMapper.map(productTagDto, ProductTagResponseModel.class);
-		returnValue.setId(productTagDto.getId());
+	public ResponseEntity<ProductTagDto> getProductTag(@PathVariable String productTagId) {
+		ProductTagDto returnValue = productTagService.getProductTagByExternalId(productTagId);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@PutMapping(value = "/{productTagId}", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<ProductTagResponseModel> updateProductTag(@PathVariable String productTagId,
-			@RequestBody ProductTagRequestModel productTagDetails) {
-		ProductTagDto productTag = modelMapper.map(productTagDetails, ProductTagDto.class);
-		ProductTagDto updatedProductTag = productTagService.updateProductTag(productTagId, productTag);
-
-		ProductTagResponseModel returnValue = modelMapper.map(updatedProductTag, ProductTagResponseModel.class);
-		returnValue.setId(updatedProductTag.getId());
+	public ResponseEntity<ProductTagDto> updateProductTag(@PathVariable String productTagId,
+			@RequestBody ProductTagDto productTagDetails) {
+		ProductTagDto returnValue = productTagService.updateProductTag(productTagId, productTagDetails);
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 

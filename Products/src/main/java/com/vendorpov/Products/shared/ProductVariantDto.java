@@ -1,15 +1,15 @@
 package com.vendorpov.Products.shared;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
 public class ProductVariantDto extends BaseDto {
 
 	private static final long serialVersionUID = 6703134141545020761L;
 	private String variantSku;
-	private List<ProductAttributeDto> productAttributes;
-	private List<SupplierProductVariantDto> supplierProductVariants;
-	private List<InventoryDto> inventories;
+	private Set<ProductAttributeDto> productAttributes;
+	private Set<SupplierProductVariantDto> supplierProductVariants;
+	private Set<InventoryDto> inventories;
 	private ProductDto product;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
@@ -22,27 +22,27 @@ public class ProductVariantDto extends BaseDto {
 		this.variantSku = variantSku;
 	}
 
-	public List<ProductAttributeDto> getProductAttributes() {
+	public Set<ProductAttributeDto> getProductAttributes() {
 		return productAttributes;
 	}
 
-	public void setProductAttributes(List<ProductAttributeDto> productAttributes) {
+	public void setProductAttributes(Set<ProductAttributeDto> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
 
-	public List<SupplierProductVariantDto> getSupplierProductVariants() {
+	public Set<SupplierProductVariantDto> getSupplierProductVariants() {
 		return supplierProductVariants;
 	}
 
-	public void setSupplierProductVariants(List<SupplierProductVariantDto> supplierProductVariants) {
+	public void setSupplierProductVariants(Set<SupplierProductVariantDto> supplierProductVariants) {
 		this.supplierProductVariants = supplierProductVariants;
 	}
 
-	public List<InventoryDto> getInventories() {
+	public Set<InventoryDto> getInventories() {
 		return inventories;
 	}
 
-	public void setInventories(List<InventoryDto> inventories) {
+	public void setInventories(Set<InventoryDto> inventories) {
 		this.inventories = inventories;
 	}
 

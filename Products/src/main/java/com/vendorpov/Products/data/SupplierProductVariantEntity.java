@@ -2,10 +2,6 @@ package com.vendorpov.Products.data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -24,10 +20,6 @@ public class SupplierProductVariantEntity implements Serializable {
 	@MapsId("supplierId")
 	@JoinColumn(name = "supplier_id")
 	private SupplierEntity supplier;
-	@CreationTimestamp
-	private Instant createdOn;
-	@UpdateTimestamp
-	private Instant lastUpdatedOn;
 
 	@ManyToOne
 	@MapsId("productVariantId")
@@ -77,22 +69,6 @@ public class SupplierProductVariantEntity implements Serializable {
 
 	public void setTaxRate(BigDecimal taxRate) {
 		this.taxRate = taxRate;
-	}
-
-	public Instant getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Instant createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Instant getLastUpdatedOn() {
-		return lastUpdatedOn;
-	}
-
-	public void setLastUpdatedOn(Instant lastUpdatedOn) {
-		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
 }

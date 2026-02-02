@@ -2,8 +2,8 @@ import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import { create } from "../../utils/http";
+import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
+import { create } from "../../../utils/http";
 
 export default function BrandAddPage() {
 	const navigate = useNavigate();

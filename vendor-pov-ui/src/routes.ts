@@ -4,9 +4,9 @@ import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentic
 import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
 // import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
-import BrandAddPage from "./pages/products/BrandAddPage";
-import BrandDetailsPage from "./pages/products/BrandDetailsPage";
-import BrandListPage from "./pages/products/BrandListPage";
+import BrandAddPage from "./pages/products/Brands/BrandAddPage";
+import BrandDetailsPage from "./pages/products/Brands/BrandDetailsPage";
+import BrandListPage from "./pages/products/Brands/BrandListPage";
 // import AddProduct from "./pages/products/AddProduct";
 import Products from "./pages/products/ProductListPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
