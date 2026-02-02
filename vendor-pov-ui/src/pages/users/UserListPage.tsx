@@ -11,17 +11,8 @@ import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
+import type { User } from "../../types/models";
 import { deleteResource, getAll } from "../../utils/http";
-
-interface User {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	dailyTarget: number;
-	weeklyTarget: number;
-	monthlyTarget: number;
-}
 
 function TabNavigation() {
 	const navigate = useNavigate();

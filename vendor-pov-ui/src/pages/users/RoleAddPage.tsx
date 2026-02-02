@@ -7,12 +7,8 @@ import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
+import type { Authority } from "../../types/models.ts";
 import { create, getAll } from "../../utils/http";
-
-interface Authority {
-	id: string;
-	name: string;
-}
 
 export default function RoleAddPage() {
 	const navigate = useNavigate();
@@ -57,7 +53,7 @@ export default function RoleAddPage() {
 		const body = { name, authorities: selectedAuthorities };
 
 		try {
-			const response = await create("roles", body);
+			const response = await create({ path: "roles", body });
 			setNotification({
 				message: `Role ${response.name} created successfully`,
 				type: "success",

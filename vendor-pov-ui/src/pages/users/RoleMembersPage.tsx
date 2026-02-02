@@ -6,17 +6,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
+import type { User } from "../../types/models";
 import { getAll } from "../../utils/http";
-
-interface User {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	dailyTarget: number;
-	weeklyTarget: number;
-	monthlyTarget: number;
-}
 
 function Row(props: { row: User }) {
 	const { row } = props;

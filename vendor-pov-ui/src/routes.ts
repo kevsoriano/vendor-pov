@@ -4,11 +4,15 @@ import AuthenticationPage, { action as AuthAction } from "./pages/auth/Authentic
 import { action as LogoutAction } from "./pages/auth/Logout"; // Update the import path as needed
 // import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
+import OutletListPage from "./pages/outlets/OutletsListPage";
 import BrandAddPage from "./pages/products/Brands/BrandAddPage";
 import BrandDetailsPage from "./pages/products/Brands/BrandDetailsPage";
 import BrandListPage from "./pages/products/Brands/BrandListPage";
 // import AddProduct from "./pages/products/AddProduct";
 import Products from "./pages/products/ProductListPage";
+import ProductTagsListPage from "./pages/products/ProductTag/ProductTagsListPage";
+import SuppliersAddPage from "./pages/products/Suppliers/SuppliersAddPage";
+import SupplierListPage from "./pages/products/Suppliers/SuppliersListPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
 import RoleAddPage from "./pages/users/RoleAddPage";
 import RoleDetailsPage from "./pages/users/RoleDetailsPage";
@@ -90,6 +94,26 @@ export const router = createBrowserRouter([
 			{
 				path: "brands/:id/edit",
 				Component: BrandDetailsPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "suppliers",
+				Component: SupplierListPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "suppliers/add",
+				Component: SuppliersAddPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "product-tags",
+				Component: ProductTagsListPage,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "outlets",
+				Component: OutletListPage,
 				loader: checkAuthLoader,
 			},
 			{

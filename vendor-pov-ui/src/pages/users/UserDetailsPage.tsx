@@ -12,33 +12,9 @@ import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
+import type { Role, User } from "../../types/models";
 import { get, getAll, update } from "../../utils/http";
 import type { CreatableSelectOption } from "./UserAddPage";
-
-interface Role {
-	id: string;
-	name: string;
-}
-
-interface User {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	dailyTarget: number;
-	weeklyTarget: number;
-	monthlyTarget: number;
-	currency: string;
-	addresses: {
-		id: string;
-		addressLine1: string;
-		addressLine2: string;
-		city: string;
-		country: string;
-		postalCode: string;
-	}[];
-	roles: Role[];
-}
 
 const UserDetailsPage = () => {
 	const navigate = useNavigate();

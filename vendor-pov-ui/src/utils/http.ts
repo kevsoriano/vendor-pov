@@ -56,7 +56,7 @@ export async function get(path: string, id: string) {
 	return resData;
 }
 
-export async function create(path: string, body: any) {
+export async function create({ path, body }: { path: string; body: Record<string, unknown> }) {
 	const token = getAuthToken();
 	const response = await fetch(`${BASE_URL}/${path}`, {
 		method: "POST",
@@ -75,7 +75,7 @@ export async function create(path: string, body: any) {
 	return resData;
 }
 
-export async function update(path: string, id: string, body: any) {
+export async function update(path: string, id: string, body: Record<string, unknown>) {
 	const token = getAuthToken();
 	const response = await fetch(`${BASE_URL}/${path}/${id}`, {
 		method: "PUT",

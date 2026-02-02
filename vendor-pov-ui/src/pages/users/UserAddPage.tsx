@@ -17,12 +17,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormLabel from "@mui/material/FormLabel";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
+import type { Role } from "../../types/models";
 import { create, getAll } from "../../utils/http";
-
-interface Role {
-	id: string;
-	name: string;
-}
 
 export default function UserAddPage() {
 	const navigate = useNavigate();
@@ -140,7 +136,7 @@ export default function UserAddPage() {
 		};
 
 		try {
-			const response = await create("users", body);
+			const response = await create({ path: "users", body });
 			setNotification({
 				message: `User ${response.name} created successfully`,
 				type: "success",
@@ -371,4 +367,4 @@ export default function UserAddPage() {
 			</div>
 		</div>
 	);
-};
+}

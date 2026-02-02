@@ -7,18 +7,8 @@ import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
+import type { Authority, Role } from "../../types/models";
 import { deleteResource, get, getAll, update } from "../../utils/http";
-
-interface Authority {
-	id: string;
-	name: string;
-}
-
-interface Role {
-	id: string;
-	name: string;
-	authorities: Authority[];
-}
 
 const RoleDetailsPage = () => {
 	const navigate = useNavigate();

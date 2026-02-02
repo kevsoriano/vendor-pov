@@ -3,12 +3,8 @@ import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
+import type { Brand } from "../../../types/models";
 import { deleteResource, get, update } from "../../../utils/http";
-
-interface Brand {
-	id: string;
-	name: string;
-}
 
 export default function BrandDetailsPage() {
 	const navigate = useNavigate();

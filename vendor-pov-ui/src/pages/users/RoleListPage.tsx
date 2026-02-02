@@ -9,13 +9,8 @@ import type React from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
+import type { Role } from "../../types/models";
 import { getAll } from "../../utils/http";
-
-interface Role {
-	id: string;
-	name: string;
-	userCount: number;
-}
 
 function TabNavigation() {
 	const navigate = useNavigate();
