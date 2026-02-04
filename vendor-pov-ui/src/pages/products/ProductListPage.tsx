@@ -16,16 +16,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
+import { useQuery } from "@tanstack/react-query";
 import { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
 import ResourceTable from "../../components/common/ResourceTable";
+import type { Product } from "../../types/models";
 import { getAuthToken } from "../../utils/auth";
-
-interface Product {
-	name: string;
-	productId: number;
-}
+import { getAll } from "../../utils/http";
 
 function rowData(name: string, productId: number) {
 	return {
@@ -88,45 +86,21 @@ function Row(props: { row: ReturnType<typeof rowData> }) {
 }
 
 const Products = () => {
-	const [activeTab, setActiveTab] = useState("one");
-	const BASE_URL = "http://localhost:8082";
-	const token = getAuthToken();
+	const navigate = useNavigate();
 
-	const [isFetching, setIsFetching] = useState(false);
-	const [notification, setNotification] = useState<{
-		message: string;
-		type: "success" | "error" | "info";
-	} | null>(null);
-	const [products, setProducts] = useState<Product[]>([]);
+	const {
+		data: products = [],
+		isPending,
+		isError,
+		error,
+	} = useQuery<Product[]>({
+		queryKey: ["products"],
+		queryFn: () => getAll("products"),
+		staleTime: 0,
+		// gcTime: 30000,
+	});
 
-	useEffect(() => {
-		setIsFetching(true);
-		const fetchProducts = async () => {
-			const response = await fetch(`${BASE_URL}/products`, {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-			})
-				.then((response) => {
-					return response.json();
-				})
-				.then((data) => {
-					setProducts(data);
-					console.log(data);
-				})
-				.finally(() => {
-					setIsFetching(false);
-				});
-		};
-		fetchProducts();
-	}, []);
-
-	const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-		console.log(event);
-		setActiveTab(newValue);
-	};
+	console.log(products);
 
 	return (
 		<div>
@@ -136,30 +110,38 @@ const Products = () => {
 			<div className="flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center">
 				<p>Add, view and edit your products all in one place.</p>
 				<div className="flex gap-2">
-					<button className="bg-[#5d91b4] text-white">Import</button>
-					<button className="bg-[#00b740] text-white">
-						<Link to={"/products/add"}>Add Product</Link>
+					<button type="button" className="bg-[#5d91b4] text-white">
+						Import
+					</button>
+					<button
+						type="button"
+						className="bg-[#00b740] text-white px-4 py-2 rounded"
+						onClick={() => navigate("/products/add")}
+					>
+						Add
 					</button>
 				</div>
 			</div>
-			{notification && (
+
+			{isError && (
 				<NotificationBanner
-					message={notification.message}
-					type={notification.type}
-					onClose={() => setNotification(null)}
+					message={error instanceof Error ? error.message : "Failed to load"}
+					type="error"
+					onClose={() => {}} // Usually managed via query invalidation or local state if needed
 				/>
 			)}
 
-			{isFetching && <div>Loading products...</div>}
+			{isPending && <div>Loading products...</div>}
 
-			{!isFetching && products.length === 0 && <div>No products found.</div>}
+			{!isPending && products.length === 0 && <div>No products found.</div>}
 
-			{!isFetching && products.length > 0 && (
+			{!isPending && products.length > 0 && (
 				<ResourceTable
 					headers={["", "Name", "Product ID"]}
 					items={products}
-					renderRow={(product) => <Row key={product.productId} row={product} />}
-				></ResourceTable>
+					renderRow={(product) => <Row key={product.id} row={product} />}
+					isActionsAvailable={true}
+				/>
 			)}
 		</div>
 	);

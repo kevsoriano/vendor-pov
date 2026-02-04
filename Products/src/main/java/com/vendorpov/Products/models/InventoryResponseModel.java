@@ -1,11 +1,11 @@
 package com.vendorpov.Products.models;
 
-public class InventoryRequestModel {
+public class InventoryResponseModel {
 	private int quantity;
 	private int reorderThreshold;
 	private int reorderQty;
-	private OutletRequestModel outlet;
-	private SupplierRequestModel supplier;
+	private OutletResponseModel outlet;
+	private SupplierResponseModel supplier;
 
 	public int getQuantity() {
 		return quantity;
@@ -31,19 +31,19 @@ public class InventoryRequestModel {
 		this.reorderQty = reorderQty;
 	}
 
-	public OutletRequestModel getOutlet() {
+	public OutletResponseModel getOutlet() {
 		return outlet;
 	}
 
-	public void setOutlet(OutletRequestModel outlet) {
+	public void setOutlet(OutletResponseModel outlet) {
 		this.outlet = outlet;
 	}
 
-	public SupplierRequestModel getSupplier() {
+	public SupplierResponseModel getSupplier() {
 		return supplier;
 	}
 
-	public void setSupplier(SupplierRequestModel supplier) {
+	public void setSupplier(SupplierResponseModel supplier) {
 		this.supplier = supplier;
 	}
 

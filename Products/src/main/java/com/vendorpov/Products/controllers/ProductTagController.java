@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vendorpov.Products.models.ProductRequestModel;
+import com.vendorpov.Products.models.ProductTagRequestModel;
+import com.vendorpov.Products.models.ProductTagResponseModel;
 import com.vendorpov.Products.services.ProductTagService;
 import com.vendorpov.Products.shared.ProductTagDto;
 
@@ -36,34 +39,50 @@ public class ProductTagController {
 
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<ProductTagDto> createProductTag(@Valid @RequestBody ProductTagDto productTag) {
-		ProductTagDto returnValue = productTagService.createProductTag(productTag);
+	public ResponseEntity<ProductTagResponseModel> createProductTag(@Valid @RequestBody ProductRequestModel productTag) {
+		ProductTagDto productTagDto = modelMapper.map(productTag, ProductTagDto.class);
+		ProductTagDto createdProductTag = productTagService.createProductTag(productTagDto);
+		
+		ProductTagResponseModel returnValue = modelMapper.map(createdProductTag, ProductTagResponseModel.class);
+		returnValue.setId(createdProductTag.getId());
+		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<List<ProductTagDto>> getProductTags(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<ProductTagResponseModel>> getProductTags(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String sort) {
-		List<ProductTagDto> returnValue = new ArrayList<>();
-		
+		List<ProductTagResponseModel> returnValue = new ArrayList<>();
 		List<ProductTagDto> productTags = productTagService.getProductTags(page, limit);
-		productTags.forEach(productTag -> returnValue.add(productTag));
+		
+		productTags.forEach(productTag -> {
+			ProductTagResponseModel productTagDetails = modelMapper.map(productTag, ProductTagResponseModel.class);
+			productTagDetails.setId(productTag.getId());
+			returnValue.add(productTagDetails);
+		});
 		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@GetMapping(value = "/{productTagId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<ProductTagDto> getProductTag(@PathVariable String productTagId) {
-		ProductTagDto returnValue = productTagService.getProductTagByExternalId(productTagId);
+	public ResponseEntity<ProductTagResponseModel> getProductTag(@PathVariable String productTagId) {
+		ProductTagDto productTagDetails = productTagService.getProductTagByExternalId(productTagId);
+		ProductTagResponseModel returnValue = modelMapper.map(productTagDetails, ProductTagResponseModel.class);
+		returnValue.setId(productTagDetails.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 
 	@PutMapping(value = "/{productTagId}", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<ProductTagDto> updateProductTag(@PathVariable String productTagId,
-			@RequestBody ProductTagDto productTagDetails) {
-		ProductTagDto returnValue = productTagService.updateProductTag(productTagId, productTagDetails);
+	public ResponseEntity<ProductTagResponseModel> updateProductTag(@PathVariable String productTagId,
+			@RequestBody ProductTagRequestModel productTagDetails) {
+		ProductTagDto productTagDto = modelMapper.map(productTagDetails, ProductTagDto.class);
+		ProductTagDto updatedProductTag = productTagService.updateProductTag(productTagId, productTagDto);
+		
+		ProductTagResponseModel returnValue = modelMapper.map(updatedProductTag, ProductTagResponseModel.class);
+		returnValue.setId(updatedProductTag.getId());
+		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 

@@ -6,9 +6,9 @@ import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import type { Authority, Role } from "../../types/models";
-import { deleteResource, get, getAll, update } from "../../utils/http";
+import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
+import type { Authority, Role } from "../../../types/models";
+import { deleteResource, get, getAll, update } from "../../../utils/http";
 
 const RoleDetailsPage = () => {
 	const navigate = useNavigate();

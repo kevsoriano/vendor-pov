@@ -42,6 +42,12 @@ export interface Brand {
 	productCount: number;
 }
 
+export interface Product {
+	id: string;
+	name: string;
+	productId: number;
+}
+
 export interface ProductTag {
 	id: string;
 	name: string;

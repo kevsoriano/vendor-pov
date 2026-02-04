@@ -2,9 +2,6 @@ package com.vendorpov.Products.models;
 
 import java.util.List;
 
-import com.vendorpov.Products.shared.BrandDto;
-import com.vendorpov.Products.shared.ProductTagDto;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -13,8 +10,8 @@ public class ProductRequestModel {
 	@Size(min = 2, message = "name must be greater than or equal to 2 characters")
 	private String name;
 	private String description;
-	private BrandDto brand;
-	private List<ProductTagDto> productTags;
+//	private BrandDto brand;
+	private List<ProductTagRequestModel> productTags;
 	private List<ProductAttributeRequestModel> productAttributes;
 	private List<ProductVariantRequestModel> productVariants;
 
@@ -34,19 +31,19 @@ public class ProductRequestModel {
 		this.description = description;
 	}
 
-	public BrandDto getBrand() {
-		return brand;
-	}
+//	public BrandDto getBrand() {
+//		return brand;
+//	}
+//
+//	public void setBrand(BrandDto brand) {
+//		this.brand = brand;
+//	}
 
-	public void setBrand(BrandDto brand) {
-		this.brand = brand;
-	}
-
-	public List<ProductTagDto> getProductTags() {
+	public List<ProductTagRequestModel> getProductTags() {
 		return productTags;
 	}
 
-	public void setProductTags(List<ProductTagDto> productTags) {
+	public void setProductTags(List<ProductTagRequestModel> productTags) {
 		this.productTags = productTags;
 	}
 

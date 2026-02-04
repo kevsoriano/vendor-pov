@@ -1,14 +1,11 @@
 package com.vendorpov.Products;
 
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.vendorpov.Products.data.BaseEntity;
-import com.vendorpov.Products.data.BrandEntity;
 import com.vendorpov.Products.data.OutletEntity;
 import com.vendorpov.Products.data.ProductAttributeEntity;
 import com.vendorpov.Products.data.ProductEntity;
@@ -16,7 +13,6 @@ import com.vendorpov.Products.data.ProductTagEntity;
 import com.vendorpov.Products.data.ProductVariantEntity;
 import com.vendorpov.Products.data.SupplierEntity;
 import com.vendorpov.Products.shared.BaseDto;
-import com.vendorpov.Products.shared.BrandDto;
 import com.vendorpov.Products.shared.OutletDto;
 import com.vendorpov.Products.shared.ProductAttributeDto;
 import com.vendorpov.Products.shared.ProductDto;
@@ -27,33 +23,17 @@ import com.vendorpov.Products.shared.SupplierDto;
 @Configuration
 public class ModelMapperConfig {
 	@Bean
-	public ModelMapper modelMapper() {
+	ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
 
 		// 1. Set the Global Strategy to STRICT
 		modelMapper.getConfiguration()
-						.setMatchingStrategy(MatchingStrategies.STRICT)
-						.setAmbiguityIgnored(true);
-//						.setPropertyCondition(context -> {
-//							String destName = context.getMapping().getDestinationProperties()
-//					                .get(context.getMapping().getDestinationProperties().size() - 1).getName();
-//					        
-//					        // If it's not named "id", let it through
-//					        if (!destName.equalsIgnoreCase("id")) return true;
-//
-//					        // If it IS named "id", only let it through if we explicitly 
-//					        // mapped it from externalId (this happens in our TypeMaps)
-//					        return context.getMapping().getSourceProperties().stream()
-//					                .anyMatch(p -> p.getName().equalsIgnoreCase("externalId"));
-//					    });
-		
-		modelMapper.addConverter(context -> null, String.class, Long.class);
+						.setMatchingStrategy(MatchingStrategies.STRICT);
 
 		// 2. Explicitly map the ID mismatch
 		// Configure bidirectional mapping for BaseEntity <-> BaseDto
 		// Entity (externalId) -> DTO (id)
 		modelMapper.typeMap(BaseEntity.class, BaseDto.class).addMappings(mapper -> {
-	        mapper.skip(BaseDto::setId); // <--- THIS STOP THE DATABASE ID LEAK
 	        mapper.map(BaseEntity::getExternalId, BaseDto::setId);		
 	    });
 
@@ -102,13 +82,13 @@ public class ModelMapperConfig {
 				});
 		
 		// BrandEntity <-> BrandDto
-		modelMapper.typeMap(BrandEntity.class, BrandDto.class).includeBase(BaseEntity.class, BaseDto.class)
-				.addMappings(mapper -> mapper.map(BrandEntity::getExternalId, BrandDto::setId));
-		modelMapper.typeMap(BrandDto.class, BrandEntity.class).includeBase(BaseDto.class, BaseEntity.class)
-				.addMappings(mapper -> {
-					mapper.map(BrandDto::getId, BrandEntity::setExternalId);
-					mapper.skip(BrandEntity::setId);
-				});
+//		modelMapper.typeMap(BrandEntity.class, BrandDto.class).includeBase(BaseEntity.class, BaseDto.class)
+//				.addMappings(mapper -> mapper.map(BrandEntity::getExternalId, BrandDto::setId));
+//		modelMapper.typeMap(BrandDto.class, BrandEntity.class).includeBase(BaseDto.class, BaseEntity.class)
+//				.addMappings(mapper -> {
+//					mapper.map(BrandDto::getId, BrandEntity::setExternalId);
+//					mapper.skip(BrandEntity::setId);
+//				});
 
 //		// SupplierEntity <-> SupplierDto
 		modelMapper.typeMap(SupplierEntity.class, SupplierDto.class).includeBase(BaseEntity.class, BaseDto.class)

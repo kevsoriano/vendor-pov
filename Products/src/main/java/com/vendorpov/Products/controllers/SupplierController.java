@@ -3,6 +3,7 @@ package com.vendorpov.Products.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vendorpov.Products.models.SupplierRequestModel;
+import com.vendorpov.Products.models.SupplierResponseModel;
 import com.vendorpov.Products.services.SupplierService;
 import com.vendorpov.Products.shared.SupplierDto;
 
@@ -29,36 +32,53 @@ import jakarta.validation.Valid;
 public class SupplierController {
 	@Autowired
 	SupplierService supplierService;
+	@Autowired
+	ModelMapper modelMapper;
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<SupplierDto> createSupplier(@Valid @RequestBody SupplierDto supplierDetails) {
-		SupplierDto returnValue = supplierService.createSupplier(supplierDetails);
+	public ResponseEntity<SupplierResponseModel> createSupplier(@Valid @RequestBody SupplierRequestModel supplierDetails) {
+		SupplierDto supplierDto = modelMapper.map(supplierDetails, SupplierDto.class);
+		SupplierDto createdSupplier = supplierService.createSupplier(supplierDto);
+		
+		SupplierResponseModel returnValue = modelMapper.map(createdSupplier, SupplierResponseModel.class);
+		returnValue.setId(createdSupplier.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<List<SupplierDto>> getSuppliers(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<List<SupplierResponseModel>> getSuppliers(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int limit,
 			@RequestParam(required = false) String sort) {
-		List<SupplierDto> returnValue = new ArrayList<>();
-		
+		List<SupplierResponseModel> returnValue = new ArrayList<>();
 		List<SupplierDto> suppliers = supplierService.getSuppliers(page, limit);
-		suppliers.forEach(supplier -> returnValue.add(supplier));
+		
+		suppliers.forEach(supplier -> {
+			SupplierResponseModel supplierDetails = modelMapper.map(supplier, SupplierResponseModel.class);
+			supplierDetails.setId(supplier.getId());
+			returnValue.add(supplierDetails);
+		});
 		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@GetMapping(value="/{supplierId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<SupplierDto> getSupplier(@PathVariable String supplierId) {
-		SupplierDto returnValue = supplierService.getSupplierByExternalId(supplierId);
+	public ResponseEntity<SupplierResponseModel> getSupplier(@PathVariable String supplierId) {
+		SupplierDto supplier = supplierService.getSupplierByExternalId(supplierId);
+		SupplierResponseModel returnValue = modelMapper.map(supplier, SupplierResponseModel.class);
+		returnValue.setId(supplier.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	
 	@PutMapping(value="/{supplierId}", consumes = { MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE , MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<SupplierDto> updateSupplier(@PathVariable String supplierId, @RequestBody SupplierDto supplierDetails) {
-		SupplierDto returnValue = supplierService.updateSupplier(supplierId, supplierDetails);
+	public ResponseEntity<SupplierResponseModel> updateSupplier(@PathVariable String supplierId, @RequestBody SupplierRequestModel supplierDetails) {
+		SupplierDto supplierDto = modelMapper.map(supplierDetails, SupplierDto.class);
+		SupplierDto updatedSupplier = supplierService.updateSupplier(supplierId, supplierDto);
+		
+		SupplierResponseModel returnValue = modelMapper.map(updatedSupplier, SupplierResponseModel.class);
+		returnValue.setId(updatedSupplier.getId());
+		
 		return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 	}
 	

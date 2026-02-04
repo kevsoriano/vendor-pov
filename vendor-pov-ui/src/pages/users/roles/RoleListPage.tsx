@@ -7,10 +7,10 @@ import Tabs from "@mui/material/Tabs";
 import { useQuery } from "@tanstack/react-query";
 import type React from "react";
 import { useNavigate } from "react-router-dom";
-import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import ResourceTable from "../../components/common/ResourceTable";
-import type { Role } from "../../types/models";
-import { getAll } from "../../utils/http";
+import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
+import ResourceTable from "../../../components/common/ResourceTable";
+import type { Role } from "../../../types/models";
+import { getAll } from "../../../utils/http";
 
 function TabNavigation() {
 	const navigate = useNavigate();

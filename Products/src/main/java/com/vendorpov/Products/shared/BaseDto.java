@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 public abstract class BaseDto implements Serializable {
 	private static final long serialVersionUID = -496787152642605L;
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private String id;
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Instant createdOn;

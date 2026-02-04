@@ -5,6 +5,7 @@ import { action as LogoutAction } from "./pages/auth/Logout"; // Update the impo
 // import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
 import OutletListPage from "./pages/outlets/OutletsListPage";
+import AddProduct from "./pages/products/AddProduct2";
 import BrandAddPage from "./pages/products/Brands/BrandAddPage";
 import BrandDetailsPage from "./pages/products/Brands/BrandDetailsPage";
 import BrandListPage from "./pages/products/Brands/BrandListPage";
@@ -13,11 +14,12 @@ import Products from "./pages/products/ProductListPage";
 import ProductTagsListPage from "./pages/products/ProductTag/ProductTagsListPage";
 import SuppliersAddPage from "./pages/products/Suppliers/SuppliersAddPage";
 import SupplierListPage from "./pages/products/Suppliers/SuppliersListPage";
+import SellPage from "./pages/sell/SellPage";
 import TestCreatableSelect from "./pages/TestCreatableSelect";
-import RoleAddPage from "./pages/users/RoleAddPage";
-import RoleDetailsPage from "./pages/users/RoleDetailsPage";
-import RoleListPage from "./pages/users/RoleListPage";
 import RoleMembersPage from "./pages/users/RoleMembersPage";
+import RoleAddPage from "./pages/users/roles/RoleAddPage";
+import RoleDetailsPage from "./pages/users/roles/RoleDetailsPage";
+import RoleListPage from "./pages/users/roles/RoleListPage";
 import UserAddPage from "./pages/users/UserAddPage";
 import UserDetailsPage from "./pages/users/UserDetailsPage";
 import UserListPage from "./pages/users/UserListPage";
@@ -119,6 +121,16 @@ export const router = createBrowserRouter([
 			{
 				path: "products",
 				Component: Products,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "products/add",
+				Component: AddProduct,
+				loader: checkAuthLoader,
+			},
+			{
+				path: "sell",
+				Component: SellPage,
 				loader: checkAuthLoader,
 			},
 			{

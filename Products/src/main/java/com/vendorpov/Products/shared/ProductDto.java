@@ -8,7 +8,7 @@ public class ProductDto extends BaseDto {
 	private static final long serialVersionUID = -2800386597500305630L;
 	private String name;
 	private String description;
-	private BrandDto brand;
+//	private BrandDto brand;
 	private Set<ProductTagDto> productTags;
 	private Set<ProductAttributeDto> productAttributes;
 	private Set<ProductVariantDto> productVariants;
@@ -31,13 +31,13 @@ public class ProductDto extends BaseDto {
 		this.description = description;
 	}
 
-	public BrandDto getBrand() {
-		return brand;
-	}
-
-	public void setBrand(BrandDto brand) {
-		this.brand = brand;
-	}
+//	public BrandDto getBrand() {
+//		return brand;
+//	}
+//
+//	public void setBrand(BrandDto brand) {
+//		this.brand = brand;
+//	}
 
 	public Set<ProductTagDto> getProductTags() {
 		return productTags;

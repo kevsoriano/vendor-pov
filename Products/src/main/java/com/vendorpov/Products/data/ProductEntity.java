@@ -20,9 +20,9 @@ public class ProductEntity extends BaseEntity {
 	private String name;
 	@Column
 	private String description;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "brand_id", referencedColumnName = "externalId", nullable = false)
-	private BrandEntity brand;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "brand_id", referencedColumnName = "externalId", nullable = false)
+//	private BrandEntity brand;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@JoinTable(name = "product_tag_assignments", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_tag_id", referencedColumnName = "id"))
 	private Set<ProductTagEntity> productTags;
@@ -43,16 +43,16 @@ public class ProductEntity extends BaseEntity {
 		return description;
 	}
 
+//	public BrandEntity getBrand() {
+//		return brand;
+//	}
+//
+//	public void setBrand(BrandEntity brand) {
+//		this.brand = brand;
+//	}
+
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public BrandEntity getBrand() {
-		return brand;
-	}
-
-	public void setBrand(BrandEntity brand) {
-		this.brand = brand;
 	}
 
 	public Set<ProductTagEntity> getProductTags() {

@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.vendorpov.Products.data.BrandEntity;
-import com.vendorpov.Products.data.BrandRepository;
 import com.vendorpov.Products.data.InventoryEntity;
 import com.vendorpov.Products.data.OutletEntity;
 import com.vendorpov.Products.data.OutletRepository;
@@ -48,8 +46,8 @@ public class ProductServiceImpl implements ProductService {
 	OutletRepository outletRepository;
 	@Autowired
 	ProductVariantRepository productVariantRepository;
-	@Autowired
-	BrandRepository brandRepository;
+//	@Autowired
+//	BrandRepository brandRepository;
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -59,24 +57,18 @@ public class ProductServiceImpl implements ProductService {
 		ProductEntity productEntity = modelMapper.map(productDetails, ProductEntity.class);
 		productEntity.setExternalId(UUID.randomUUID().toString());
 
-		// 1. Validate the incoming request data first
-		if (productDetails.getBrand() == null || productDetails.getBrand().getId() == null) {
-		    throw new RuntimeException("Brand ID is required.");
-		}
-
-		// 2. Fetch the managed entity from the DB
-		BrandEntity savedBrand = brandRepository.findByExternalId(productDetails.getBrand().getId());
-
-		if (savedBrand == null) {
-		    throw new RuntimeException("Brand '" + productDetails.getBrand().getId() + "' does not exist.");
-		}
-
-		// 3. Establish the relationship
-		// This is the "Product-first" approach which is standard for ownership
-		savedBrand.addProduct(productEntity);
-
-		// Optional: Only if you need the Brand object to reflect the change in the same transaction
-//	    savedBrand.getProducts().add(productEntity);
+//		// 1. Validate the incoming request data first
+//		if (productDetails.getBrand() == null || productDetails.getBrand().getId() == null) {
+//		    throw new RuntimeException("Brand ID is required.");
+//		}
+//
+//		BrandEntity savedBrand = brandRepository.findByExternalId(productDetails.getBrand().getId());
+//
+//		if (savedBrand == null) {
+//		    throw new RuntimeException("Brand '" + productDetails.getBrand().getId() + "' does not exist.");
+//		}
+//
+//		savedBrand.addProduct(productEntity);
 
 		if (productEntity.getProductTags() != null && !productEntity.getProductTags().isEmpty()) {
 			Set<ProductTagEntity> tags = new HashSet<>();
@@ -217,7 +209,7 @@ public class ProductServiceImpl implements ProductService {
 
 		productDto.setName(productDetails.getName());
 		productDto.setDescription(productDetails.getDescription());
-		productDto.setBrand(productDetails.getBrand());
+//		productDto.setBrand(productDetails.getBrand());
 		productDto.setProductTags(productDetails.getProductTags());
 		productDto.setProductAttributes(productDetails.getProductAttributes());
 		productDto.setProductVariants(productDetails.getProductVariants());

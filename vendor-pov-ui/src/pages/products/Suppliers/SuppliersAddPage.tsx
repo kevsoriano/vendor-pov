@@ -3,13 +3,17 @@ import TextField from "@mui/material/TextField";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner";
-import { create } from "../../../utils/http";
+import { create, queryClient } from "../../../utils/http";
 
 export default function SuppliersAddPage() {
 	const navigate = useNavigate();
 
 	const { mutate, isPending, isError, error } = useMutation({
 		mutationFn: create,
+		onSuccess: () => {
+			navigate("/suppliers");
+			queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+		},
 	});
 
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -23,8 +27,6 @@ export default function SuppliersAddPage() {
 			path: "suppliers",
 			body: payload,
 		});
-
-		// navigate("/suppliers");
 	}
 
 	return (

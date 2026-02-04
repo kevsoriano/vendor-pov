@@ -1,5 +1,7 @@
+import { QueryClient } from "@tanstack/react-query";
 import { getAuthToken } from "./auth";
 
+export const queryClient = new QueryClient();
 const BASE_URL = "http://localhost:8082";
 
 export async function deleteResource(path: string, id: string) {

@@ -6,9 +6,9 @@ import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NotificationBanner from "../../components/common/NotificationBanner/NotificationBanner";
-import type { Authority } from "../../types/models.ts";
-import { create, getAll } from "../../utils/http";
+import NotificationBanner from "../../../components/common/NotificationBanner/NotificationBanner.tsx";
+import type { Authority } from "../../../types/models.ts";
+import { create, getAll } from "../../../utils/http.ts";
 
 export default function RoleAddPage() {
 	const navigate = useNavigate();

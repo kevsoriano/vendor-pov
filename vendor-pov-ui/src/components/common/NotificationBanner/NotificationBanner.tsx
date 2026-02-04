@@ -17,7 +17,7 @@ const NotificationBanner: React.FC<Props> = ({ message, type = "info", onClose }
 		// 1. Set the timer
 		const timer = setTimeout(() => {
 			setIsVisible(false); // Change state after 3 seconds
-		}, 3000);
+		}, 30000);
 
 		// 2. Cleanup function (Crucial to prevent memory leaks)
 		return () => clearTimeout(timer);
