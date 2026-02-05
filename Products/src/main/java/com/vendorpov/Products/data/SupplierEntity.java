@@ -14,7 +14,7 @@ public class SupplierEntity extends BaseEntity {
 	private static final long serialVersionUID = 5027515860634704602L;
 	@Column(unique = true, length = 50, nullable = false)
 	private String name;
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String description;
 	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<SupplierProductVariantEntity> supplierProductVariant;

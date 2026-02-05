@@ -75,13 +75,9 @@ public class ProductServiceImpl implements ProductService {
 			productEntity.getProductTags().forEach(tag -> {
 				ProductTagEntity savedProductTag = productTagRepository.findByName(tag.getName());
 				if (savedProductTag != null) {
-					savedProductTag.getProducts().add(productEntity);
 					tags.add(savedProductTag);
 				} else {
-					Set<ProductEntity> products = new HashSet<>();
-					products.add(productEntity);
 					tag.setExternalId(UUID.randomUUID().toString());
-					tag.setProducts(products);
 					tags.add(tag);
 				}
 			});

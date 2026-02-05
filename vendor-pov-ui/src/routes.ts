@@ -5,7 +5,7 @@ import { action as LogoutAction } from "./pages/auth/Logout"; // Update the impo
 // import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
 import OutletListPage from "./pages/outlets/OutletsListPage";
-import AddProduct from "./pages/products/AddProduct2";
+import AddProduct from "./pages/products/AddProduct";
 import BrandAddPage from "./pages/products/Brands/BrandAddPage";
 import BrandDetailsPage from "./pages/products/Brands/BrandDetailsPage";
 import BrandListPage from "./pages/products/Brands/BrandListPage";
