@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { Product } from "../../types/models";
+import type { Product, ProductVariant } from "../../types/models";
 import { getAll } from "../../utils/http";
 import Cart from "./components/Cart";
 import ProductCard from "./components/ProductCard";
 
 interface CartItem {
 	product: Product;
+	variant?: ProductVariant;
 	quantity: number;
 }
 
@@ -24,26 +25,47 @@ export default function SellPage() {
 
 	const [cart, setCart] = useState<CartItem[]>([]);
 
-	const addToCart = (product: Product) => {
+	const addToCart = (product: Product, variant?: ProductVariant) => {
 		setCart((prev) => {
-			const existing = prev.find((item) => item.product.id === product.id);
+			// Create a unique key based on product and variant
+			const cartKey = variant ? `${product.id}-${variant.id}` : product.id;
+			const existing = prev.find((item) => {
+				const itemKey = item.variant
+					? `${item.product.id}-${item.variant.id}`
+					: item.product.id;
+				return itemKey === cartKey;
+			});
+
 			if (existing) {
-				return prev.map((item) =>
-					item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
-				);
+				return prev.map((item) => {
+					const itemKey = item.variant
+						? `${item.product.id}-${item.variant.id}`
+						: item.product.id;
+					return itemKey === cartKey ? { ...item, quantity: item.quantity + 1 } : item;
+				});
 			}
-			return [...prev, { product, quantity: 1 }];
+			return [...prev, { product, variant, quantity: 1 }];
 		});
 	};
 
-	const removeFromCart = (productId: string) => {
-		setCart((prev) => prev.filter((item) => item.product.id !== productId));
+	const removeFromCart = (productId: string, variantId?: string) => {
+		setCart((prev) =>
+			prev.filter((item) => {
+				const itemKey = item.variant ? `${item.product.id}-${item.variant.id}` : item.product.id;
+				const targetKey = variantId ? `${productId}-${variantId}` : productId;
+				return itemKey !== targetKey;
+			}),
+		);
 	};
 
-	const updateQuantity = (productId: string, quantity: number) => {
+	const updateQuantity = (productId: string, quantity: number, variantId?: string) => {
 		if (quantity < 1) return;
 		setCart((prev) =>
-			prev.map((item) => (item.product.id === productId ? { ...item, quantity } : item)),
+			prev.map((item) => {
+				const itemKey = item.variant ? `${item.product.id}-${item.variant.id}` : item.product.id;
+				const targetKey = variantId ? `${productId}-${variantId}` : productId;
+				return itemKey === targetKey ? { ...item, quantity } : item;
+			}),
 		);
 	};
 

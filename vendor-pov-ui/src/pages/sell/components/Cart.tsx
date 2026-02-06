@@ -1,14 +1,15 @@
-import type { Product } from "../../../types/models";
+import type { Product, ProductVariant } from "../../../types/models";
 
 interface CartItem {
 	product: Product;
+	variant?: ProductVariant;
 	quantity: number;
 }
 
 interface CartProps {
 	cart: CartItem[];
-	onRemoveFromCart: (productId: string) => void;
-	onUpdateQuantity: (productId: string, quantity: number) => void;
+	onRemoveFromCart: (productId: string, variantId?: string) => void;
+	onUpdateQuantity: (productId: string, quantity: number, variantId?: string) => void;
 	onCheckout: () => void;
 }
 
@@ -50,15 +51,22 @@ const Cart: React.FC<CartProps> = ({ cart, onRemoveFromCart, onUpdateQuantity, o
 						<tbody>
 							{cart.map((item, idx) => (
 								<tr
-									key={item.product.id}
+									key={`${item.product.id}-${item.variant?.id || "no-variant"}`}
 									className={
 										idx % 2 === 0
 											? "bg-gray-50 hover:bg-green-50 transition"
 											: "hover:bg-green-50 transition"
 									}
 								>
-									<td className="py-2 px-2 text-center font-medium">
-										{item.product.name}
+									<td className="py-2 px-2 text-center">
+										<div className="font-medium">{item.product.name}</div>
+										{item.variant && (
+											<div className="text-xs text-gray-500 mt-1">
+												{item.variant.productAttributes
+													?.map((attr) => `${attr.attributeKey}: ${attr.attributeValue}`)
+													.join(" • ") || item.variant.variantSku}
+											</div>
+										)}
 									</td>
 									<td className="py-2 px-2 text-center">
 										<input
@@ -66,7 +74,11 @@ const Cart: React.FC<CartProps> = ({ cart, onRemoveFromCart, onUpdateQuantity, o
 											min={1}
 											value={item.quantity}
 											onChange={(e) =>
-												onUpdateQuantity(item.product.id, Number(e.target.value))
+												onUpdateQuantity(
+													item.product.id,
+													Number(e.target.value),
+													item.variant?.id,
+												)
 											}
 											className="w-16 border border-green-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-green-400 outline-none transition"
 										/>
@@ -75,7 +87,7 @@ const Cart: React.FC<CartProps> = ({ cart, onRemoveFromCart, onUpdateQuantity, o
 										<button
 											type="button"
 											className="text-red-600 font-semibold hover:underline hover:text-red-800 transition"
-											onClick={() => onRemoveFromCart(item.product.id)}
+											onClick={() => onRemoveFromCart(item.product.id, item.variant?.id)}
 										>
 											Remove
 										</button>

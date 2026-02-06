@@ -42,10 +42,24 @@ export interface Brand {
 	productCount: number;
 }
 
+export interface ProductAttribute {
+	id: string;
+	attributeKey: string;
+	attributeValue: string;
+}
+
+export interface ProductVariant {
+	id: string;
+	variantSku: string;
+	productAttributes: ProductAttribute[];
+}
+
 export interface Product {
 	id: string;
 	name: string;
 	productId: number;
+	description?: string;
+	productVariants?: ProductVariant[];
 }
 
 export interface ProductTag {
