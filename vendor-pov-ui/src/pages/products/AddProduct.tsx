@@ -7,7 +7,8 @@ import AutocompleteSelect, {
 } from "../../components/common/AutocompleteSelect";
 import type { ProductTag, Supplier } from "../../types/models";
 import { create, getAll, queryClient } from "../../utils/http";
-import AttributeInput from "./components/AttributeInput";
+import AttributeInput, { type AttributeRow } from "./components/AttributeInput";
+import ProductVariantsTable from "./components/ProductVariantsTable";
 
 const AddProduct = () => {
 	const navigate = useNavigate();
@@ -79,6 +80,7 @@ const AddProduct = () => {
 
 	const [selectedSupplier, setSelectedSupplier] = React.useState<Supplier | null>(null);
 	const [selectedProductTag, setSelectedProductTag] = React.useState<ProductTag | null>(null);
+	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
 
 	return (
 		<div>
@@ -180,7 +182,11 @@ const AddProduct = () => {
 
 					{/* AttributeInput component for adding attributes */}
 					<div className="px-4 sm:px-6 lg:px-8 py-4">
-						<AttributeInput />
+						<AttributeInput value={attributes} onChange={setAttributes} />
+						<ProductVariantsTable
+							attributes={attributes}
+							header={attributes.map((attr) => attr.name)}
+						/>
 					</div>
 					<div>
 						<button type="submit">Save</button>

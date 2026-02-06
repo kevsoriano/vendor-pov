@@ -1,27 +1,31 @@
 import { Box, Button, Chip, InputAdornment, Stack, TextField } from "@mui/material";
 import type React from "react";
-import { useState } from "react";
 
-interface AttributeRow {
+export interface AttributeRow {
 	rowId: string;
 	name: string;
 	values: string[];
 }
 
-const AttributeInput: React.FC = () => {
-	const [attributes, setAttributes] = useState<AttributeRow[]>([]);
+interface AttributeInputProps {
+	value: AttributeRow[];
+	onChange: (nextValue: AttributeRow[]) => void;
+}
+
+const AttributeInput: React.FC<AttributeInputProps> = ({ value, onChange }) => {
+	const attributes = value;
 
 	const handleAddAttribute = () => {
 		if (attributes.length < 3) {
 			const newId = Date.now().toString() + Math.random().toString(36).slice(2);
-			setAttributes([...attributes, { rowId: newId, name: "", values: [] }]);
+			onChange([...attributes, { rowId: newId, name: "", values: [] }]);
 		}
 	};
 
 	const handleNameChange = (index: number, value: string) => {
 		const updated = [...attributes];
 		updated[index].name = value;
-		setAttributes(updated);
+		onChange(updated);
 	};
 
 	const handleChipAdd = (index: number, value: string) => {
@@ -29,14 +33,14 @@ const AttributeInput: React.FC = () => {
 		const updated = [...attributes];
 		if (updated[index].values.length < 5 && !updated[index].values.includes(value)) {
 			updated[index].values.push(value);
-			setAttributes(updated);
+			onChange(updated);
 		}
 	};
 
 	const handleChipDelete = (index: number, chip: string) => {
 		const updated = [...attributes];
 		updated[index].values = updated[index].values.filter((v) => v !== chip);
-		setAttributes(updated);
+		onChange(updated);
 	};
 
 	return (
