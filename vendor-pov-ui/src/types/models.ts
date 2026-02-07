@@ -36,6 +36,11 @@ export interface Supplier {
 	productCount: number;
 }
 
+export interface Outlet {
+	id: string;
+	name: string;
+}
+
 export interface Brand {
 	id: string;
 	name: string;

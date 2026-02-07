@@ -5,11 +5,12 @@ import { Link } from "react-router-dom";
 // Type definitions
 import type { AutocompleteSelectOption } from "../../components/common/AutocompleteSelect";
 import AutocompleteSelect from "../../components/common/AutocompleteSelect";
-import type { ProductTag, Supplier } from "../../types/models";
+import type { Outlet, ProductTag, Supplier } from "../../types/models";
 import { create, getAll, queryClient } from "../../utils/http";
 import type { AttributeRow } from "./components/AttributeInput";
 import AttributeInput from "./components/AttributeInput";
 import ProductVariantsTable from "./components/ProductVariantsTable";
+import OutletsTable from "./OutletsTable";
 
 const PRODUCT_TYPES = ["Standard", "Variant", "Composite"] as const;
 type ProductType = (typeof PRODUCT_TYPES)[number];
@@ -42,9 +43,16 @@ const AddProduct: React.FC = () => {
 		queryFn: () => getAll("suppliers"),
 		staleTime: 0,
 	});
+
 	const { data: productTags = [] } = useQuery<ProductTag[]>({
 		queryKey: ["productTags"],
 		queryFn: () => getAll("productTags"),
+		staleTime: 0,
+	});
+
+	const { data: outlets = [] } = useQuery<Outlet[]>({
+		queryKey: ["outlets"],
+		queryFn: () => getAll("outlets"),
 		staleTime: 0,
 	});
 
@@ -52,9 +60,15 @@ const AddProduct: React.FC = () => {
 		id: supplier.id,
 		name: supplier.name,
 	}));
+
 	const productTagOptions: AutocompleteSelectOption[] = productTags.map((tag) => ({
 		id: tag.id,
 		name: tag.name,
+	}));
+
+	const outletOptions: AutocompleteSelectOption[] = outlets.map((outlet) => ({
+		id: outlet.id,
+		name: outlet.name,
 	}));
 
 	const { mutate: mutateSupplier } = useMutation({
@@ -63,6 +77,7 @@ const AddProduct: React.FC = () => {
 			queryClient.invalidateQueries({ queryKey: ["suppliers"] });
 		},
 	});
+
 	const { mutate: mutateProductTag } = useMutation({
 		mutationFn: create,
 		onSuccess: () => {
@@ -90,6 +105,7 @@ const AddProduct: React.FC = () => {
 			<div className="px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
 				<h1>Products</h1>
 			</div>
+
 			<div className="flex justify-between px-4 sm:px-6 lg:px-8 py-6 items-center">
 				<p>Add, view and edit your products all in one place.</p>
 				<div className="flex gap-2">
@@ -108,20 +124,23 @@ const AddProduct: React.FC = () => {
 			<div className="flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
 				<form onSubmit={handleSubmit}>
 					<div className="flex">
-						<div className="w-[15%]">
+						<div className="w-[35%]">
 							<p>General</p>
 						</div>
 						<div className="flex flex-col w-full">
-							<TextField
-								label="Name"
-								name="name"
-								id="name"
-								placeholder="Enter a product name"
-								variant="outlined"
-								size="small"
-								fullWidth
-							/>
-							<div className="flex flex-col w-[78%] mb-4 text-sm font-medium">
+							<div className="flex flex-col w-full mb-4 text-sm font-medium">
+								<TextField
+									label="Name"
+									name="name"
+									id="name"
+									placeholder="Enter a product name"
+									variant="outlined"
+									size="small"
+									fullWidth
+								/>
+							</div>
+
+							<div className="flex flex-col w-full mb-4 text-sm font-medium">
 								<TextField
 									label="Description"
 									name="description"
@@ -132,7 +151,7 @@ const AddProduct: React.FC = () => {
 									fullWidth
 								/>
 							</div>
-							<div className="flex flex-col w-[78%] mb-4">
+							<div className="flex flex-col w-full mb-4">
 								<AutocompleteSelect
 									options={productTagOptions}
 									resource={selectedProductTag}
@@ -201,17 +220,63 @@ const AddProduct: React.FC = () => {
 									))}
 								</fieldset>
 							</div>
-							<div className="flex flex-col w-[78%] mb-4">
-								<AutocompleteSelect
-									options={supplierOptions}
-									resource={selectedSupplier}
-									onChange={(option: AutocompleteSelectOption | null) => {
-										setSelectedSupplier(option);
-									}}
-									placeholder="Select or create a supplier"
-									onCreateOption={handleCreateSupplier}
-									label={"Supplier"}
-								/>
+							<div className="flex flex-grow w-full mb-4 gap-4">
+								<div className="flex-1">
+									<AutocompleteSelect
+										options={supplierOptions}
+										resource={selectedSupplier}
+										onChange={(option: AutocompleteSelectOption | null) => {
+											setSelectedSupplier(option);
+										}}
+										placeholder="Select or create a supplier"
+										onCreateOption={handleCreateSupplier}
+										label={"Supplier"}
+									/>
+								</div>
+								<div className="flex-1">
+									<TextField
+										label="Supplier Code"
+										name="supplierCode"
+										id="supplierCode"
+										placeholder="Enter a supplier code"
+										variant="outlined"
+										fullWidth
+									/>
+								</div>
+								<div className="flex-1">
+									<TextField
+										label="Supplier Price"
+										name="supplierPrice"
+										id="supplierPrice"
+										placeholder="Enter a supplier price"
+										variant="outlined"
+										fullWidth
+										type="number"
+										InputProps={{
+											startAdornment: <span style={{ marginRight: 4 }}>$</span>,
+											inputMode: "numeric",
+										}}
+										inputProps={{
+											style: {
+												MozAppearance: "textfield",
+												textAlign: "right",
+											},
+											className: "no-spinner",
+											step: "0.01",
+										}}
+										onChange={(e) => {
+											const value = e.target.value;
+											const formatted = value.includes(".")
+												? value.replace(/^(\d+\.\d{0,2}).*$/, "$1")
+												: value;
+											e.target.value = formatted;
+										}}
+									/>
+								</div>
+							</div>
+							{/* Outlets Table */}
+							<div className="mb-6">
+								<OutletsTable outlets={outlets} />
 							</div>
 						</div>
 					</div>
