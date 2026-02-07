@@ -100,6 +100,17 @@ const AddProduct: React.FC = () => {
 		// handle form submission logic here
 	};
 
+	// Display FormData visually
+	const formData = {
+		selectedSupplier,
+		selectedProductTag,
+		attributes,
+		productType,
+		suppliers,
+		productTags,
+		outlets,
+	};
+
 	return (
 		<div>
 			<div className="px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
@@ -278,6 +289,26 @@ const AddProduct: React.FC = () => {
 							<div className="mb-6">
 								<OutletsTable outlets={outlets} />
 							</div>
+							<div className="mb-4">
+								<TextField
+									label="Tax Rate"
+									name="taxRate"
+									id="taxRate"
+									placeholder="Enter a tax rate"
+									variant="outlined"
+									fullWidth
+								/>
+							</div>
+							<div className="mb-4">
+								<TextField
+									label="Price"
+									name="price"
+									id="price"
+									placeholder="Enter a price"
+									variant="outlined"
+									fullWidth
+								/>
+							</div>
 						</div>
 					</div>
 					{/* AttributeInput and ProductVariantsTable only for Variant */}
@@ -295,6 +326,11 @@ const AddProduct: React.FC = () => {
 						<button type="button">Cancel</button>
 					</div>
 				</form>
+			</div>
+			{/* Display FormData visually */}
+			<div className="bg-white border rounded p-4 my-4">
+				<h2 className="font-bold mb-2">Current Form Data</h2>
+				<pre>{JSON.stringify(formData, null, 2)}</pre>
 			</div>
 		</div>
 	);
