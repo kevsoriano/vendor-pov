@@ -85,14 +85,44 @@ const AddProduct: React.FC = () => {
 		mutateSupplier({ path: "suppliers", body: newSupplier });
 		return newSupplier;
 	};
+
 	const handleCreateProductTag = async (inputValue: string): Promise<AutocompleteSelectOption> => {
 		const newProductTag = { name: inputValue, id: Math.random().toString() };
 		mutateProductTag({ path: "productTags", body: newProductTag });
 		return newProductTag;
 	};
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		// handle form submission logic here
+		// Construct payload for request
+		const payload = {
+			name: "", // Fill from form
+			description: "", // Fill from form
+			productType,
+			productTags: selectedProductTag ? [selectedProductTag] : [],
+			productAttributes: attributes || [],
+			productVariants: [
+				{
+					variantSku: "", // Fill from form or variant logic
+					productAttributes: [], // Fill from variant logic
+					supplierProductVariants: [
+						{
+							supplier: selectedSupplier ? { id: selectedSupplier.id } : {},
+							supplierPrice: 0, // Fill from form
+							taxRate: 0, // Fill from form
+						},
+					],
+					inventories: outlets.map((outlet) => ({
+						outlet: { id: outlet.id },
+						supplier: selectedSupplier ? { id: selectedSupplier.id } : {},
+						quantity: 0, // Fill from table input
+						reorderThreshold: 0, // Fill from table input
+						reorderQty: 0, // Fill from table input
+					})),
+				},
+			],
+		};
 	};
 
 	// Display FormData visually
