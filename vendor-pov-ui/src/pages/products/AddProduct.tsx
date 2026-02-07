@@ -66,11 +66,6 @@ const AddProduct: React.FC = () => {
 		name: tag.name,
 	}));
 
-	const outletOptions: AutocompleteSelectOption[] = outlets.map((outlet) => ({
-		id: outlet.id,
-		name: outlet.name,
-	}));
-
 	const { mutate: mutateSupplier } = useMutation({
 		mutationFn: create,
 		onSuccess: () => {
