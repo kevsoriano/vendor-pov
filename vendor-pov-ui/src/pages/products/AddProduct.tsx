@@ -1,68 +1,61 @@
 import TextField from "@mui/material/TextField";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AutocompleteSelect, {
-	type AutocompleteSelectOption,
-} from "../../components/common/AutocompleteSelect";
+import { Link } from "react-router-dom";
+// Type definitions
+import type { AutocompleteSelectOption } from "../../components/common/AutocompleteSelect";
+import AutocompleteSelect from "../../components/common/AutocompleteSelect";
 import type { ProductTag, Supplier } from "../../types/models";
 import { create, getAll, queryClient } from "../../utils/http";
-import AttributeInput, { type AttributeRow } from "./components/AttributeInput";
+import type { AttributeRow } from "./components/AttributeInput";
+import AttributeInput from "./components/AttributeInput";
 import ProductVariantsTable from "./components/ProductVariantsTable";
 
-const AddProduct = () => {
-	const navigate = useNavigate();
+const PRODUCT_TYPES = ["Standard", "Variant", "Composite"] as const;
+type ProductType = (typeof PRODUCT_TYPES)[number];
+const PRODUCT_TYPE_DETAILS: { value: ProductType; description: string }[] = [
+	{
+		value: "Standard",
+		description: "A single product with no variants.",
+	},
+	{
+		value: "Variant",
+		description: "A product with multiple variants (e.g., size, color).",
+	},
+	{
+		value: "Composite",
+		description: "A product composed of other products (bundles, kits).",
+	},
+];
+
+const AddProduct: React.FC = () => {
+	const [selectedSupplier, setSelectedSupplier] = React.useState<AutocompleteSelectOption | null>(
+		null,
+	);
+	const [selectedProductTag, setSelectedProductTag] =
+		React.useState<AutocompleteSelectOption | null>(null);
+	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
+	const [productType, setProductType] = React.useState<ProductType>("Standard");
+
 	const { data: suppliers = [] } = useQuery<Supplier[]>({
 		queryKey: ["suppliers"],
 		queryFn: () => getAll("suppliers"),
 		staleTime: 0,
-		// gcTime: 30000,
 	});
-
 	const { data: productTags = [] } = useQuery<ProductTag[]>({
 		queryKey: ["productTags"],
 		queryFn: () => getAll("productTags"),
 		staleTime: 0,
-		// gcTime: 30000,
 	});
-
-	const handleSubmit = (formData: FormData) => {
-		const name = formData.get("name");
-		const description = formData.get("description");
-		console.log(name, description);
-	};
 
 	const supplierOptions: AutocompleteSelectOption[] = suppliers.map((supplier) => ({
 		id: supplier.id,
 		name: supplier.name,
 	}));
-
 	const productTagOptions: AutocompleteSelectOption[] = productTags.map((tag) => ({
 		id: tag.id,
 		name: tag.name,
 	}));
-
-	const handleCreateSupplier = async (inputValue: string): Promise<AutocompleteSelectOption> => {
-		// Simulate API call or resource creation
-		const newSupplier = { name: inputValue };
-		const payload = newSupplier;
-		mutateSupplier({
-			path: "suppliers",
-			body: payload,
-		});
-		return newSupplier;
-	};
-
-	const handleCreateProductTag = async (inputValue: string): Promise<AutocompleteSelectOption> => {
-		// Simulate API call or resource creation
-		const newProductTag = { name: inputValue };
-		const payload = newProductTag;
-		mutateProductTag({
-			path: "productTags",
-			body: payload,
-		});
-		return newProductTag;
-	};
 
 	const { mutate: mutateSupplier } = useMutation({
 		mutationFn: create,
@@ -70,7 +63,6 @@ const AddProduct = () => {
 			queryClient.invalidateQueries({ queryKey: ["suppliers"] });
 		},
 	});
-
 	const { mutate: mutateProductTag } = useMutation({
 		mutationFn: create,
 		onSuccess: () => {
@@ -78,9 +70,20 @@ const AddProduct = () => {
 		},
 	});
 
-	const [selectedSupplier, setSelectedSupplier] = React.useState<Supplier | null>(null);
-	const [selectedProductTag, setSelectedProductTag] = React.useState<ProductTag | null>(null);
-	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
+	const handleCreateSupplier = async (inputValue: string): Promise<AutocompleteSelectOption> => {
+		const newSupplier = { name: inputValue, id: Math.random().toString() };
+		mutateSupplier({ path: "suppliers", body: newSupplier });
+		return newSupplier;
+	};
+	const handleCreateProductTag = async (inputValue: string): Promise<AutocompleteSelectOption> => {
+		const newProductTag = { name: inputValue, id: Math.random().toString() };
+		mutateProductTag({ path: "productTags", body: newProductTag });
+		return newProductTag;
+	};
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		// handle form submission logic here
+	};
 
 	return (
 		<div>
@@ -91,12 +94,11 @@ const AddProduct = () => {
 				<p>Add, view and edit your products all in one place.</p>
 				<div className="flex gap-2">
 					<button type="button" className="bg-[#5d91b4] text-white">
-						<Link to={"/products/add"}>Cancel</Link>
+						<Link to="/products/add">Cancel</Link>
 					</button>
 					<button
-						type="button"
-						className={`inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700
-                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+						type="submit"
+						className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 					>
 						Save
 					</button>
@@ -104,24 +106,21 @@ const AddProduct = () => {
 			</div>
 
 			<div className="flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
-				<form action={handleSubmit}>
+				<form onSubmit={handleSubmit}>
 					<div className="flex">
 						<div className="w-[15%]">
 							<p>General</p>
 						</div>
 						<div className="flex flex-col w-full">
-							<div className="flex flex-col w-[78%] mb-4">
-								<TextField
-									label="Name"
-									name="name"
-									id="name"
-									placeholder="Enter a product name"
-									variant="outlined"
-									size="small"
-									fullWidth
-								/>
-							</div>
-
+							<TextField
+								label="Name"
+								name="name"
+								id="name"
+								placeholder="Enter a product name"
+								variant="outlined"
+								size="small"
+								fullWidth
+							/>
 							<div className="flex flex-col w-[78%] mb-4 text-sm font-medium">
 								<TextField
 									label="Description"
@@ -133,22 +132,12 @@ const AddProduct = () => {
 									fullWidth
 								/>
 							</div>
-
 							<div className="flex flex-col w-[78%] mb-4">
 								<AutocompleteSelect
 									options={productTagOptions}
-									resource={
-										selectedProductTag
-											? { id: selectedProductTag.id, name: selectedProductTag.name }
-											: null
-									}
-									onChange={(option) => {
-										if (option) {
-											const productTag = productTags.find((pt) => pt.id === option.id);
-											setSelectedProductTag(productTag ?? null);
-										} else {
-											setSelectedProductTag(null);
-										}
+									resource={selectedProductTag}
+									onChange={(option: AutocompleteSelectOption | null) => {
+										setSelectedProductTag(option);
 									}}
 									placeholder="Select or create a product tag"
 									onCreateOption={handleCreateProductTag}
@@ -156,21 +145,68 @@ const AddProduct = () => {
 								/>
 							</div>
 
+							{/* ProductType selection */}
+							<div className="flex flex-col w-full mb-4">
+								<fieldset
+									className="flex w-full border-0 p-0 m-0"
+									id="productType"
+									aria-label="Product Type"
+									style={{ width: "100%" }}
+								>
+									{PRODUCT_TYPE_DETAILS.map((typeObj, idx) => (
+										<button
+											key={typeObj.value}
+											type="button"
+											id={`productType-${typeObj.value}`}
+											className={`flex-1 flex flex-col items-center justify-center px-0 py-4 border text-sm font-medium focus:outline-none transition-all duration-200 shadow-sm
+												${
+													productType === typeObj.value
+														? "bg-gradient-to-b from-indigo-600 to-indigo-500 text-white border-indigo-700 shadow-lg"
+														: "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:shadow-md"
+												}
+          
+											`}
+											style={{
+												margin: 0,
+												minWidth: 0,
+												minHeight: 110,
+												boxShadow:
+													productType === typeObj.value
+														? "0 4px 16px 0 rgba(99,102,241,0.10)"
+														: undefined,
+												borderRight:
+													idx < PRODUCT_TYPE_DETAILS.length - 1 ? "none" : undefined,
+											}}
+											aria-pressed={productType === typeObj.value}
+											onClick={() => setProductType(typeObj.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													setProductType(typeObj.value);
+												}
+											}}
+										>
+											<span className="font-semibold text-lg tracking-wide mb-1">
+												{typeObj.value}
+											</span>
+											<div
+												className={`w-8 h-0.5 my-1 ${productType === typeObj.value ? "bg-white/70" : "bg-gray-300"}`}
+											/>
+											<span
+												className={`text-xs mt-1 text-center transition-colors duration-200 ${productType === typeObj.value ? "text-white" : "text-gray-500"}`}
+												style={{ minHeight: 32, display: "flex", alignItems: "center" }}
+											>
+												{typeObj.description}
+											</span>
+										</button>
+									))}
+								</fieldset>
+							</div>
 							<div className="flex flex-col w-[78%] mb-4">
 								<AutocompleteSelect
 									options={supplierOptions}
-									resource={
-										selectedSupplier
-											? { id: selectedSupplier.id, name: selectedSupplier.name }
-											: null
-									}
-									onChange={(option) => {
-										if (option) {
-											const supplier = suppliers.find((s) => s.id === option.id);
-											setSelectedSupplier(supplier ?? null);
-										} else {
-											setSelectedSupplier(null);
-										}
+									resource={selectedSupplier}
+									onChange={(option: AutocompleteSelectOption | null) => {
+										setSelectedSupplier(option);
 									}}
 									placeholder="Select or create a supplier"
 									onCreateOption={handleCreateSupplier}
@@ -179,15 +215,16 @@ const AddProduct = () => {
 							</div>
 						</div>
 					</div>
-
-					{/* AttributeInput component for adding attributes */}
-					<div className="px-4 sm:px-6 lg:px-8 py-4">
-						<AttributeInput value={attributes} onChange={setAttributes} />
-						<ProductVariantsTable
-							attributes={attributes}
-							header={attributes.map((attr) => attr.name)}
-						/>
-					</div>
+					{/* AttributeInput and ProductVariantsTable only for Variant */}
+					{productType === "Variant" && (
+						<div className="px-4 sm:px-6 lg:px-8 py-4">
+							<AttributeInput value={attributes} onChange={setAttributes} />
+							<ProductVariantsTable
+								attributes={attributes}
+								header={attributes.map((attr) => attr.name)}
+							/>
+						</div>
+					)}
 					<div>
 						<button type="submit">Save</button>
 						<button type="button">Cancel</button>

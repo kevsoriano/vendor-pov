@@ -1,5 +1,5 @@
-import type { Product, ProductVariant } from "../../../types/models";
 import { useState } from "react";
+import type { Product, ProductVariant } from "../../../types/models";
 import VariantSelectionModal from "./VariantSelectionModal";
 
 interface ProductCardProps {
@@ -38,6 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 					stroke="currentColor"
 					viewBox="0 0 24 24"
 				>
+					<title>Product image placeholder</title>
 					<path
 						strokeLinecap="round"
 						strokeLinejoin="round"
