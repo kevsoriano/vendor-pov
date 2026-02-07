@@ -3,6 +3,8 @@ package com.vendorpov.Products.shared;
 import java.time.Instant;
 import java.util.Set;
 
+import com.vendorpov.Products.data.ProductType;
+
 public class ProductDto extends BaseDto {
 
 	private static final long serialVersionUID = -2800386597500305630L;
@@ -10,6 +12,7 @@ public class ProductDto extends BaseDto {
 	private String description;
 //	private BrandDto brand;
 	private Set<ProductTagDto> productTags;
+	private ProductType productType;
 	private Set<ProductAttributeDto> productAttributes;
 	private Set<ProductVariantDto> productVariants;
 	private Instant createdOn;
@@ -45,6 +48,14 @@ public class ProductDto extends BaseDto {
 
 	public void setProductTags(Set<ProductTagDto> productTags) {
 		this.productTags = productTags;
+	}
+
+	public ProductType getProductType() {
+		return productType;
+	}
+
+	public void setProductType(ProductType productType) {
+		this.productType = productType;
 	}
 
 	public Set<ProductAttributeDto> getProductAttributes() {

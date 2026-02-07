@@ -23,6 +23,8 @@ brew services start postgresql
 brew services stop postgresql
 ```
 ## Other useful commands
-\l - list database
+\l - list databases
 \du - list users
+\dt - list tables
 SET ROLE new_username; - switch user
+DROP DATABASE db_name;

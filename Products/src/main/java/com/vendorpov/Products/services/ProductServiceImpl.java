@@ -91,6 +91,10 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 
+		if(productEntity.getProductType().toString() == "STANDARD" && !(productEntity.getProductVariants().size() == 1)) {
+			throw new RuntimeException("Standard products must have exactly 1 product variant."); 
+		}
+		
 		if (productEntity.getProductVariants() != null) {
 			for (ProductVariantEntity variant : productEntity.getProductVariants()) {
 				variant.setProduct(productEntity);

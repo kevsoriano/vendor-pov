@@ -2,6 +2,8 @@ package com.vendorpov.Products.models;
 
 import java.util.List;
 
+import com.vendorpov.Products.data.ProductType;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -11,6 +13,7 @@ public class ProductRequestModel {
 	private String name;
 	private String description;
 //	private BrandDto brand;
+	private ProductType productType;
 	private List<ProductTagRequestModel> productTags;
 	private List<ProductAttributeRequestModel> productAttributes;
 	private List<ProductVariantRequestModel> productVariants;
@@ -41,6 +44,14 @@ public class ProductRequestModel {
 
 	public List<ProductTagRequestModel> getProductTags() {
 		return productTags;
+	}
+
+	public ProductType getProductType() {
+		return productType;
+	}
+
+	public void setProductType(ProductType productType) {
+		this.productType = productType;
 	}
 
 	public void setProductTags(List<ProductTagRequestModel> productTags) {

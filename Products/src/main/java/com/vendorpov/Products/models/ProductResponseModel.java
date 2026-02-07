@@ -2,11 +2,14 @@ package com.vendorpov.Products.models;
 
 import java.util.List;
 
+import com.vendorpov.Products.data.ProductType;
+
 public class ProductResponseModel {
 	private String id;
 	private String name;
 	private String description;
 //	private BrandDto brand;
+	private ProductType productType;
 	private List<ProductTagResponseModel> productTags;
 	private List<ProductAttributeResponseModel> productAttributes;
 	private List<ProductVariantResponseModel> productVariants;
@@ -45,6 +48,14 @@ public class ProductResponseModel {
 
 	public List<ProductTagResponseModel> getProductTags() {
 		return productTags;
+	}
+
+	public ProductType getProductType() {
+		return productType;
+	}
+
+	public void setProductType(ProductType productType) {
+		this.productType = productType;
 	}
 
 	public void setProductTags(List<ProductTagResponseModel> productTags) {

@@ -5,11 +5,12 @@ import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "products")
@@ -26,6 +27,9 @@ public class ProductEntity extends BaseEntity {
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@JoinTable(name = "product_tag_assignments", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_tag_id", referencedColumnName = "id"))
 	private Set<ProductTagEntity> productTags;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "product_type", nullable = false)
+	private ProductType productType = ProductType.STANDARD;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ProductAttributeEntity> productAttributes;
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,6 +69,14 @@ public class ProductEntity extends BaseEntity {
 
 	public Set<ProductAttributeEntity> getProductAttributes() {
 		return productAttributes;
+	}
+
+	public ProductType getProductType() {
+		return productType;
+	}
+
+	public void setProductType(ProductType productType) {
+		this.productType = productType;
 	}
 
 	public void setProductAttributes(Set<ProductAttributeEntity> productAttributes) {
