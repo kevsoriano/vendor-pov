@@ -1,5 +1,7 @@
-import { Box, Button, Chip, InputAdornment, Stack, TextField } from "@mui/material";
+import { Box, Button, Stack, TextField } from "@mui/material";
 import type React from "react";
+
+import ChipSelect from "../../../components/common/SelectChips";
 
 export interface AttributeRow {
 	rowId: string;
@@ -28,7 +30,7 @@ const AttributeInput: React.FC<AttributeInputProps> = ({ value, onChange }) => {
 		onChange(updated);
 	};
 
-	const handleChipAdd = (index: number, value: string) => {
+	const handleValuesAdd = (index: number, value: string) => {
 		if (!value.trim()) return;
 		const updated = [...attributes];
 		if (updated[index].values.length < 5 && !updated[index].values.includes(value)) {
@@ -37,7 +39,7 @@ const AttributeInput: React.FC<AttributeInputProps> = ({ value, onChange }) => {
 		}
 	};
 
-	const handleChipDelete = (index: number, chip: string) => {
+	const handleValuesDelete = (index: number, chip: string) => {
 		const updated = [...attributes];
 		updated[index].values = updated[index].values.filter((v) => v !== chip);
 		onChange(updated);
@@ -69,50 +71,12 @@ const AttributeInput: React.FC<AttributeInputProps> = ({ value, onChange }) => {
 							sx={{ flex: 1 }}
 						/>
 						<Box sx={{ flex: 2, width: "100%" }}>
-							<TextField
-								label="Values"
-								size="small"
-								fullWidth
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position="start">
-											<Box
-												sx={{
-													display: "flex",
-													flexDirection: "row",
-													alignItems: "center",
-													flexWrap: "nowrap",
-													gap: 0.5,
-													overflow: "auto",
-													maxWidth: 350,
-													scrollbarWidth: "none", // Firefox
-													"&::-webkit-scrollbar": { display: "none" }, // Chrome/Safari
-												}}
-											>
-												{attr.values.map((chip) => (
-													<Chip
-														key={chip}
-														label={chip}
-														onDelete={() => handleChipDelete(idx, chip)}
-														size="small"
-													/>
-												))}
-											</Box>
-										</InputAdornment>
-									),
-								}}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" && attr.values.length < 5) {
-										handleChipAdd(idx, (e.target as HTMLInputElement).value);
-										(e.target as HTMLInputElement).value = "";
-									}
-								}}
+							<ChipSelect
+								values={attr.values}
+								onAdd={(val) => handleValuesAdd(idx, val)}
+								onDelete={(chip) => handleValuesDelete(idx, chip)}
+								maxValues={5}
 							/>
-							{attr.values.length >= 5 && (
-								<Box sx={{ color: "text.secondary", fontSize: 12, mt: 0.5 }}>
-									Maximum of 5 values allowed.
-								</Box>
-							)}
 						</Box>
 					</Box>
 				))}

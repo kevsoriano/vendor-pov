@@ -29,7 +29,7 @@ export default function BrandAddPage() {
 		const body = { name };
 
 		try {
-			const response = await create("brands", body);
+			const response = await create({ path: "brands", body });
 			setNotification({
 				message: `Brand ${response.name} created successfully`,
 				type: "success",

@@ -9,7 +9,7 @@ export interface AutocompleteSelectOption {
 	description?: string;
 }
 
-interface AutocompleteSelectProps {
+interface SelectDropdownProps {
 	options: AutocompleteSelectOption[];
 	resource: AutocompleteSelectOption | null;
 	onChange: (value: AutocompleteSelectOption | null) => void;
@@ -22,7 +22,7 @@ const filter = createFilterOptions<
 	AutocompleteSelectOption | { inputValue: string; label: string }
 >();
 
-const AutocompleteSelect: React.FC<AutocompleteSelectProps> = ({
+const SelectDropdown: React.FC<SelectDropdownProps> = ({
 	options,
 	resource,
 	onChange,
@@ -138,4 +138,4 @@ const AutocompleteSelect: React.FC<AutocompleteSelectProps> = ({
 	);
 };
 
-export default AutocompleteSelect;
+export default SelectDropdown;

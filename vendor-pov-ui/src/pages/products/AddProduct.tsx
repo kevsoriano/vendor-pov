@@ -3,8 +3,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Link } from "react-router-dom";
 // Type definitions
-import type { AutocompleteSelectOption } from "../../components/common/AutocompleteSelect";
-import AutocompleteSelect from "../../components/common/AutocompleteSelect";
+import ChipsSelect from "../../components/common/SelectChips";
+import type { AutocompleteSelectOption } from "../../components/common/SelectDropdown";
+import AutocompleteSelect from "../../components/common/SelectDropdown";
 import type { Outlet, ProductTag, Supplier } from "../../types/models";
 import { create, getAll, queryClient } from "../../utils/http";
 import type { AttributeRow } from "./components/AttributeInput";
@@ -33,8 +34,7 @@ const AddProduct: React.FC = () => {
 	const [selectedSupplier, setSelectedSupplier] = React.useState<AutocompleteSelectOption | null>(
 		null,
 	);
-	const [selectedProductTag, setSelectedProductTag] =
-		React.useState<AutocompleteSelectOption | null>(null);
+	const [selectedProductTags, setSelectedProductTags] = React.useState<string[]>([]);
 	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
 	const [productType, setProductType] = React.useState<ProductType>("Standard");
 
@@ -61,10 +61,7 @@ const AddProduct: React.FC = () => {
 		name: supplier.name,
 	}));
 
-	const productTagOptions: AutocompleteSelectOption[] = productTags.map((tag) => ({
-		id: tag.id,
-		name: tag.name,
-	}));
+	const productTagOptions: string[] = productTags.map((tag) => tag.name);
 
 	const { mutate: mutateSupplier } = useMutation({
 		mutationFn: create,
@@ -95,13 +92,24 @@ const AddProduct: React.FC = () => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		// handle form submission logic here
+		const formData = new FormData(e.currentTarget);
+		const name = formData.get("name")?.toString().trim();
+		const description = formData.get("description")?.toString().trim();
 		// Construct payload for request
 		const payload = {
-			name: "", // Fill from form
-			description: "", // Fill from form
+			name,
+			description,
 			productType,
-			productTags: selectedProductTag ? [selectedProductTag] : [],
-			productAttributes: attributes || [],
+			productTags: selectedProductTags,
+			productAttributes:
+				attributes
+					.filter((attr) => attr.name && Array.isArray(attr.values) && attr.values.length > 0)
+					.flatMap((attr) =>
+						attr.values.map((value) => ({
+							attributeKey: attr.name,
+							attributeValue: value,
+						})),
+					) || [],
 			productVariants: [
 				{
 					variantSku: "", // Fill from form or variant logic
@@ -123,17 +131,7 @@ const AddProduct: React.FC = () => {
 				},
 			],
 		};
-	};
-
-	// Display FormData visually
-	const formData = {
-		selectedSupplier,
-		selectedProductTag,
-		attributes,
-		productType,
-		suppliers,
-		productTags,
-		outlets,
+		console.log(payload);
 	};
 
 	return (
@@ -188,15 +186,24 @@ const AddProduct: React.FC = () => {
 								/>
 							</div>
 							<div className="flex flex-col w-full mb-4">
-								<AutocompleteSelect
-									options={productTagOptions}
-									resource={selectedProductTag}
-									onChange={(option: AutocompleteSelectOption | null) => {
-										setSelectedProductTag(option);
+								<ChipsSelect
+									values={selectedProductTags}
+									onAdd={(tag) => {
+										if (tag && !selectedProductTags.includes(tag)) {
+											setSelectedProductTags([...selectedProductTags, tag]);
+										}
 									}}
-									placeholder="Select or create a product tag"
-									onCreateOption={handleCreateProductTag}
-									label={"Product Tag"}
+									onDelete={(tag) => {
+										setSelectedProductTags(selectedProductTags.filter((t) => t !== tag));
+									}}
+									autocompleteOptions={productTagOptions}
+									label="Product Tags"
+									maxValues={10}
+									onCreateOption={async (inputValue) => {
+										const created = await handleCreateProductTag(inputValue);
+										// Optionally, you could refresh productTagOptions here if needed
+										return created.name;
+									}}
 								/>
 							</div>
 
@@ -351,11 +358,6 @@ const AddProduct: React.FC = () => {
 						<button type="button">Cancel</button>
 					</div>
 				</form>
-			</div>
-			{/* Display FormData visually */}
-			<div className="bg-white border rounded p-4 my-4">
-				<h2 className="font-bold mb-2">Current Form Data</h2>
-				<pre>{JSON.stringify(formData, null, 2)}</pre>
 			</div>
 		</div>
 	);
