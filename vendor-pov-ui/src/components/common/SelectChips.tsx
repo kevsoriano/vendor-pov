@@ -2,7 +2,7 @@ import { Autocomplete, Box, Chip, InputAdornment, TextField } from "@mui/materia
 import { useState } from "react";
 
 export interface AutocompleteOption {
-	id: string;
+	id?: string;
 	name: string;
 }
 
@@ -156,7 +156,6 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 										onAdd({ id: inputValue.trim(), name: inputValue.trim() });
 									}
 									setInputValue("");
-									e.preventDefault();
 								}
 							}}
 						/>

@@ -1,12 +1,14 @@
 import { Box, Button, Stack, TextField } from "@mui/material";
 import type React from "react";
 
-import ChipSelect from "../../../components/common/SelectChips";
+import ChipSelect, {
+	type AutocompleteOption,
+} from "../../../components/common/SelectChips";
 
 export interface AttributeRow {
 	rowId: string;
 	name: string;
-	values: string[];
+	values: AutocompleteOption[];
 }
 
 interface AttributeInputProps {
@@ -30,18 +32,29 @@ const AttributeInput: React.FC<AttributeInputProps> = ({ value, onChange }) => {
 		onChange(updated);
 	};
 
-	const handleValuesAdd = (index: number, value: string) => {
-		if (!value.trim()) return;
+	const getOptionKey = (option: AutocompleteOption) => {
+		const optionValue = (option as { value?: string }).value;
+		const optionLabel = (option as { label?: string }).label;
+		return String(optionValue ?? optionLabel ?? "");
+	};
+
+	const handleValuesAdd = (index: number, option: AutocompleteOption) => {
+		const optionKey = getOptionKey(option).trim();
+		if (!optionKey) return;
 		const updated = [...attributes];
-		if (updated[index].values.length < 5 && !updated[index].values.includes(value)) {
-			updated[index].values.push(value);
+		const existingKeys = updated[index].values.map(getOptionKey);
+		if (updated[index].values.length < 5 && !existingKeys.includes(optionKey)) {
+			updated[index].values = [...updated[index].values, option];
 			onChange(updated);
 		}
 	};
 
-	const handleValuesDelete = (index: number, chip: string) => {
+	const handleValuesDelete = (index: number, chip: AutocompleteOption) => {
 		const updated = [...attributes];
-		updated[index].values = updated[index].values.filter((v) => v !== chip);
+		const chipKey = getOptionKey(chip);
+		updated[index].values = updated[index].values.filter(
+			(v) => getOptionKey(v) !== chipKey
+		);
 		onChange(updated);
 	};
 
