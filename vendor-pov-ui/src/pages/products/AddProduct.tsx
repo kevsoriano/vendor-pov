@@ -1,9 +1,9 @@
 import TextField from "@mui/material/TextField";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // Type definitions
-import SelectChips from "../../components/common/SelectChips";
+import SelectChips, { type AutocompleteOption } from "../../components/common/SelectChips";
 import type { AutocompleteSelectOption } from "../../components/common/SelectDropdown";
 import AutocompleteSelect from "../../components/common/SelectDropdown";
 import type { Outlet, ProductTag, Supplier } from "../../types/models";
@@ -36,10 +36,11 @@ const AddProduct: React.FC = () => {
 	const [selectedSupplier, setSelectedSupplier] = React.useState<AutocompleteSelectOption | null>(
 		null,
 	);
-	const [selectedProductTags, setSelectedProductTags] = React.useState<string[]>([]);
+	const [selectedProductTags, setSelectedProductTags] = React.useState<AutocompleteOption[]>([]);
 	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
 	const [productType, setProductType] = React.useState<ProductType>("Standard");
 	const [productVariants, setProductVariants] = React.useState<ProductVariant[]>([]);
+	const navigate = useNavigate();
 
 	const { data: suppliers = [] } = useQuery<Supplier[]>({
 		queryKey: ["suppliers"],
@@ -64,7 +65,10 @@ const AddProduct: React.FC = () => {
 		name: supplier.name,
 	}));
 
-	const productTagOptions: string[] = productTags.map((tag) => tag.name);
+	const productTagOptions = productTags.map((tag) => ({
+		id: tag.id,
+		name: tag.name,
+	}));
 
 	const { mutate: mutateSupplier } = useMutation({
 		mutationFn: create,
@@ -80,13 +84,21 @@ const AddProduct: React.FC = () => {
 		},
 	});
 
+	const { mutate: mutateProduct } = useMutation({
+		mutationFn: create,
+		onSuccess: () => {
+			navigate("/products");
+			queryClient.invalidateQueries({ queryKey: ["products"] });
+		},
+	});
+
 	const handleCreateSupplier = async (inputValue: string): Promise<AutocompleteSelectOption> => {
 		const newSupplier = { name: inputValue, id: Math.random().toString() };
 		mutateSupplier({ path: "suppliers", body: newSupplier });
 		return newSupplier;
 	};
 
-	const handleCreateProductTag = async (inputValue: string): Promise<AutocompleteSelectOption> => {
+	const handleCreateProductTag = async (inputValue: string): Promise<AutocompleteOption> => {
 		const newProductTag = { name: inputValue, id: Math.random().toString() };
 		mutateProductTag({ path: "productTags", body: newProductTag });
 		return newProductTag;
@@ -113,9 +125,39 @@ const AddProduct: React.FC = () => {
 							attributeValue: value,
 						})),
 					) || [],
-			productVariants: productVariants,
+			productVariants: productType === "Standard" ? 
+			[{
+				"variantSku": formData.get("variantSku")?.toString().trim(),
+				"retailPrice": formData.get("price") ? parseFloat(formData.get("price")!.toString()) : undefined,
+				"taxRate": formData.get("taxRate") ? parseFloat(formData.get("taxRate")!.toString()) : undefined,
+				"productAttributes": [],
+				"supplierProductVariants": [
+					{
+						"supplier": {
+							"id": formData.get("supplier")?.toString() || selectedSupplier?.id,
+						},  
+						"supplierPrice": formData.get("supplierPrice") ? parseFloat(formData.get("supplierPrice")!.toString()) : undefined,
+					}
+				],
+				"inventories": [
+					{
+						"outlet": {
+							"id": formData.get("outlet")?.toString() || outlets[0]?.id,
+						},
+						"supplier": {
+							"id": formData.get("supplier")?.toString() || selectedSupplier?.id,
+						},
+						"quantity": formData.get("quantity") ? parseInt(formData.get("quantity")!.toString()) : 20,
+						"reorderThreshold": formData.get("reorderThreshold") ? parseInt(formData.get("reorderThreshold")!.toString()) : 10,
+						"reorderQty": formData.get("reorderQty") ? parseInt(formData.get("reorderQty")!.toString()) : 5
+					}
+				]
+			}] : productVariants,
 		};
-		console.log(payload);
+		mutateProduct({
+			path: "products",
+			body: payload,
+		});
 	};
 
 	return (
@@ -173,12 +215,19 @@ const AddProduct: React.FC = () => {
 								<SelectChips
 									values={selectedProductTags}
 									onAdd={(tag) => {
-										if (tag && !selectedProductTags.includes(tag)) {
+										if (
+											tag &&
+											!selectedProductTags.some(
+												(t) => t.id === tag.id || t.name === tag.name,
+											)
+										) {
 											setSelectedProductTags([...selectedProductTags, tag]);
 										}
 									}}
 									onDelete={(tag) => {
-										setSelectedProductTags(selectedProductTags.filter((t) => t !== tag));
+										setSelectedProductTags(
+											selectedProductTags.filter((t) => t.id !== tag.id),
+										);
 									}}
 									autocompleteOptions={productTagOptions}
 									label="Product Tags"
@@ -186,7 +235,7 @@ const AddProduct: React.FC = () => {
 									onCreateOption={async (inputValue) => {
 										const created = await handleCreateProductTag(inputValue);
 										// Optionally, you could refresh productTagOptions here if needed
-										return created.name;
+										return created;
 									}}
 								/>
 							</div>

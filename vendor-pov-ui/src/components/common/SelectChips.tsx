@@ -1,14 +1,24 @@
 import { Autocomplete, Box, Chip, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 
+export interface AutocompleteOption {
+	id: string;
+	name: string;
+}
+
+interface CreateOption {
+	inputValue: string;
+	label: string;
+}
+
 interface SelectChipsProps {
-	values: string[];
-	onAdd: (value: string) => void;
-	onDelete: (value: string) => void;
+	values: AutocompleteOption[];
+	onAdd: (value: AutocompleteOption) => void;
+	onDelete: (value: AutocompleteOption) => void;
 	maxValues?: number;
 	label?: string;
-	autocompleteOptions?: string[];
-	onCreateOption?: (inputValue: string) => Promise<string>;
+	autocompleteOptions?: AutocompleteOption[];
+	onCreateOption?: (inputValue: string) => Promise<AutocompleteOption>;
 }
 
 const SelectChips: React.FC<SelectChipsProps> = ({
@@ -22,19 +32,31 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 }) => {
 	const [inputValue, setInputValue] = useState("");
 
+	const isCreateOption = (option: unknown): option is CreateOption =>
+		typeof option === "object" && option !== null && "inputValue" in option;
+
+	const isAutocompleteOption = (option: unknown): option is AutocompleteOption =>
+		typeof option === "object" && option !== null && "name" in option;
+
+	const isSelectedName = (name: string) => values.some((value) => value.name === name);
+
 	// If autocompleteOptions is provided, use Autocomplete, else fallback to TextField
 	if (autocompleteOptions && Array.isArray(autocompleteOptions)) {
 		// Filter out already selected values from options
-		const filteredOptions = autocompleteOptions.filter((opt) => !values.includes(opt));
+		const filteredOptions = autocompleteOptions.filter(
+			(opt) => !values.some((value) => value.id === opt.id || value.name === opt.name),
+		);
+		const trimmedInput = inputValue.trim();
 		// Add 'Add "value"' option if inputValue is not empty and not in options
-		const showAddOption =
-			inputValue.trim() &&
-			!filteredOptions.includes(inputValue.trim()) &&
-			!values.includes(inputValue.trim());
+		const showAddOption = Boolean(
+			trimmedInput &&
+			!filteredOptions.some((opt) => opt.name === trimmedInput) &&
+			!isSelectedName(trimmedInput),
+		);
 		const options = showAddOption
 			? [
 					...filteredOptions,
-					{ inputValue: inputValue.trim(), label: `Add "${inputValue.trim()}"` },
+					{ inputValue: trimmedInput, label: `Add "${trimmedInput}"` },
 				]
 			: filteredOptions;
 		return (
@@ -44,7 +66,8 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 					options={options}
 					getOptionLabel={(option) => {
 						if (typeof option === "string") return option;
-						if (typeof option === "object" && option.label) return option.label;
+						if (isCreateOption(option)) return option.label;
+						if (isAutocompleteOption(option)) return option.name;
 						return "";
 					}}
 					inputValue={inputValue}
@@ -55,20 +78,28 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 						if (
 							typeof newValue === "string" &&
 							newValue.trim() &&
-							!values.includes(newValue) &&
+							!isSelectedName(newValue.trim()) &&
 							values.length < maxValues
 						) {
-							onAdd(newValue.trim());
+							if (onCreateOption) {
+								const created = await onCreateOption(newValue.trim());
+								if (created && !isSelectedName(created.name)) {
+									onAdd(created);
+								}
+								setInputValue("");
+							} else {
+								onAdd({ id: newValue.trim(), name: newValue.trim() });
+								setInputValue("");
+							}
+						} else if (isAutocompleteOption(newValue)) {
+							if (!isSelectedName(newValue.name) && values.length < maxValues) {
+								onAdd(newValue);
+							}
 							setInputValue("");
-						} else if (
-							newValue &&
-							typeof newValue === "object" &&
-							newValue.inputValue &&
-							onCreateOption
-						) {
+						} else if (isCreateOption(newValue) && onCreateOption) {
 							// Call backend to create new tag, then add to chips
 							const created = await onCreateOption(newValue.inputValue);
-							if (created && !values.includes(created)) {
+							if (created && !isSelectedName(created.name)) {
 								onAdd(created);
 							}
 							setInputValue("");
@@ -99,8 +130,8 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 										>
 											{values.map((chip) => (
 												<Chip
-													key={chip}
-													label={chip}
+													key={chip.id}
+													label={chip.name}
 													onDelete={() => onDelete(chip)}
 													size="small"
 												/>
@@ -113,16 +144,16 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 								if (
 									e.key === "Enter" &&
 									inputValue.trim() &&
-									!values.includes(inputValue.trim()) &&
+									!isSelectedName(inputValue.trim()) &&
 									values.length < maxValues
 								) {
 									if (showAddOption && onCreateOption) {
 										const created = await onCreateOption(inputValue.trim());
-										if (created && !values.includes(created)) {
+										if (created && !isSelectedName(created.name)) {
 											onAdd(created);
 										}
 									} else {
-										onAdd(inputValue.trim());
+										onAdd({ id: inputValue.trim(), name: inputValue.trim() });
 									}
 									setInputValue("");
 									e.preventDefault();
@@ -166,8 +197,8 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 							>
 								{values.map((chip) => (
 									<Chip
-										key={chip}
-										label={chip}
+										key={chip.id}
+										label={chip.name}
 										onDelete={() => onDelete(chip)}
 										size="small"
 									/>
@@ -177,8 +208,9 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 					),
 				}}
 				onKeyDown={(e) => {
-					if (e.key === "Enter" && values.length < maxValues) {
-						onAdd((e.target as HTMLInputElement).value);
+					const nextValue = (e.target as HTMLInputElement).value.trim();
+					if (e.key === "Enter" && nextValue && values.length < maxValues) {
+						onAdd({ id: nextValue, name: nextValue });
 						(e.target as HTMLInputElement).value = "";
 					}
 				}}
