@@ -1,10 +1,13 @@
 package com.vendorpov.Products.models;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class ProductVariantRequestModel {
 
 	private String variantSku;
+	private BigDecimal retailPrice;
+	private BigDecimal taxRate;
 	private List<ProductAttributeRequestModel> productAttributes;
 	private List<SupplierProductVariantRequestModel> supplierProductVariants;
 	private List<InventoryRequestModel> inventories;
@@ -15,6 +18,22 @@ public class ProductVariantRequestModel {
 
 	public void setVariantSku(String variantSku) {
 		this.variantSku = variantSku;
+	}
+
+	public BigDecimal getRetailPrice() {
+		return retailPrice;
+	}
+
+	public void setRetailPrice(BigDecimal retailPrice) {
+		this.retailPrice = retailPrice;
+	}
+
+	public BigDecimal getTaxRate() {
+		return taxRate;
+	}
+
+	public void setTaxRate(BigDecimal taxRate) {
+		this.taxRate = taxRate;
 	}
 
 	public List<ProductAttributeRequestModel> getProductAttributes() {

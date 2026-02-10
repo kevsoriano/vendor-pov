@@ -53,10 +53,27 @@ export interface ProductAttribute {
 	attributeValue: string;
 }
 
+export interface SupplierProductVariants {
+	supplier: Supplier;
+	supplierPrice: number;
+}
+
+export interface Inventories {
+	outlet: Outlet;
+	supplier: Supplier;
+	quantity: number;
+	reorderThreshold: number;
+	reorderQuantity: number;
+}
+
 export interface ProductVariant {
 	id: string;
 	variantSku: string;
+	retailPrice: number;
+	taxRate: number;
 	productAttributes: ProductAttribute[];
+	supplierProductVariants: SupplierProductVariants[];
+	inventories: Inventories[];
 }
 
 export interface Product {

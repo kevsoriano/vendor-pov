@@ -136,7 +136,6 @@ public class ProductServiceImpl implements ProductService {
 				        link.setSupplier(supplierEntity);
 				        
 				        link.setSupplierPrice(supplierProductVariant.getSupplierPrice());
-				        link.setTaxRate(supplierProductVariant.getTaxRate());
 				        
 				        newLinks.add(link);
 				    }

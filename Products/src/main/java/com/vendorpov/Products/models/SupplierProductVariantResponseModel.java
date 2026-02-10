@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class SupplierProductVariantResponseModel {
 	private SupplierResponseModel supplier;
 	private BigDecimal supplierPrice;
-	private BigDecimal taxRate;
 
 	public SupplierResponseModel getSupplier() {
 		return supplier;
@@ -21,14 +20,6 @@ public class SupplierProductVariantResponseModel {
 
 	public void setSupplierPrice(BigDecimal supplierPrice) {
 		this.supplierPrice = supplierPrice;
-	}
-
-	public BigDecimal getTaxRate() {
-		return taxRate;
-	}
-
-	public void setTaxRate(BigDecimal taxRate) {
-		this.taxRate = taxRate;
 	}
 
 }

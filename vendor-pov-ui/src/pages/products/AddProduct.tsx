@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Link } from "react-router-dom";
 // Type definitions
-import ChipsSelect from "../../components/common/SelectChips";
+import SelectChips from "../../components/common/SelectChips";
 import type { AutocompleteSelectOption } from "../../components/common/SelectDropdown";
 import AutocompleteSelect from "../../components/common/SelectDropdown";
 import type { Outlet, ProductTag, Supplier } from "../../types/models";
@@ -30,6 +30,8 @@ const PRODUCT_TYPE_DETAILS: { value: ProductType; description: string }[] = [
 	},
 ];
 
+import type { ProductVariant } from "../../types/models";
+
 const AddProduct: React.FC = () => {
 	const [selectedSupplier, setSelectedSupplier] = React.useState<AutocompleteSelectOption | null>(
 		null,
@@ -37,6 +39,7 @@ const AddProduct: React.FC = () => {
 	const [selectedProductTags, setSelectedProductTags] = React.useState<string[]>([]);
 	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
 	const [productType, setProductType] = React.useState<ProductType>("Standard");
+	const [productVariants, setProductVariants] = React.useState<ProductVariant[]>([]);
 
 	const { data: suppliers = [] } = useQuery<Supplier[]>({
 		queryKey: ["suppliers"],
@@ -110,26 +113,7 @@ const AddProduct: React.FC = () => {
 							attributeValue: value,
 						})),
 					) || [],
-			productVariants: [
-				{
-					variantSku: "", // Fill from form or variant logic
-					productAttributes: [], // Fill from variant logic
-					supplierProductVariants: [
-						{
-							supplier: selectedSupplier ? { id: selectedSupplier.id } : {},
-							supplierPrice: 0, // Fill from form
-							taxRate: 0, // Fill from form
-						},
-					],
-					inventories: outlets.map((outlet) => ({
-						outlet: { id: outlet.id },
-						supplier: selectedSupplier ? { id: selectedSupplier.id } : {},
-						quantity: 0, // Fill from table input
-						reorderThreshold: 0, // Fill from table input
-						reorderQty: 0, // Fill from table input
-					})),
-				},
-			],
+			productVariants: productVariants,
 		};
 		console.log(payload);
 	};
@@ -186,7 +170,7 @@ const AddProduct: React.FC = () => {
 								/>
 							</div>
 							<div className="flex flex-col w-full mb-4">
-								<ChipsSelect
+								<SelectChips
 									values={selectedProductTags}
 									onAdd={(tag) => {
 										if (tag && !selectedProductTags.includes(tag)) {
@@ -263,84 +247,102 @@ const AddProduct: React.FC = () => {
 									))}
 								</fieldset>
 							</div>
-							<div className="flex flex-grow w-full mb-4 gap-4">
-								<div className="flex-1">
-									<AutocompleteSelect
-										options={supplierOptions}
-										resource={selectedSupplier}
-										onChange={(option: AutocompleteSelectOption | null) => {
-											setSelectedSupplier(option);
-										}}
-										placeholder="Select or create a supplier"
-										onCreateOption={handleCreateSupplier}
-										label={"Supplier"}
-									/>
-								</div>
-								<div className="flex-1">
-									<TextField
-										label="Supplier Code"
-										name="supplierCode"
-										id="supplierCode"
-										placeholder="Enter a supplier code"
-										variant="outlined"
-										fullWidth
-									/>
-								</div>
-								<div className="flex-1">
-									<TextField
-										label="Supplier Price"
-										name="supplierPrice"
-										id="supplierPrice"
-										placeholder="Enter a supplier price"
-										variant="outlined"
-										fullWidth
-										type="number"
-										InputProps={{
-											startAdornment: <span style={{ marginRight: 4 }}>$</span>,
-											inputMode: "numeric",
-										}}
-										inputProps={{
-											style: {
-												MozAppearance: "textfield",
-												textAlign: "right",
-											},
-											className: "no-spinner",
-											step: "0.01",
-										}}
-										onChange={(e) => {
-											const value = e.target.value;
-											const formatted = value.includes(".")
-												? value.replace(/^(\d+\.\d{0,2}).*$/, "$1")
-												: value;
-											e.target.value = formatted;
-										}}
-									/>
-								</div>
-							</div>
-							{/* Outlets Table */}
-							<div className="mb-6">
-								<OutletsTable outlets={outlets} />
-							</div>
-							<div className="mb-4">
-								<TextField
-									label="Tax Rate"
-									name="taxRate"
-									id="taxRate"
-									placeholder="Enter a tax rate"
-									variant="outlined"
-									fullWidth
-								/>
-							</div>
-							<div className="mb-4">
-								<TextField
-									label="Price"
-									name="price"
-									id="price"
-									placeholder="Enter a price"
-									variant="outlined"
-									fullWidth
-								/>
-							</div>
+							{/* Standard product type fields */}
+							{productType === "Standard" && (
+								<>
+									<div className="mb-4">
+										<TextField
+											label="Variant SKU"
+											name="variantSku"
+											id="variantSku"
+											placeholder="Enter a variant SKU"
+											variant="outlined"
+											fullWidth
+										/>
+									</div>
+
+									<div className="flex flex-grow w-full mb-4 gap-4">
+										<div className="flex-1">
+											<AutocompleteSelect
+												options={supplierOptions}
+												resource={selectedSupplier}
+												onChange={(option: AutocompleteSelectOption | null) => {
+													setSelectedSupplier(option);
+												}}
+												placeholder="Select or create a supplier"
+												onCreateOption={handleCreateSupplier}
+												label={"Supplier"}
+											/>
+										</div>
+										<div className="flex-1">
+											<TextField
+												label="Supplier Code"
+												name="supplierCode"
+												id="supplierCode"
+												placeholder="Enter a supplier code"
+												variant="outlined"
+												fullWidth
+											/>
+										</div>
+										<div className="flex-1">
+											<TextField
+												label="Supplier Price"
+												name="supplierPrice"
+												id="supplierPrice"
+												placeholder="Enter a supplier price"
+												variant="outlined"
+												fullWidth
+												type="number"
+												InputProps={{
+													startAdornment: <span style={{ marginRight: 4 }}>$</span>,
+													inputMode: "numeric",
+												}}
+												inputProps={{
+													style: {
+														MozAppearance: "textfield",
+														textAlign: "right",
+													},
+													className: "no-spinner",
+													step: "0.01",
+												}}
+												onChange={(e) => {
+													const value = e.target.value;
+													const formatted = value.includes(".")
+														? value.replace(/^(\d+\.\d{0,2}).*$/, "$1")
+														: value;
+													e.target.value = formatted;
+												}}
+											/>
+										</div>
+									</div>
+
+									<div className="mb-6">
+										<OutletsTable outlets={outlets} />
+									</div>
+
+									<div className="mb-4">
+										<TextField
+											label="Tax Rate"
+											name="taxRate"
+											id="taxRate"
+											placeholder="Enter a tax rate"
+											variant="outlined"
+											fullWidth
+										/>
+									</div>
+
+									<div className="mb-4">
+										<TextField
+											label="Price"
+											name="price"
+											id="price"
+											placeholder="Enter a price"
+											variant="outlined"
+											fullWidth
+										/>
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 					{/* AttributeInput and ProductVariantsTable only for Variant */}
@@ -350,6 +352,7 @@ const AddProduct: React.FC = () => {
 							<ProductVariantsTable
 								attributes={attributes}
 								header={attributes.map((attr) => attr.name)}
+								onVariantsChange={setProductVariants}
 							/>
 						</div>
 					)}

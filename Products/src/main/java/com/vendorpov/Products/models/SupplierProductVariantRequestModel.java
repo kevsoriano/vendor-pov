@@ -6,7 +6,6 @@ public class SupplierProductVariantRequestModel {
 
 	private SupplierRequestModel supplier;
 	private BigDecimal supplierPrice;
-	private BigDecimal taxRate;
 
 	public SupplierRequestModel getSupplier() {
 		return supplier;
@@ -23,13 +22,4 @@ public class SupplierProductVariantRequestModel {
 	public void setSupplierPrice(BigDecimal supplierPrice) {
 		this.supplierPrice = supplierPrice;
 	}
-
-	public BigDecimal getTaxRate() {
-		return taxRate;
-	}
-
-	public void setTaxRate(BigDecimal taxRate) {
-		this.taxRate = taxRate;
-	}
-
 }

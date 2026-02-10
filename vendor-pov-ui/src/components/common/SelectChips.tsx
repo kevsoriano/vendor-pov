@@ -145,6 +145,7 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 		<Box sx={{ width: "100%" }}>
 			<TextField
 				label={label}
+				placeholder="Enter a product tag"
 				size="small"
 				fullWidth
 				InputProps={{

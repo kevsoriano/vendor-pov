@@ -8,7 +8,6 @@ public class SupplierProductVariantDto implements Serializable {
 	private static final long serialVersionUID = -6458634379518346695L;
 	private SupplierDto supplier;
 	private BigDecimal supplierPrice;
-	private BigDecimal taxRate;
 
 	public SupplierDto getSupplier() {
 		return supplier;
@@ -24,14 +23,6 @@ public class SupplierProductVariantDto implements Serializable {
 
 	public void setSupplierPrice(BigDecimal supplierPrice) {
 		this.supplierPrice = supplierPrice;
-	}
-
-	public BigDecimal getTaxRate() {
-		return taxRate;
-	}
-
-	public void setTaxRate(BigDecimal taxRate) {
-		this.taxRate = taxRate;
 	}
 
 }

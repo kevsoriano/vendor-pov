@@ -28,8 +28,6 @@ public class SupplierProductVariantEntity implements Serializable {
 
 	@Column(precision = 10, scale = 2)
 	private BigDecimal supplierPrice;
-	@Column(precision = 5, scale = 4)
-	private BigDecimal taxRate;
 
 	public SupplierProductVariantCompositeKey getId() {
 		return id;
@@ -61,14 +59,6 @@ public class SupplierProductVariantEntity implements Serializable {
 
 	public void setSupplierPrice(BigDecimal supplierPrice) {
 		this.supplierPrice = supplierPrice;
-	}
-
-	public BigDecimal getTaxRate() {
-		return taxRate;
-	}
-
-	public void setTaxRate(BigDecimal taxRate) {
-		this.taxRate = taxRate;
 	}
 
 }

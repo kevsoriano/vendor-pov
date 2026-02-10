@@ -14,6 +14,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	TextField,
 	Typography,
 	useTheme,
 } from "@mui/material";
@@ -23,11 +24,17 @@ import type { AttributeRow } from "./AttributeInput";
 interface VariantRow {
 	id: string;
 	values: string[];
+	variantSku: string;
+	supplierPrice: string;
+	retailPrice: string;
 }
+
+import type { ProductVariant } from "../../../types/models";
 
 interface ProductVariantsTableProps {
 	attributes: AttributeRow[];
 	header?: string[];
+	onVariantsChange?: (variants: ProductVariant[]) => void;
 }
 
 const normalizeAttributes = (attributes: AttributeRow[]) =>
@@ -39,7 +46,7 @@ const normalizeAttributes = (attributes: AttributeRow[]) =>
 		}))
 		.filter((attr) => attr.name.length > 0 && attr.values.length > 0);
 
-const buildVariantRows = (attributes: AttributeRow[]): VariantRow[] => {
+const buildProductVariants = (attributes: AttributeRow[]): ProductVariant[] => {
 	const normalized = normalizeAttributes(attributes);
 	if (normalized.length === 0) return [];
 
@@ -52,7 +59,14 @@ const buildVariantRows = (attributes: AttributeRow[]): VariantRow[] => {
 
 	return combinations.map((values, index) => ({
 		id: `${index + 1}`,
-		values,
+		variantSku: "",
+		supplierPrice: "",
+		retailPrice: "",
+		productAttributes: normalized.map((attr, i) => ({
+			id: `${index + 1}-${i}`,
+			attributeKey: attr.name,
+			attributeValue: values[i] || "",
+		})),
 	}));
 };
 
@@ -62,9 +76,19 @@ interface RowProps {
 	row: VariantRow;
 	columns: string[];
 	index: number;
+	onSkuChange: (id: string, newSku: string) => void;
+	onSupplierPriceChange: (id: string, newPrice: string) => void;
+	onRetailPriceChange: (id: string, newPrice: string) => void;
 }
 
-const ExpandableRow: React.FC<RowProps> = ({ row, columns, index }) => {
+const ExpandableRow: React.FC<RowProps> = ({
+	row,
+	columns,
+	index,
+	onSkuChange,
+	onSupplierPriceChange,
+	onRetailPriceChange,
+}) => {
 	const [open, setOpen] = React.useState(false);
 	const [checked, setChecked] = React.useState(false);
 	const theme = useTheme();
@@ -90,6 +114,44 @@ const ExpandableRow: React.FC<RowProps> = ({ row, columns, index }) => {
 						size="small"
 					/>
 				</TableCell>
+				<TableCell
+					align="center"
+					sx={{ fontFamily: "monospace", fontSize: 15, fontWeight: 500, width: 120 }}
+				>
+					<TextField
+						variant="standard"
+						value={row.variantSku}
+						onChange={(e) => onSkuChange(row.id, e.target.value)}
+						inputProps={{
+							style: { textAlign: "center", fontFamily: "monospace", fontSize: 15 },
+						}}
+						placeholder="SKU"
+					/>
+				</TableCell>
+				<TableCell align="center" sx={{ fontFamily: "monospace", fontSize: 15, width: 120 }}>
+					<TextField
+						variant="standard"
+						value={row.supplierPrice}
+						onChange={(e) => onSupplierPriceChange(row.id, e.target.value)}
+						inputProps={{
+							style: { textAlign: "center", fontFamily: "monospace", fontSize: 15 },
+						}}
+						placeholder="Supplier Price"
+						type="number"
+					/>
+				</TableCell>
+				<TableCell align="center" sx={{ fontFamily: "monospace", fontSize: 15, width: 120 }}>
+					<TextField
+						variant="standard"
+						value={row.retailPrice}
+						onChange={(e) => onRetailPriceChange(row.id, e.target.value)}
+						inputProps={{
+							style: { textAlign: "center", fontFamily: "monospace", fontSize: 15 },
+						}}
+						placeholder="Retail Price"
+						type="number"
+					/>
+				</TableCell>
 				{row.values.map((value, idx) => (
 					<TableCell
 						key={`${row.id}-${idx}`}
@@ -113,7 +175,7 @@ const ExpandableRow: React.FC<RowProps> = ({ row, columns, index }) => {
 				</TableCell>
 			</TableRow>
 			<TableRow>
-				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 3}>
+				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 6}>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box
 							sx={{
@@ -138,9 +200,47 @@ const ExpandableRow: React.FC<RowProps> = ({ row, columns, index }) => {
 	);
 };
 
-const ProductVariantsTable: React.FC<ProductVariantsTableProps> = ({ attributes, header }) => {
+const ProductVariantsTable: React.FC<ProductVariantsTableProps> = ({
+	attributes,
+	header,
+	onVariantsChange,
+}) => {
 	const normalized = normalizeAttributes(attributes);
-	const rows = buildVariantRows(attributes);
+	const [variants, setVariants] = React.useState<ProductVariant[]>(() =>
+		buildProductVariants(attributes),
+	);
+
+	React.useEffect(() => {
+		const newVariants = buildProductVariants(attributes);
+		setVariants(newVariants);
+	}, [attributes]);
+
+	React.useEffect(() => {
+		if (onVariantsChange) {
+			// Remove extra fields before calling onVariantsChange
+			onVariantsChange(variants.map(({ supplierPrice, retailPrice, ...rest }) => rest));
+		}
+	}, [onVariantsChange, variants]);
+
+	const handleSkuChange = (id: string, newSku: string) => {
+		setVariants((prev) =>
+			prev.map((variant) => (variant.id === id ? { ...variant, variantSku: newSku } : variant)),
+		);
+	};
+	const handleSupplierPriceChange = (id: string, newPrice: string) => {
+		setVariants((prev) =>
+			prev.map((variant) =>
+				variant.id === id ? { ...variant, supplierPrice: newPrice } : variant,
+			),
+		);
+	};
+	const handleRetailPriceChange = (id: string, newPrice: string) => {
+		setVariants((prev) =>
+			prev.map((variant) =>
+				variant.id === id ? { ...variant, retailPrice: newPrice } : variant,
+			),
+		);
+	};
 
 	// Use header prop if provided, otherwise use attribute names
 	const columnHeaders =
@@ -175,14 +275,37 @@ const ProductVariantsTable: React.FC<ProductVariantsTableProps> = ({ attributes,
 								{col}
 							</TableCell>
 						))}
+						<TableCell align="center" sx={{ fontWeight: 700, width: 120 }}>
+							SKU
+						</TableCell>
+						<TableCell align="center" sx={{ fontWeight: 700, width: 120 }}>
+							Supplier Price
+						</TableCell>
+						<TableCell align="center" sx={{ fontWeight: 700, width: 120 }}>
+							Retail Price
+						</TableCell>
 						<TableCell align="center" sx={{ width: 120, fontWeight: 700 }}>
 							Actions
 						</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{rows.map((row, idx) => (
-						<ExpandableRow key={row.id} row={row} columns={columnHeaders} index={idx} />
+					{variants.map((variant, idx) => (
+						<ExpandableRow
+							key={variant.id}
+							row={{
+								id: variant.id,
+								values: variant.productAttributes.map((attr) => attr.attributeValue),
+								variantSku: variant.variantSku,
+								supplierPrice: variant.supplierPrice || "",
+								retailPrice: variant.retailPrice || "",
+							}}
+							columns={columnHeaders}
+							index={idx}
+							onSkuChange={handleSkuChange}
+							onSupplierPriceChange={handleSupplierPriceChange}
+							onRetailPriceChange={handleRetailPriceChange}
+						/>
 					))}
 				</TableBody>
 			</Table>

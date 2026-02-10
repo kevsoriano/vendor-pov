@@ -1,5 +1,6 @@
 package com.vendorpov.Products.data;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class ProductVariantEntity extends BaseEntity {
 
 	@Column(length = 50, nullable = false)
 	private String variantSku;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal retailPrice;
+	@Column(precision = 5, scale = 4)
+	private BigDecimal taxRate;
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "product_variant_attributes", joinColumns = @JoinColumn(name = "product_variant_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "product_attribute_id", referencedColumnName = "id"))
 	private Collection<ProductAttributeEntity> productAttributes;
@@ -39,6 +44,22 @@ public class ProductVariantEntity extends BaseEntity {
 
 	public void setVariantSku(String variantSku) {
 		this.variantSku = variantSku;
+	}
+
+	public BigDecimal getRetailPrice() {
+		return retailPrice;
+	}
+
+	public void setRetailPrice(BigDecimal retailPrice) {
+		this.retailPrice = retailPrice;
+	}
+
+	public BigDecimal getTaxRate() {
+		return taxRate;
+	}
+
+	public void setTaxRate(BigDecimal taxRate) {
+		this.taxRate = taxRate;
 	}
 
 	public Collection<ProductAttributeEntity> getProductAttributes() {
