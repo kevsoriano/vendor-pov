@@ -50,14 +50,11 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 		// Add 'Add "value"' option if inputValue is not empty and not in options
 		const showAddOption = Boolean(
 			trimmedInput &&
-			!filteredOptions.some((opt) => opt.name === trimmedInput) &&
-			!isSelectedName(trimmedInput),
+				!filteredOptions.some((opt) => opt.name === trimmedInput) &&
+				!isSelectedName(trimmedInput),
 		);
 		const options = showAddOption
-			? [
-					...filteredOptions,
-					{ inputValue: trimmedInput, label: `Add "${trimmedInput}"` },
-				]
+			? [...filteredOptions, { inputValue: trimmedInput, label: `Add "${trimmedInput}"` }]
 			: filteredOptions;
 		return (
 			<Box sx={{ width: "100%" }}>
@@ -175,7 +172,7 @@ const SelectChips: React.FC<SelectChipsProps> = ({
 		<Box sx={{ width: "100%" }}>
 			<TextField
 				label={label}
-				placeholder="Enter a product tag"
+				placeholder={`Enter ${label.toLowerCase()}`}
 				size="small"
 				fullWidth
 				InputProps={{

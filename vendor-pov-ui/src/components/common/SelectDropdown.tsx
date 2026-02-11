@@ -109,7 +109,14 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
 				}}
 				loading={loading}
 				freeSolo={!!onCreateOption}
-				renderInput={(params) => <TextField {...params} label={label} />}
+				renderInput={(params) => (
+					<TextField
+						{...params}
+						label={label}
+						InputLabelProps={{ shrink: true }}
+						placeholder={`Select or create a ${label.toLowerCase()}`}
+					/>
+				)}
 				inputValue={inputValue}
 				onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
 				isOptionEqualToValue={(option, val) => {

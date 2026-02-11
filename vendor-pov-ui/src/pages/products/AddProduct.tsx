@@ -8,9 +8,9 @@ import type { AutocompleteSelectOption } from "../../components/common/SelectDro
 import AutocompleteSelect from "../../components/common/SelectDropdown";
 import type { Outlet, ProductTag, Supplier } from "../../types/models";
 import { create, getAll, queryClient } from "../../utils/http";
-import type { AttributeRow } from "./components/AttributeInput";
-import AttributeInput from "./components/AttributeInput";
-import ProductVariantsTable from "./components/ProductVariantsTable";
+import ProductAttributesEditor, {
+	type ProductAttributeDraft,
+} from "./components/ProductAttributesEditor";
 import OutletsTable from "./OutletsTable";
 
 const PRODUCT_TYPES = ["Standard", "Variant", "Composite"] as const;
@@ -30,17 +30,102 @@ const PRODUCT_TYPE_DETAILS: { value: ProductType; description: string }[] = [
 	},
 ];
 
-import type { ProductVariant } from "../../types/models";
+type ProductAttributeCreatePayload = {
+	attributeKey: string;
+	attributeValue: string;
+};
+
+type ProductVariantCreatePayload = {
+	variantSku?: string;
+	retailPrice?: number;
+	taxRate?: number;
+	productAttributes: ProductAttributeCreatePayload[];
+	supplierProductVariants: Array<{
+		supplier: { id?: string };
+		supplierPrice?: number;
+	}>;
+	inventories: Array<{
+		outlet: { id?: string };
+		supplier: { id?: string };
+		quantity?: number;
+		reorderThreshold?: number;
+		reorderQty?: number;
+	}>;
+};
+
+const normalizeSkuToken = (value: string) =>
+	value
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+
+const buildVariantSku = (attributes: ProductAttributeCreatePayload[], fallbackIndex: number) => {
+	const tokens = attributes.map((attr) => normalizeSkuToken(attr.attributeValue)).filter(Boolean);
+	if (tokens.length === 0) return `variant-${fallbackIndex + 1}`;
+	return tokens.join("-");
+};
+
+const cartesianProduct = <T,>(lists: T[][]): T[][] => {
+	if (lists.length === 0) return [[]];
+	return lists.reduce<T[][]>(
+		(acc, list) => {
+			const next: T[][] = [];
+			for (const accItem of acc) {
+				for (const item of list) {
+					next.push([...accItem, item]);
+				}
+			}
+			return next;
+		},
+		[[]],
+	);
+};
+
+const generateVariantAttributes = (
+	attributes: ProductAttributeDraft[],
+): ProductAttributeCreatePayload[][] => {
+	const completeAttributes = attributes
+		.map((a) => ({
+			attributeKey: a.attributeKey.trim(),
+			attributeValues: a.attributeValues.map((v) => v.trim()).filter(Boolean),
+		}))
+		.filter((a) => a.attributeKey && a.attributeValues.length > 0);
+
+	if (completeAttributes.length === 0) return [];
+
+	const valueLists: ProductAttributeCreatePayload[][] = completeAttributes.map((a) =>
+		a.attributeValues.map((value) => ({ attributeKey: a.attributeKey, attributeValue: value })),
+	);
+
+	return cartesianProduct(valueLists);
+};
 
 const AddProduct: React.FC = () => {
 	const [selectedSupplier, setSelectedSupplier] = React.useState<AutocompleteSelectOption | null>(
 		null,
 	);
 	const [selectedProductTags, setSelectedProductTags] = React.useState<AutocompleteOption[]>([]);
-	const [attributes, setAttributes] = React.useState<AttributeRow[]>([]);
 	const [productType, setProductType] = React.useState<ProductType>("Standard");
-	const [productVariants, setProductVariants] = React.useState<ProductVariant[]>([]);
+	const [productVariants, _setProductVariants] = React.useState<ProductVariantCreatePayload[]>([]);
+	const [productAttributes, setProductAttributes] = React.useState<ProductAttributeDraft[]>([]);
 	const navigate = useNavigate();
+
+	const generatedVariantAttributes = React.useMemo(
+		() => generateVariantAttributes(productAttributes),
+		[productAttributes],
+	);
+
+	const generatedVariants: ProductVariantCreatePayload[] = React.useMemo(() => {
+		return generatedVariantAttributes.map((attrs, index) => ({
+			variantSku: buildVariantSku(attrs, index),
+			retailPrice: undefined,
+			taxRate: undefined,
+			productAttributes: attrs,
+			supplierProductVariants: [],
+			inventories: [],
+		}));
+	}, [generatedVariantAttributes]);
 
 	const { data: suppliers = [] } = useQuery<Supplier[]>({
 		queryKey: ["suppliers"],
@@ -108,51 +193,71 @@ const AddProduct: React.FC = () => {
 		e.preventDefault();
 		// handle form submission logic here
 		const formData = new FormData(e.currentTarget);
+		const getNumber = (key: string): number | undefined => {
+			const value = formData.get(key);
+			if (typeof value !== "string") return undefined;
+			const trimmed = value.trim();
+			if (!trimmed) return undefined;
+			const parsed = Number(trimmed);
+			return Number.isFinite(parsed) ? parsed : undefined;
+		};
+		const getInt = (key: string): number | undefined => {
+			const num = getNumber(key);
+			return typeof num === "number" ? Math.trunc(num) : undefined;
+		};
 		const name = formData.get("name")?.toString().trim();
 		const description = formData.get("description")?.toString().trim();
+
+		const nextProductVariants: ProductVariantCreatePayload[] =
+			productType === "Standard"
+				? [
+						{
+							variantSku: formData.get("variantSku")?.toString().trim(),
+							retailPrice: getNumber("price"),
+							taxRate: getNumber("taxRate"),
+							productAttributes: [],
+							supplierProductVariants: [
+								{
+									supplier: {
+										id: formData.get("supplier")?.toString() || selectedSupplier?.id,
+									},
+									supplierPrice: getNumber("supplierPrice"),
+								},
+							],
+							inventories: [
+								{
+									outlet: {
+										id: formData.get("outlet")?.toString() || outlets[0]?.id,
+									},
+									supplier: {
+										id: formData.get("supplier")?.toString() || selectedSupplier?.id,
+									},
+									quantity: getInt("quantity") ?? 20,
+									reorderThreshold: getInt("reorderThreshold") ?? 10,
+									reorderQty: getInt("reorderQty") ?? 5,
+								},
+							],
+						},
+					]
+				: productType === "Variant"
+					? generatedVariants
+					: productVariants;
 		// Construct payload for request
 		const payload = {
 			name,
 			description,
 			productType,
 			productTags: selectedProductTags,
-			productAttributes:
-				attributes
-					.filter((attr) => attr.name && Array.isArray(attr.values) && attr.values.length > 0)
-					.flatMap((attr) =>
-						attr.values.map((value) => ({
-							attributeKey: attr.name,
-							attributeValue: value,
-						})),
-					) || [],
-			productVariants: productType === "Standard" ? 
-			[{
-				"variantSku": formData.get("variantSku")?.toString().trim(),
-				"retailPrice": formData.get("price") ? parseFloat(formData.get("price")!.toString()) : undefined,
-				"taxRate": formData.get("taxRate") ? parseFloat(formData.get("taxRate")!.toString()) : undefined,
-				"productAttributes": [],
-				"supplierProductVariants": [
-					{
-						"supplier": {
-							"id": formData.get("supplier")?.toString() || selectedSupplier?.id,
-						},  
-						"supplierPrice": formData.get("supplierPrice") ? parseFloat(formData.get("supplierPrice")!.toString()) : undefined,
-					}
-				],
-				"inventories": [
-					{
-						"outlet": {
-							"id": formData.get("outlet")?.toString() || outlets[0]?.id,
-						},
-						"supplier": {
-							"id": formData.get("supplier")?.toString() || selectedSupplier?.id,
-						},
-						"quantity": formData.get("quantity") ? parseInt(formData.get("quantity")!.toString()) : 20,
-						"reorderThreshold": formData.get("reorderThreshold") ? parseInt(formData.get("reorderThreshold")!.toString()) : 10,
-						"reorderQty": formData.get("reorderQty") ? parseInt(formData.get("reorderQty")!.toString()) : 5
-					}
-				]
-			}] : productVariants,
+			// productAttributes:
+			// 	attributes
+			// 		.filter((attr) => attr.name && Array.isArray(attr.values) && attr.values.length > 0)
+			// 		.flatMap((attr) =>
+			// 			attr.values.map((value) => ({
+			// 				attributeKey: attr.name,
+			// 				attributeValue: value,
+			// 			})),
+			// 		) || [],
+			productVariants: nextProductVariants,
 		};
 		mutateProduct({
 			path: "products",
@@ -173,7 +278,15 @@ const AddProduct: React.FC = () => {
 						<Link to="/products/add">Cancel</Link>
 					</button>
 					<button
-						type="submit"
+						type="button"
+						onClick={() => {
+							const form = document.getElementById(
+								"add-product-form",
+							) as HTMLFormElement | null;
+							if (form) {
+								form.requestSubmit();
+							}
+						}}
 						className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 					>
 						Save
@@ -182,11 +295,17 @@ const AddProduct: React.FC = () => {
 			</div>
 
 			<div className="flex flex-col px-4 sm:px-6 lg:px-8 py-6 bg-[#eff4f4]">
-				<form onSubmit={handleSubmit}>
+				<form
+					id="add-product-form"
+					onSubmit={handleSubmit}
+					className="max-w-5xl mx-auto bg-white p-6"
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+						}
+					}}
+				>
 					<div className="flex">
-						<div className="w-[35%]">
-							<p>General</p>
-						</div>
 						<div className="flex flex-col w-full">
 							<div className="flex flex-col w-full mb-4 text-sm font-medium">
 								<TextField
@@ -307,6 +426,7 @@ const AddProduct: React.FC = () => {
 											placeholder="Enter a variant SKU"
 											variant="outlined"
 											fullWidth
+											InputLabelProps={{ shrink: true }}
 										/>
 									</div>
 
@@ -331,6 +451,7 @@ const AddProduct: React.FC = () => {
 												placeholder="Enter a supplier code"
 												variant="outlined"
 												fullWidth
+												InputLabelProps={{ shrink: true }}
 											/>
 										</div>
 										<div className="flex-1">
@@ -377,6 +498,7 @@ const AddProduct: React.FC = () => {
 											placeholder="Enter a tax rate"
 											variant="outlined"
 											fullWidth
+											InputLabelProps={{ shrink: true }}
 										/>
 									</div>
 
@@ -388,27 +510,60 @@ const AddProduct: React.FC = () => {
 											placeholder="Enter a price"
 											variant="outlined"
 											fullWidth
+											InputLabelProps={{ shrink: true }}
 										/>
+									</div>
+								</>
+							)}
+
+							{/* Variant product type fields */}
+							{productType === "Variant" && (
+								<>
+									<div className="mb-6">
+										<ProductAttributesEditor
+											attributes={productAttributes}
+											onChange={setProductAttributes}
+										/>
+									</div>
+
+									<div className="mb-4">
+										<div className="text-sm font-medium text-gray-900">
+											Product Variants ({generatedVariants.length})
+										</div>
+										{generatedVariants.length === 0 ? (
+											<div className="text-sm text-gray-500 mt-1">
+												Add at least one attribute key with values to generate variants.
+											</div>
+										) : (
+											<div className="mt-3 border border-gray-200 rounded-md divide-y">
+												{generatedVariants.map((variant, idx) => (
+													<div
+														key={`${variant.variantSku ?? "variant"}-${idx}`}
+														className="p-3"
+													>
+														<div className="text-sm text-gray-900">
+															{variant.productAttributes
+																.map(
+																	(a) => `${a.attributeKey}: ${a.attributeValue}`,
+																)
+																.join(" • ")}
+														</div>
+														<div className="text-xs text-gray-500 mt-1">
+															SKU: {variant.variantSku || `variant-${idx + 1}`}
+														</div>
+													</div>
+												))}
+											</div>
+										)}
 									</div>
 								</>
 							)}
 						</div>
 					</div>
-					{/* AttributeInput and ProductVariantsTable only for Variant */}
-					{productType === "Variant" && (
-						<div className="px-4 sm:px-6 lg:px-8 py-4">
-							<AttributeInput value={attributes} onChange={setAttributes} />
-							<ProductVariantsTable
-								attributes={attributes}
-								header={attributes.map((attr) => attr.name)}
-								onVariantsChange={setProductVariants}
-							/>
-						</div>
-					)}
-					<div>
+					{/* <div>
 						<button type="submit">Save</button>
 						<button type="button">Cancel</button>
-					</div>
+					</div> */}
 				</form>
 			</div>
 		</div>
