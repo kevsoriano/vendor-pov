@@ -14,10 +14,10 @@ import ResourceTable from "../../components/common/ResourceTable";
 import type { Product } from "../../types/models";
 import { getAll } from "../../utils/http";
 
-function rowData(name: string, productId: number) {
+function rowData(name: string, description?: string) {
 	return {
 		name,
-		productId,
+		description,
 	};
 }
 
@@ -36,7 +36,7 @@ function Row(props: { row: ReturnType<typeof rowData> }) {
 				<TableCell component="th" scope="row" align="center">
 					{row.name}
 				</TableCell>
-				<TableCell align="center">{row.productId}</TableCell>
+				<TableCell align="center">{row.description ?? "—"}</TableCell>
 				<TableCell align="center">
 					<Button>
 						<EditIcon />
@@ -126,9 +126,14 @@ const Products = () => {
 
 			{!isPending && products.length > 0 && (
 				<ResourceTable
-					headers={["", "Name", "Product ID"]}
+					headers={["", "Name", "Product Description"]}
 					items={products}
-					renderRow={(product) => <Row key={product.id} row={product} />}
+					renderRow={(product) => (
+						<Row
+							key={product.id}
+							row={rowData(product.name, product.description)}
+						/>
+					)}
 					isActionsAvailable={true}
 				/>
 			)}

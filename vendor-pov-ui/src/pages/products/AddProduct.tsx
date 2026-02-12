@@ -113,6 +113,7 @@ const AddProduct: React.FC = () => {
 	const [productVariants, _setProductVariants] = React.useState<ProductVariantCreatePayload[]>([]);
 	const [productAttributes, setProductAttributes] = React.useState<ProductAttributeDraft[]>([]);
 	const [variantRows, setVariantRows] = React.useState<ProductVariantCreatePayload[]>([]);
+	const variantRowsRef = React.useRef<ProductVariantCreatePayload[]>([]);
 	const navigate = useNavigate();
 
 	const generatedVariantAttributes = React.useMemo(
@@ -155,6 +156,10 @@ const AddProduct: React.FC = () => {
 			});
 		});
 	}, [generatedVariantAttributes]);
+
+	React.useEffect(() => {
+		variantRowsRef.current = variantRows;
+	}, [variantRows]);
 
 	const { data: suppliers = [] } = useQuery<Supplier[]>({
 		queryKey: ["suppliers"],
@@ -269,7 +274,7 @@ const AddProduct: React.FC = () => {
 						},
 					]
 				: productType === "Variant"
-					? variantRows
+					? variantRowsRef.current
 					: productVariants;
 		// Construct payload for request
 		const payload = {
@@ -277,15 +282,19 @@ const AddProduct: React.FC = () => {
 			description,
 			productType,
 			productTags: selectedProductTags,
-			// productAttributes:
-			// 	attributes
-			// 		.filter((attr) => attr.name && Array.isArray(attr.values) && attr.values.length > 0)
-			// 		.flatMap((attr) =>
-			// 			attr.values.map((value) => ({
-			// 				attributeKey: attr.name,
-			// 				attributeValue: value,
-			// 			})),
-			// 		) || [],
+			productAttributes:
+				productAttributes
+					.map((attr) => ({
+						attributeKey: attr.attributeKey.trim(),
+						attributeValues: attr.attributeValues.map((value) => value.trim()).filter(Boolean),
+					}))
+					.filter((attr) => attr.attributeKey && attr.attributeValues.length > 0)
+					.flatMap((attr) =>
+						attr.attributeValues.map((value) => ({
+							attributeKey: attr.attributeKey,
+							attributeValue: value,
+						})),
+					),
 			productVariants: nextProductVariants,
 		};
 		mutateProduct({
@@ -576,15 +585,17 @@ const AddProduct: React.FC = () => {
 													variantKey: string,
 													nextVariant: ProductVariantCreatePayload,
 												) => {
-													setVariantRows((prev) =>
-														prev.map((v, index) => {
+													setVariantRows((prev) => {
+														const next = prev.map((v, index) => {
 															const rowKey = getVariantRowKeyFromAttributes(
 																v.productAttributes,
 																index,
 															);
 															return rowKey === variantKey ? nextVariant : v;
-														}),
-													);
+														});
+														variantRowsRef.current = next;
+														return next;
+													});
 												}}
 											/>
 										)}
