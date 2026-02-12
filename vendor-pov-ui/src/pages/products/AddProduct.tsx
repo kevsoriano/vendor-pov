@@ -8,6 +8,9 @@ import type { AutocompleteSelectOption } from "../../components/common/SelectDro
 import AutocompleteSelect from "../../components/common/SelectDropdown";
 import type { Outlet, ProductTag, Supplier } from "../../types/models";
 import { create, getAll, queryClient } from "../../utils/http";
+import ExpandableVariantsTable, {
+	getVariantRowKeyFromAttributes,
+} from "./components/ExpandableVariantsTable.tsx";
 import ProductAttributesEditor, {
 	type ProductAttributeDraft,
 } from "./components/ProductAttributesEditor";
@@ -109,6 +112,7 @@ const AddProduct: React.FC = () => {
 	const [productType, setProductType] = React.useState<ProductType>("Standard");
 	const [productVariants, _setProductVariants] = React.useState<ProductVariantCreatePayload[]>([]);
 	const [productAttributes, setProductAttributes] = React.useState<ProductAttributeDraft[]>([]);
+	const [variantRows, setVariantRows] = React.useState<ProductVariantCreatePayload[]>([]);
 	const navigate = useNavigate();
 
 	const generatedVariantAttributes = React.useMemo(
@@ -116,15 +120,40 @@ const AddProduct: React.FC = () => {
 		[productAttributes],
 	);
 
-	const generatedVariants: ProductVariantCreatePayload[] = React.useMemo(() => {
-		return generatedVariantAttributes.map((attrs, index) => ({
-			variantSku: buildVariantSku(attrs, index),
-			retailPrice: undefined,
-			taxRate: undefined,
-			productAttributes: attrs,
-			supplierProductVariants: [],
-			inventories: [],
-		}));
+	React.useEffect(() => {
+		setVariantRows((prev) => {
+			const prevByKey = new Map(
+				prev.map((v, index) => [getVariantRowKeyFromAttributes(v.productAttributes, index), v]),
+			);
+
+			return generatedVariantAttributes.map((attrs, index) => {
+				const rowKey = getVariantRowKeyFromAttributes(attrs, index);
+				const existing = prevByKey.get(rowKey);
+				const base: ProductVariantCreatePayload = {
+					variantSku: buildVariantSku(attrs, index),
+					retailPrice: 0,
+					taxRate: undefined,
+					productAttributes: attrs,
+					supplierProductVariants: [],
+					inventories: [],
+				};
+
+				if (!existing) return base;
+				return {
+					...base,
+					variantSku: existing.variantSku ?? base.variantSku,
+					supplierProductVariants: existing.supplierProductVariants?.length
+						? existing.supplierProductVariants
+						: base.supplierProductVariants,
+					retailPrice:
+						typeof existing.retailPrice === "number"
+							? existing.retailPrice
+							: base.retailPrice,
+					taxRate: existing.taxRate,
+					inventories: existing.inventories?.length ? existing.inventories : base.inventories,
+				};
+			});
+		});
 	}, [generatedVariantAttributes]);
 
 	const { data: suppliers = [] } = useQuery<Supplier[]>({
@@ -240,7 +269,7 @@ const AddProduct: React.FC = () => {
 						},
 					]
 				: productType === "Variant"
-					? generatedVariants
+					? variantRows
 					: productVariants;
 		// Construct payload for request
 		const payload = {
@@ -528,32 +557,36 @@ const AddProduct: React.FC = () => {
 
 									<div className="mb-4">
 										<div className="text-sm font-medium text-gray-900">
-											Product Variants ({generatedVariants.length})
+											Product Variants ({variantRows.length})
 										</div>
-										{generatedVariants.length === 0 ? (
+										{variantRows.length === 0 ? (
 											<div className="text-sm text-gray-500 mt-1">
 												Add at least one attribute key with values to generate variants.
 											</div>
 										) : (
-											<div className="mt-3 border border-gray-200 rounded-md divide-y">
-												{generatedVariants.map((variant, idx) => (
-													<div
-														key={`${variant.variantSku ?? "variant"}-${idx}`}
-														className="p-3"
-													>
-														<div className="text-sm text-gray-900">
-															{variant.productAttributes
-																.map(
-																	(a) => `${a.attributeKey}: ${a.attributeValue}`,
-																)
-																.join(" • ")}
-														</div>
-														<div className="text-xs text-gray-500 mt-1">
-															SKU: {variant.variantSku || `variant-${idx + 1}`}
-														</div>
-													</div>
-												))}
-											</div>
+											<ExpandableVariantsTable
+												variants={variantRows}
+												suppliers={supplierOptions
+													.filter((s): s is { id: string; name: string } =>
+														Boolean(s.id),
+													)
+													.map((s) => ({ id: s.id, name: s.name }))}
+												outlets={outlets.map((o) => ({ id: o.id, name: o.name }))}
+												onChangeVariant={(
+													variantKey: string,
+													nextVariant: ProductVariantCreatePayload,
+												) => {
+													setVariantRows((prev) =>
+														prev.map((v, index) => {
+															const rowKey = getVariantRowKeyFromAttributes(
+																v.productAttributes,
+																index,
+															);
+															return rowKey === variantKey ? nextVariant : v;
+														}),
+													);
+												}}
+											/>
 										)}
 									</div>
 								</>
