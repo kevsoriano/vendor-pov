@@ -108,6 +108,7 @@ const AddProduct: React.FC = () => {
 	const [selectedSupplier, setSelectedSupplier] = React.useState<AutocompleteSelectOption | null>(
 		null,
 	);
+	const [variantSupplier, setVariantSupplier] = React.useState<string>("");
 	const [selectedProductTags, setSelectedProductTags] = React.useState<AutocompleteOption[]>([]);
 	const [productType, setProductType] = React.useState<ProductType>("Standard");
 	const [productVariants, _setProductVariants] = React.useState<ProductVariantCreatePayload[]>([]);
@@ -115,6 +116,44 @@ const AddProduct: React.FC = () => {
 	const [variantRows, setVariantRows] = React.useState<ProductVariantCreatePayload[]>([]);
 	const variantRowsRef = React.useRef<ProductVariantCreatePayload[]>([]);
 	const navigate = useNavigate();
+
+	React.useEffect(() => {
+		if (productType !== "Variant") return;
+		setVariantRows((prev) => {
+			const nextSupplierId = variantSupplier.trim();
+			const next = prev.map((row) => {
+				const currentPrimary = row.supplierProductVariants?.[0];
+				const currentSupplierId = currentPrimary?.supplier?.id ?? "";
+				if (currentSupplierId === nextSupplierId) return row;
+
+				const nextSupplierProductVariants = nextSupplierId
+					? [
+							{
+								supplier: { id: nextSupplierId },
+								supplierPrice: currentPrimary?.supplierPrice,
+							},
+						]
+					: row.supplierProductVariants;
+
+				const nextInventories = Array.isArray(row.inventories)
+					? row.inventories.map((inv) => ({
+							...inv,
+							supplier: nextSupplierId
+								? { ...(inv.supplier ?? {}), id: nextSupplierId }
+								: inv.supplier,
+						}))
+					: row.inventories;
+
+				return {
+					...row,
+					supplierProductVariants: nextSupplierProductVariants,
+					inventories: nextInventories,
+				};
+			});
+			variantRowsRef.current = next;
+			return next;
+		});
+	}, [productType, variantSupplier]);
 
 	const generatedVariantAttributes = React.useMemo(
 		() => generateVariantAttributes(productAttributes),
@@ -127,6 +166,7 @@ const AddProduct: React.FC = () => {
 				prev.map((v, index) => [getVariantRowKeyFromAttributes(v.productAttributes, index), v]),
 			);
 
+			const nextSupplierId = productType === "Variant" ? variantSupplier.trim() : "";
 			return generatedVariantAttributes.map((attrs, index) => {
 				const rowKey = getVariantRowKeyFromAttributes(attrs, index);
 				const existing = prevByKey.get(rowKey);
@@ -135,7 +175,13 @@ const AddProduct: React.FC = () => {
 					retailPrice: 0,
 					taxRate: undefined,
 					productAttributes: attrs,
-					supplierProductVariants: [],
+					supplierProductVariants: nextSupplierId
+						? [
+								{
+									supplier: { id: nextSupplierId },
+								},
+							]
+						: [],
 					inventories: [],
 				};
 
@@ -155,7 +201,7 @@ const AddProduct: React.FC = () => {
 				};
 			});
 		});
-	}, [generatedVariantAttributes]);
+	}, [generatedVariantAttributes, productType, variantSupplier]);
 
 	React.useEffect(() => {
 		variantRowsRef.current = variantRows;
@@ -282,19 +328,18 @@ const AddProduct: React.FC = () => {
 			description,
 			productType,
 			productTags: selectedProductTags,
-			productAttributes:
-				productAttributes
-					.map((attr) => ({
-						attributeKey: attr.attributeKey.trim(),
-						attributeValues: attr.attributeValues.map((value) => value.trim()).filter(Boolean),
-					}))
-					.filter((attr) => attr.attributeKey && attr.attributeValues.length > 0)
-					.flatMap((attr) =>
-						attr.attributeValues.map((value) => ({
-							attributeKey: attr.attributeKey,
-							attributeValue: value,
-						})),
-					),
+			productAttributes: productAttributes
+				.map((attr) => ({
+					attributeKey: attr.attributeKey.trim(),
+					attributeValues: attr.attributeValues.map((value) => value.trim()).filter(Boolean),
+				}))
+				.filter((attr) => attr.attributeKey && attr.attributeValues.length > 0)
+				.flatMap((attr) =>
+					attr.attributeValues.map((value) => ({
+						attributeKey: attr.attributeKey,
+						attributeValue: value,
+					})),
+				),
 			productVariants: nextProductVariants,
 		};
 		mutateProduct({
@@ -557,6 +602,25 @@ const AddProduct: React.FC = () => {
 							{/* Variant product type fields */}
 							{productType === "Variant" && (
 								<>
+									<div className="mb-4">
+										<AutocompleteSelect
+											options={supplierOptions}
+											resource={
+												variantSupplier
+													? supplierOptions.find(
+															(opt) => opt.id === variantSupplier,
+														) || null
+													: null
+											}
+											onChange={(option: AutocompleteSelectOption | null) => {
+												setVariantSupplier(option?.id ?? "");
+											}}
+											placeholder="Select or create a supplier"
+											onCreateOption={handleCreateSupplier}
+											label={"Supplier"}
+										/>
+									</div>
+
 									<div className="mb-6">
 										<ProductAttributesEditor
 											attributes={productAttributes}
@@ -575,11 +639,6 @@ const AddProduct: React.FC = () => {
 										) : (
 											<ExpandableVariantsTable
 												variants={variantRows}
-												suppliers={supplierOptions
-													.filter((s): s is { id: string; name: string } =>
-														Boolean(s.id),
-													)
-													.map((s) => ({ id: s.id, name: s.name }))}
 												outlets={outlets.map((o) => ({ id: o.id, name: o.name }))}
 												onChangeVariant={(
 													variantKey: string,

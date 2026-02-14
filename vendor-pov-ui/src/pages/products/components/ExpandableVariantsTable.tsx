@@ -32,7 +32,6 @@ type OutletOption = {
 
 interface ExpandableVariantsTableProps<TVariant extends VariantRowBase> {
 	variants: TVariant[];
-	suppliers?: Array<{ id: string; name: string }>;
 	outlets?: OutletOption[];
 	onChangeVariant?: (variantKey: string, nextVariant: TVariant) => void;
 }
@@ -55,11 +54,6 @@ export const getVariantRowKeyFromAttributes = (
 const formatAttributesSummary = (attributes: ProductAttribute[]) => {
 	if (attributes.length === 0) return "—";
 	return attributes.map((a) => `${a.attributeKey}: ${a.attributeValue}`).join(" • ");
-};
-
-const getPrimarySupplierLabel = (variant: VariantRowBase) => {
-	const primary = variant.supplierProductVariants?.[0]?.supplier;
-	return primary?.name ?? primary?.id ?? "—";
 };
 
 const toNumberOrUndefined = (value: string) => {
@@ -89,7 +83,6 @@ const isStableMoney = (value: string) => {
 
 const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 	variants,
-	suppliers = [],
 	outlets = [],
 	onChangeVariant,
 }: ExpandableVariantsTableProps<TVariant>) => {
@@ -97,42 +90,9 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 	const [activeTabByKey, setActiveTabByKey] = React.useState<
 		Record<string, "details" | "inventories">
 	>({});
-	const [inventoryKeysByVariant, setInventoryKeysByVariant] = React.useState<
-		Record<string, string[]>
-	>({});
 	const [draftMoney, setDraftMoney] = React.useState<
 		Record<string, { supplierPrice?: string; retailPrice?: string }>
 	>({});
-
-	const createInventoryKey = React.useCallback(() => {
-		const maybeCrypto = globalThis.crypto as unknown as { randomUUID?: () => string };
-		if (typeof maybeCrypto?.randomUUID === "function") {
-			return maybeCrypto.randomUUID();
-		}
-		return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-	}, []);
-
-	React.useEffect(() => {
-		setInventoryKeysByVariant((prev) => {
-			let changed = false;
-			const next: Record<string, string[]> = { ...prev };
-			variants.forEach((variant, index) => {
-				const rowKey = getVariantRowKeyFromAttributes(variant.productAttributes, index);
-				const invCount = Array.isArray(variant.inventories) ? variant.inventories.length : 0;
-				const existing = next[rowKey] ?? [];
-				if (existing.length === invCount) return;
-				changed = true;
-				if (existing.length > invCount) {
-					next[rowKey] = existing.slice(0, invCount);
-					return;
-				}
-				const padded = [...existing];
-				while (padded.length < invCount) padded.push(createInventoryKey());
-				next[rowKey] = padded;
-			});
-			return changed ? next : prev;
-		});
-	}, [variants, createInventoryKey]);
 
 	return (
 		<div className="mt-3 border border-gray-200 rounded-md overflow-hidden bg-white">
@@ -140,7 +100,6 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 				<table className="min-w-full divide-y divide-gray-200 text-sm">
 					<colgroup>
 						<col style={{ width: 44 }} />
-						<col style={{ width: 160 }} />
 						<col style={{ width: 160 }} />
 						<col style={{ width: 140 }} />
 						<col style={{ width: 140 }} />
@@ -155,7 +114,6 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 								Toggle
 							</th>
 							<th className="px-3 py-2 text-left font-medium text-gray-700">SKU</th>
-							<th className="px-3 py-2 text-left font-medium text-gray-700">Supplier</th>
 							<th className="px-3 py-2 text-right font-medium text-gray-700">
 								Supplier Price
 							</th>
@@ -197,35 +155,6 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 								updateVariant({ inventories: nextInventories } as Partial<TVariant>);
 							};
 
-							const updatePrimarySupplier = (nextSupplier: {
-								id?: string;
-								name?: string;
-							}) => {
-								const currentPrimary = variant.supplierProductVariants?.[0];
-								const nextPrimary = {
-									...(currentPrimary ?? {}),
-									supplier: nextSupplier,
-								};
-
-								const patch: Record<string, unknown> = {
-									supplierProductVariants: [nextPrimary],
-								};
-
-								const nextSupplierId = nextSupplier.id;
-								const existingInventories = getInventories();
-								if (nextSupplierId && existingInventories.length > 0) {
-									patch.inventories = existingInventories.map((inv) => ({
-										...inv,
-										supplier: {
-											...(inv?.supplier ?? {}),
-											id: nextSupplierId,
-										},
-									}));
-								}
-
-								updateVariant(patch as Partial<TVariant>);
-							};
-
 							const updateSupplierPrice = (value: string) => {
 								const currentPrimary = variant.supplierProductVariants?.[0];
 								const nextPrimary = {
@@ -241,25 +170,6 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 								updateVariant({
 									retailPrice: toNumberOrUndefined(value),
 								} as Partial<TVariant>);
-							};
-
-							const addInventoryRow = () => {
-								const firstOutletId = outlets[0]?.id;
-								const nextRow: InventoryDraft = {
-									outlet: { id: firstOutletId },
-									supplier: { id: supplierId || undefined },
-									quantity: 20,
-									reorderThreshold: 10,
-									reorderQty: 5,
-								};
-								setInventoryKeysByVariant((prev) => {
-									const existing = prev[rowKey] ?? [];
-									return {
-										...prev,
-										[rowKey]: [...existing, createInventoryKey()],
-									};
-								});
-								setInventories([...getInventories(), nextRow]);
 							};
 
 							const activeTab = activeTabByKey[rowKey] ?? "details";
@@ -303,34 +213,6 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 												}
 												disabled={!onChangeVariant}
 											/>
-										</td>
-										<td className="px-3 py-2 align-top text-gray-700">
-											{suppliers.length > 0 ? (
-												<select
-													className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-sm text-gray-900"
-													value={supplierId}
-													onChange={(e) => {
-														const nextId = e.target.value;
-														const match = suppliers.find((s) => s.id === nextId);
-														updatePrimarySupplier({
-															id: match?.id ?? nextId,
-															name: match?.name,
-														});
-													}}
-													disabled={!onChangeVariant}
-												>
-													<option value="">—</option>
-													{suppliers.map((s) => (
-														<option key={s.id} value={s.id}>
-															{s.name}
-														</option>
-													))}
-												</select>
-											) : (
-												<div className="text-gray-900">
-													{getPrimarySupplierLabel(variant)}
-												</div>
-											)}
 										</td>
 										<td className="px-3 py-2 align-top text-right text-gray-700 tabular-nums">
 											<div className="flex items-center rounded border border-gray-200 bg-white px-2 py-1">
@@ -423,7 +305,7 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 									{isExpanded && (
 										<tr className="bg-gray-50">
 											<td className="px-2 py-3 border-r border-gray-100" />
-											<td className="px-3 py-3" colSpan={5}>
+												<td className="px-3 py-3" colSpan={4}>
 												<div className="text-xs text-gray-600">
 													<div className="flex items-center gap-2 border-b border-gray-200 pb-2 mb-3">
 														<button
@@ -511,34 +393,25 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 																<div className="font-medium text-gray-800">
 																	Inventories
 																</div>
-																<button
-																	type="button"
-																	className="rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 hover:bg-gray-50"
-																	onClick={addInventoryRow}
-																	disabled={
-																		!onChangeVariant || outlets.length === 0
-																	}
-																>
-																	Add inventory
-																</button>
 															</div>
 
 															{outlets.length === 0 ? (
 																<div className="text-gray-500">
 																	No outlets available.
 																</div>
-															) : getInventories().length === 0 ? (
-																<div className="text-gray-500">
-																	No inventories yet.
-																</div>
 															) : (
 																<div className="space-y-2">
-																	{getInventories().map((inv, invIndex) => {
-																		const invKey =
-																			(inventoryKeysByVariant[rowKey] ?? [])[
-																				invIndex
-																			] ?? createInventoryKey();
-																		const outletId = inv?.outlet?.id ?? "";
+																	{outlets.map((outlet) => {
+																		const invKey = `${rowKey}:${outlet.id}`;
+																		const current = getInventories();
+																		const existingIndex = current.findIndex(
+																			(row) =>
+																				(row?.outlet?.id ?? "") === outlet.id,
+																		);
+																		const inv =
+																			existingIndex >= 0
+																				? current[existingIndex]
+																				: undefined;
 																		const quantity =
 																			typeof inv?.quantity === "number"
 																				? String(inv.quantity)
@@ -552,40 +425,43 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 																				? String(inv.reorderQty)
 																				: "";
 
-																		const updateInventoryAt = (
+																		const upsertInventoryForOutlet = (
 																			patch: Partial<InventoryDraft>,
 																		) => {
-																			const current = getInventories();
-																			const next = current.map((row, idx) => {
-																				if (idx !== invIndex) return row;
-																				const nextSupplier = supplierId
-																					? { id: supplierId }
-																					: row?.supplier;
-																				return {
-																					...row,
-																					...patch,
-																					supplier: nextSupplier,
-																				};
-																			});
-																			setInventories(next);
-																		};
-
-																		const removeInventoryAt = () => {
-																			const current = getInventories();
-																			setInventoryKeysByVariant((prev) => {
-																				const existing = prev[rowKey] ?? [];
-																				return {
-																					...prev,
-																					[rowKey]: existing.filter(
-																						(k) => k !== invKey,
-																					),
-																				};
-																			});
-																			setInventories(
-																				current.filter(
-																					(_, idx) => idx !== invIndex,
-																				),
+																			const baseSupplier = supplierId
+																				? { id: supplierId }
+																				: { id: undefined };
+																			const latest = getInventories();
+																			const idx = latest.findIndex(
+																				(row) =>
+																					(row?.outlet?.id ?? "") ===
+																					outlet.id,
 																			);
+																			if (idx >= 0) {
+																				const next = latest.map(
+																					(row, rowIndex) => {
+																						if (rowIndex !== idx) return row;
+																						return {
+																							...row,
+																							...patch,
+																							supplier: supplierId
+																								? { id: supplierId }
+																								: row?.supplier,
+																						};
+																					},
+																				);
+																				setInventories(next);
+																				return;
+																			}
+
+																			setInventories([
+																				...latest,
+																				{
+																					outlet: { id: outlet.id },
+																					supplier: baseSupplier,
+																					...patch,
+																				},
+																			]);
 																		};
 
 																		return (
@@ -601,31 +477,13 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 																						>
 																							Outlet
 																						</label>
-																						<select
+																						<input
 																							id={`${invKey}-outlet`}
 																							className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-sm text-gray-900"
-																							value={outletId}
-																							onChange={(e) =>
-																								updateInventoryAt({
-																									outlet: {
-																										id: e.target.value,
-																									},
-																								})
-																							}
-																							disabled={!onChangeVariant}
-																						>
-																							<option value="">
-																								Select outlet
-																							</option>
-																							{outlets.map((o) => (
-																								<option
-																									key={o.id}
-																									value={o.id}
-																								>
-																									{o.name}
-																								</option>
-																							))}
-																						</select>
+																							value={outlet.name}
+																							readOnly
+																							disabled
+																						/>
 																					</div>
 																					<div>
 																						<label
@@ -641,11 +499,11 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 																							inputMode="numeric"
 																							value={quantity}
 																							onChange={(e) =>
-																								updateInventoryAt({
+																								upsertInventoryForOutlet({
 																									quantity:
 																										toNumberOrUndefined(
 																											e.target.value,
-																										) ?? 0,
+																										),
 																								})
 																							}
 																							disabled={!onChangeVariant}
@@ -665,11 +523,11 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 																							inputMode="numeric"
 																							value={reorderThreshold}
 																							onChange={(e) =>
-																								updateInventoryAt({
+																								upsertInventoryForOutlet({
 																									reorderThreshold:
 																										toNumberOrUndefined(
 																											e.target.value,
-																										) ?? 0,
+																										),
 																								})
 																							}
 																							disabled={!onChangeVariant}
@@ -689,25 +547,15 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 																							inputMode="numeric"
 																							value={reorderQty}
 																							onChange={(e) =>
-																								updateInventoryAt({
+																								upsertInventoryForOutlet({
 																									reorderQty:
 																										toNumberOrUndefined(
 																											e.target.value,
-																										) ?? 0,
+																										),
 																								})
 																							}
 																							disabled={!onChangeVariant}
 																						/>
-																					</div>
-																					<div className="flex justify-end">
-																						<button
-																							type="button"
-																							className="rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 hover:bg-gray-50"
-																							onClick={removeInventoryAt}
-																							disabled={!onChangeVariant}
-																						>
-																							Remove
-																						</button>
 																					</div>
 																				</div>
 																			</div>
