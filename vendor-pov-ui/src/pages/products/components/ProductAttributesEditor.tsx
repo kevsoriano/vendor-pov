@@ -20,21 +20,29 @@ interface ProductAttributesEditorProps {
 	onChange: (next: ProductAttributeDraft[]) => void;
 	maxAttributes?: number;
 	maxValuesPerAttribute?: number;
+	minAttributes?: number;
 }
 
 const DEFAULT_MAX_ATTRIBUTES = 3;
 const DEFAULT_MAX_VALUES = 5;
+const DEFAULT_MIN_ATTRIBUTES = 0;
 
 const ProductAttributesEditor: React.FC<ProductAttributesEditorProps> = ({
 	attributes,
 	onChange,
 	maxAttributes = DEFAULT_MAX_ATTRIBUTES,
 	maxValuesPerAttribute = DEFAULT_MAX_VALUES,
+	minAttributes = DEFAULT_MIN_ATTRIBUTES,
 }) => {
 	const [pendingValues, setPendingValues] = React.useState<PendingValuesById>({});
+	const lastAttribute = attributes[attributes.length - 1];
+	const hasBlankLastKey = Boolean(lastAttribute && !lastAttribute.attributeKey.trim());
+	const isLastKeyLocked = Boolean(lastAttribute?.keyLocked);
 
 	const addAttribute = () => {
 		if (attributes.length >= maxAttributes) return;
+		if (hasBlankLastKey) return;
+		if (attributes.length > 0 && !isLastKeyLocked) return;
 		onChange([
 			...attributes,
 			{
@@ -65,6 +73,7 @@ const ProductAttributesEditor: React.FC<ProductAttributesEditorProps> = ({
 	};
 
 	const removeAttribute = (id: string) => {
+		if (attributes.length <= minAttributes) return;
 		onChange(attributes.filter((a) => a.id !== id));
 		setPendingValues((prev) => {
 			const { [id]: _removed, ...rest } = prev;
@@ -115,7 +124,11 @@ const ProductAttributesEditor: React.FC<ProductAttributesEditorProps> = ({
 				<button
 					type="button"
 					onClick={addAttribute}
-					disabled={attributes.length >= maxAttributes}
+					disabled={
+						attributes.length >= maxAttributes ||
+						hasBlankLastKey ||
+						(attributes.length > 0 && !isLastKeyLocked)
+					}
 					className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					Add Attribute
@@ -225,6 +238,7 @@ const ProductAttributesEditor: React.FC<ProductAttributesEditorProps> = ({
 								<IconButton
 									size="small"
 									onClick={() => removeAttribute(attr.id)}
+									disabled={attributes.length <= minAttributes}
 									title="Delete attribute"
 									aria-label="Delete attribute"
 								>

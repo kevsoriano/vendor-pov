@@ -91,7 +91,7 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 		Record<string, "details" | "inventories">
 	>({});
 	const [draftMoney, setDraftMoney] = React.useState<
-		Record<string, { supplierPrice?: string; retailPrice?: string }>
+		Record<string, { retailPrice?: string; taxRate?: string }>
 	>({});
 
 	return (
@@ -102,7 +102,7 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 						<col style={{ width: 44 }} />
 						<col style={{ width: 160 }} />
 						<col style={{ width: 140 }} />
-						<col style={{ width: 140 }} />
+						<col style={{ width: 120 }} />
 						<col />
 					</colgroup>
 					<thead className="bg-gray-50">
@@ -115,10 +115,10 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 							</th>
 							<th className="px-3 py-2 text-left font-medium text-gray-700">SKU</th>
 							<th className="px-3 py-2 text-right font-medium text-gray-700">
-								Supplier Price
+								Retail Price
 							</th>
 							<th className="px-3 py-2 text-right font-medium text-gray-700">
-								Retail Price
+								Tax Rate
 							</th>
 							<th className="px-3 py-2 text-left font-medium text-gray-700">Attributes</th>
 						</tr>
@@ -132,16 +132,13 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 							const isExpanded = expandedKey === rowKey;
 
 							const supplierId = variant.supplierProductVariants?.[0]?.supplier?.id ?? "";
-							const supplierPriceValue =
-								typeof variant.supplierProductVariants?.[0]?.supplierPrice === "number"
-									? String(variant.supplierProductVariants?.[0]?.supplierPrice)
-									: "";
-
 							const retailPriceValue =
 								typeof variant.retailPrice === "number" ? String(variant.retailPrice) : "0";
+							const taxRateValue =
+								typeof variant.taxRate === "number" ? String(variant.taxRate) : "";
 
-							const draftSupplierPrice = draftMoney[rowKey]?.supplierPrice;
 							const draftRetailPrice = draftMoney[rowKey]?.retailPrice;
+							const draftTaxRate = draftMoney[rowKey]?.taxRate;
 
 							const updateVariant = (patch: Partial<TVariant>) => {
 								if (!onChangeVariant) return;
@@ -155,20 +152,15 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 								updateVariant({ inventories: nextInventories } as Partial<TVariant>);
 							};
 
-							const updateSupplierPrice = (value: string) => {
-								const currentPrimary = variant.supplierProductVariants?.[0];
-								const nextPrimary = {
-									...(currentPrimary ?? {}),
-									supplierPrice: toNumberOrUndefined(value),
-								};
-								updateVariant({
-									supplierProductVariants: [nextPrimary],
-								} as Partial<TVariant>);
-							};
-
 							const updateRetailPrice = (value: string) => {
 								updateVariant({
 									retailPrice: toNumberOrUndefined(value),
+								} as Partial<TVariant>);
+							};
+
+							const updateTaxRate = (value: string) => {
+								updateVariant({
+									taxRate: toNumberOrUndefined(value),
 								} as Partial<TVariant>);
 							};
 
@@ -222,49 +214,6 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 													type="text"
 													inputMode="decimal"
 													placeholder="—"
-													value={draftSupplierPrice ?? supplierPriceValue}
-													style={{ MozAppearance: "textfield", textAlign: "right" }}
-													onChange={(e) => {
-														const formatted = formatMoneyInput(e.target.value);
-														setDraftMoney((prev) => ({
-															...prev,
-															[rowKey]: {
-																...prev[rowKey],
-																supplierPrice: formatted,
-															},
-														}));
-														if (formatted === "") {
-															updateSupplierPrice("");
-														} else if (isStableMoney(formatted)) {
-															updateSupplierPrice(formatted);
-														}
-													}}
-													onBlur={(e) => {
-														const formatted = formatMoneyInput(e.target.value);
-														updateSupplierPrice(formatted);
-														setDraftMoney((prev) => {
-															const next = { ...prev };
-															const current = next[rowKey];
-															if (!current) return next;
-															next[rowKey] = {
-																...current,
-																supplierPrice: undefined,
-															};
-															return next;
-														});
-													}}
-													disabled={!onChangeVariant}
-												/>
-											</div>
-										</td>
-										<td className="px-3 py-2 align-top text-right text-gray-700 tabular-nums">
-											<div className="flex items-center rounded border border-gray-200 bg-white px-2 py-1">
-												<span className="text-gray-500 mr-1">$</span>
-												<input
-													className="no-spinner w-full bg-transparent text-sm text-right text-gray-900 tabular-nums outline-none"
-													type="text"
-													inputMode="decimal"
-													placeholder="—"
 													value={draftRetailPrice ?? retailPriceValue}
 													style={{ MozAppearance: "textfield", textAlign: "right" }}
 													onChange={(e) => {
@@ -295,6 +244,49 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 													}}
 													disabled={!onChangeVariant}
 												/>
+											</div>
+										</td>
+										<td className="px-3 py-2 align-top text-right text-gray-700 tabular-nums">
+											<div className="flex items-center rounded border border-gray-200 bg-white px-2 py-1">
+												<input
+													className="no-spinner w-full bg-transparent text-sm text-right text-gray-900 tabular-nums outline-none"
+													type="text"
+													inputMode="decimal"
+													placeholder="—"
+													value={draftTaxRate ?? taxRateValue}
+													style={{ MozAppearance: "textfield", textAlign: "right" }}
+													onChange={(e) => {
+														const formatted = formatMoneyInput(e.target.value);
+														setDraftMoney((prev) => ({
+															...prev,
+															[rowKey]: {
+																...prev[rowKey],
+																taxRate: formatted,
+															},
+														}));
+														if (formatted === "") {
+															updateTaxRate("");
+														} else if (isStableMoney(formatted)) {
+															updateTaxRate(formatted);
+														}
+													}}
+													onBlur={(e) => {
+														const formatted = formatMoneyInput(e.target.value);
+														updateTaxRate(formatted);
+														setDraftMoney((prev) => {
+															const next = { ...prev };
+															const current = next[rowKey];
+															if (!current) return next;
+															next[rowKey] = {
+																...current,
+																taxRate: undefined,
+															};
+															return next;
+														});
+													}}
+													disabled={!onChangeVariant}
+												/>
+												<span className="ml-1 text-gray-500">%</span>
 											</div>
 										</td>
 										<td className="px-3 py-2 align-top text-gray-700">

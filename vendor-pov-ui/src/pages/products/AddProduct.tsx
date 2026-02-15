@@ -119,6 +119,21 @@ const AddProduct: React.FC = () => {
 
 	React.useEffect(() => {
 		if (productType !== "Variant") return;
+		setProductAttributes((prev) => {
+			if (prev.length > 0) return prev;
+			return [
+				{
+					id: Math.random().toString(36).slice(2),
+					attributeKey: "",
+					keyLocked: false,
+					attributeValues: [],
+				},
+			];
+		});
+	}, [productType]);
+
+	React.useEffect(() => {
+		if (productType !== "Variant") return;
 		setVariantRows((prev) => {
 			const nextSupplierId = variantSupplier.trim();
 			const next = prev.map((row) => {
@@ -625,6 +640,7 @@ const AddProduct: React.FC = () => {
 										<ProductAttributesEditor
 											attributes={productAttributes}
 											onChange={setProductAttributes}
+											minAttributes={productType === "Variant" ? 1 : 0}
 										/>
 									</div>
 
