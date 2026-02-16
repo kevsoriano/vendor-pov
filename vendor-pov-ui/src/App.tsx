@@ -27,9 +27,9 @@ function App() {
 	}, [token, submit]);
 
 	return (
-		<div className="h-[100vh]">
+		<div className="min-h-screen">
 			<Header />
-			<div className="flex h-[calc(100vh-60px)]">
+			<div className="flex min-h-[calc(100vh-60px)]">
 				{token && <Sidebar />}
 				<main className="bg-[#e4eaee] w-full">
 					<div className="">
