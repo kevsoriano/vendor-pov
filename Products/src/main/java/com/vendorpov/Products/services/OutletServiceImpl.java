@@ -43,9 +43,9 @@ public class OutletServiceImpl implements OutletService {
 		List<OutletEntity> outlets = outletPage.getContent();
 
 		for (OutletEntity outlet : outlets) {
-			OutletDto productDto = modelMapper.map(outlet, OutletDto.class);
-			productDto.setId(outlet.getExternalId());
-			returnValue.add(productDto);
+			OutletDto outletDto = modelMapper.map(outlet, OutletDto.class);
+			outletDto.setId(outlet.getExternalId());
+			returnValue.add(outletDto);
 		}
 
 		return returnValue;

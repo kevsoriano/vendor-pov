@@ -21,6 +21,7 @@ public class SaleEntity extends BaseEntity {
 	private double discountAmount;
 	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SaleLineItemEntity> saleLineItems;
+	private Instant saleDate;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -48,6 +49,14 @@ public class SaleEntity extends BaseEntity {
 
 	public void setSaleLineItems(List<SaleLineItemEntity> saleLineItems) {
 		this.saleLineItems = saleLineItems;
+	}
+
+	public Instant getSaleDate() {
+		return saleDate;
+	}
+
+	public void setSaleDate(Instant saleDate) {
+		this.saleDate = saleDate;
 	}
 
 	public Instant getCreatedOn() {

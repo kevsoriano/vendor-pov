@@ -1,11 +1,11 @@
-package com.vendorpov.Products.shared;
+package com.vendorpov.Products.models;
 
 import java.time.Instant;
 import java.util.List;
 
-public class SaleDto extends BaseDto {
+import com.vendorpov.Products.shared.SaleLineItemDto;
 
-	private static final long serialVersionUID = 1988937725348721521L;
+public class SaleRequestModel {
 	private double totalAmount;
 	private double discountAmount;
 	private List<SaleLineItemDto> saleLineItems;
@@ -37,20 +37,20 @@ public class SaleDto extends BaseDto {
 		this.saleLineItems = saleLineItems;
 	}
 
-	public Instant getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Instant createdOn) {
-		this.createdOn = createdOn;
-	}
-
 	public Instant getSaleDate() {
 		return saleDate;
 	}
 
 	public void setSaleDate(Instant saleDate) {
 		this.saleDate = saleDate;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Instant createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	public Instant getLastUpdatedOn() {

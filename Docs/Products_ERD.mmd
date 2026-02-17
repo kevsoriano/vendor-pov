@@ -1,0 +1,58 @@
+erDiagram
+  ProductEntity {
+    String name
+    String description
+    ProductType productType
+  }
+  ProductVariantEntity {
+    String variantSku
+    BigDecimal retailPrice
+    BigDecimal taxRate
+  }
+  ProductAttributeEntity {
+    String attributeKey
+    String attributeValue
+  }
+  ProductTagEntity {
+    String name
+  }
+  InventoryEntity {
+    int quantity
+    int reorderThreshold
+    int reorderQty
+  }
+  SaleEntity {
+    double totalAmount
+    double discountAmount
+    Instant saleDate
+  }
+  SaleLineItemEntity {
+    double quantity
+    BigDecimal unitPrice
+    BigDecimal discountAmount
+  }
+  SupplierEntity {
+    String name
+    String description
+  }
+  SupplierProductVariantEntity {
+    BigDecimal supplierPrice
+  }
+  OutletEntity {
+    String name
+  }
+  
+  ProductEntity ||--o{ ProductVariantEntity : has
+  ProductEntity ||--o{ ProductAttributeEntity : has
+  ProductEntity }o--o{ ProductTagEntity : tags
+  ProductVariantEntity }o--o{ ProductAttributeEntity : attributes
+  ProductVariantEntity }o--o{ SupplierProductVariantEntity : suppliers
+  ProductVariantEntity }o--o{ InventoryEntity : inventories
+
+  SaleEntity ||--o{ SaleLineItemEntity : has
+  SaleLineItemEntity }o--|| ProductVariantEntity : variant
+  InventoryEntity }o--|| ProductVariantEntity : variant
+  InventoryEntity }o--|| SupplierEntity : supplier
+  InventoryEntity }o--|| OutletEntity : outlet
+  SupplierEntity ||--o{ SupplierProductVariantEntity : supplies
+  SupplierProductVariantEntity }o--|| ProductVariantEntity : variant
