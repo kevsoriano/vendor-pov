@@ -299,10 +299,12 @@ export default function Sidebar() {
 		<>
 			<div className="bg-[#e4eaee]">
 				<ul>
-					{navigation?.map((item, index) => (
-						<Link to={item.link} key={item.name}>
+					{navigation?.map((item, index) => {
+						const hasChildren = item.children?.length > 0;
+
+						const content = (
 							<li
-								className={`text-center p-2 text-xs ${item.current ? "bg-[#ffffff]" : "bg-[#e4eaee]"}`}
+								className={`text-center p-2 text-xs ${item.current ? "bg-[#ffffff]" : "bg-[#e4eaee]"} ${hasChildren ? "cursor-pointer hover:bg-[#d9e3e8]" : ""}`}
 								onClick={() => handleMenuClick(index)}
 								onKeyDown={(e) => {
 									if (e.key === "Enter" || e.key === " ") {
@@ -317,8 +319,18 @@ export default function Sidebar() {
 								/>
 								<div className="mt-2">{item.name}</div>
 							</li>
-						</Link>
-					))}
+						);
+
+						if (hasChildren) {
+							return <div key={item.name}>{content}</div>;
+						}
+
+						return (
+							<Link to={item.link} key={item.name}>
+								{content}
+							</Link>
+						);
+					})}
 				</ul>
 			</div>
 
