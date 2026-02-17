@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Product, ProductVariant } from "../../../types/models";
 
 interface VariantSelectionModalProps {
@@ -22,6 +22,22 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 		}
 	}, [isOpen]);
 
+	const attributeKeyOrder = useMemo(() => {
+		const order = new Map<string, number>();
+		let index = 0;
+		for (const variant of product.productVariants ?? []) {
+			for (const attr of variant.productAttributes ?? []) {
+				const key = attr.attributeKey.trim().toLowerCase();
+				if (!key) continue;
+				if (!order.has(key)) {
+					order.set(key, index);
+					index += 1;
+				}
+			}
+		}
+		return order;
+	}, [product.productVariants]);
+
 	if (!isOpen) return null;
 
 	const handleConfirm = () => {
@@ -39,7 +55,16 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 		if (!variant.productAttributes || variant.productAttributes.length === 0) {
 			return variant.variantSku;
 		}
-		return variant.productAttributes
+		const sortedAttributes = [...variant.productAttributes].sort((a, b) => {
+			const keyA = a.attributeKey.trim().toLowerCase();
+			const keyB = b.attributeKey.trim().toLowerCase();
+			const rankA = attributeKeyOrder.get(keyA) ?? Number.POSITIVE_INFINITY;
+			const rankB = attributeKeyOrder.get(keyB) ?? Number.POSITIVE_INFINITY;
+			if (rankA !== rankB) return rankA - rankB;
+			return keyA.localeCompare(keyB);
+		});
+
+		return sortedAttributes
 			.map((attr) => `${attr.attributeKey}: ${attr.attributeValue}`)
 			.join(" • ");
 	};
@@ -67,7 +92,7 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 					<div className="space-y-3">
 						{product.productVariants?.map((variant) => (
 							<button
-								key={variant.id}
+								key={variant.variantSku}
 								type="button"
 								onClick={() => setSelectedVariant(variant)}
 								onKeyDown={(e) => {
@@ -79,7 +104,7 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 								className={`
 									w-full text-left p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
 									${
-										selectedVariant?.id === variant.id
+										selectedVariant?.variantSku === variant.variantSku
 											? "border-blue-600 bg-blue-50 shadow-sm"
 											: "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
 									}
@@ -98,13 +123,13 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 										className={`
 											w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
 											${
-												selectedVariant?.id === variant.id
+												selectedVariant?.variantSku === variant.variantSku
 													? "border-blue-600 bg-blue-600"
 													: "border-gray-300"
 											}
 										`}
 									>
-										{selectedVariant?.id === variant.id && (
+										{selectedVariant?.variantSku === variant.variantSku && (
 											<svg
 												className="w-3 h-3 text-white"
 												fill="none"
