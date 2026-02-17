@@ -44,6 +44,7 @@ const Cart: React.FC<CartProps> = ({ cart, onRemoveFromCart, onUpdateQuantity, o
 						<thead>
 							<tr className="bg-gray-100">
 								<th className="py-2 px-2 rounded-tl-lg">Name</th>
+								<th className="py-2 px-2">Price</th>
 								<th className="py-2 px-2">Qty</th>
 								<th className="py-2 px-2 rounded-tr-lg">Remove</th>
 							</tr>
@@ -63,10 +64,17 @@ const Cart: React.FC<CartProps> = ({ cart, onRemoveFromCart, onUpdateQuantity, o
 										{item.variant && (
 											<div className="text-xs text-gray-500 mt-1">
 												{item.variant.productAttributes
-													?.map((attr) => `${attr.attributeKey}: ${attr.attributeValue}`)
+													?.map(
+														(attr) => `${attr.attributeKey}: ${attr.attributeValue}`,
+													)
 													.join(" • ") || item.variant.variantSku}
 											</div>
 										)}
+									</td>
+									<td className="py-2 px-2 text-center text-gray-900 font-medium tabular-nums">
+										{typeof item.variant?.retailPrice === "number"
+											? item.variant.retailPrice.toFixed(2)
+											: "—"}
 									</td>
 									<td className="py-2 px-2 text-center">
 										<input

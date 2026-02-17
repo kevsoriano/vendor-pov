@@ -4,13 +4,21 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class ProductVariantResponseModel {
-
+	private String id;
 	private String variantSku;
 	private BigDecimal retailPrice;
 	private BigDecimal taxRate;
 	private List<ProductAttributeResponseModel> productAttributes;
 	private List<SupplierProductVariantResponseModel> supplierProductVariants;
 	private List<InventoryRequestModel> inventories;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getVariantSku() {
 		return variantSku;

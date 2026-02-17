@@ -28,3 +28,4 @@ brew services stop postgresql
 \dt - list tables
 SET ROLE new_username; - switch user
 DROP DATABASE db_name;
+tail -n 50 /opt/homebrew/var/log/postgresql@14.log - check logs (mac)
