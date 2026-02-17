@@ -50,6 +50,7 @@ erDiagram
   ProductVariantEntity }o--o{ InventoryEntity : inventories
 
   SaleEntity ||--o{ SaleLineItemEntity : has
+  SaleEntity }o--|| OutletEntity : outlet
   SaleLineItemEntity }o--|| ProductVariantEntity : variant
   InventoryEntity }o--|| ProductVariantEntity : variant
   InventoryEntity }o--|| SupplierEntity : supplier

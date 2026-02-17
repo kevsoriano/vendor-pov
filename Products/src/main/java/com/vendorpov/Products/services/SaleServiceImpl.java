@@ -15,6 +15,11 @@ import com.vendorpov.Products.data.SaleEntity;
 import com.vendorpov.Products.data.SaleRepository;
 import com.vendorpov.Products.shared.SaleDto;
 
+import com.vendorpov.Products.data.InventoryRepository;
+import com.vendorpov.Products.data.InventoryEntity;
+import com.vendorpov.Products.shared.SaleLineItemDto;
+import com.vendorpov.Products.data.ProductVariantEntity;
+
 @Service
 public class SaleServiceImpl implements SaleService {
 
@@ -23,11 +28,32 @@ public class SaleServiceImpl implements SaleService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	@Autowired
+	private InventoryRepository inventoryRepository;
+
 	@Override
 	public SaleDto createSale(SaleDto saleDetails) {
 		SaleEntity saleEntity = modelMapper.map(saleDetails, SaleEntity.class);
 		saleEntity.setExternalId(UUID.randomUUID().toString());
 		saleRepository.save(saleEntity);
+
+		// Update inventory for each sale line item
+		if (saleDetails.getSaleLineItems() != null) {
+			for (SaleLineItemDto lineItem : saleDetails.getSaleLineItems()) {
+				ProductVariantEntity variant = lineItem.getProductVariant();
+				// For demo: assume only one inventory per variant (no outlet/supplier
+				// distinction)
+				if (variant != null && variant.getId() != null) {
+					InventoryEntity inventory = inventoryRepository.findByProductVariantIdAndOutletId(variant.getId(),
+							null); // Update as needed for outlet
+					if (inventory != null) {
+						int newQty = inventory.getQuantity() - (int) lineItem.getQuantity();
+						inventory.setQuantity(Math.max(newQty, 0));
+						inventoryRepository.save(inventory);
+					}
+				}
+			}
+		}
 
 		SaleDto returnValue = modelMapper.map(saleEntity, SaleDto.class);
 		returnValue.setId(saleEntity.getExternalId());
