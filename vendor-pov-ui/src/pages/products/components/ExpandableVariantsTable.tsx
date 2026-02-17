@@ -117,9 +117,7 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 							<th className="px-3 py-2 text-right font-medium text-gray-700">
 								Retail Price
 							</th>
-							<th className="px-3 py-2 text-right font-medium text-gray-700">
-								Tax Rate
-							</th>
+							<th className="px-3 py-2 text-right font-medium text-gray-700">Tax Rate</th>
 							<th className="px-3 py-2 text-left font-medium text-gray-700">Attributes</th>
 						</tr>
 					</thead>
@@ -297,7 +295,7 @@ const ExpandableVariantsTable = <TVariant extends VariantRowBase>({
 									{isExpanded && (
 										<tr className="bg-gray-50">
 											<td className="px-2 py-3 border-r border-gray-100" />
-												<td className="px-3 py-3" colSpan={4}>
+											<td className="px-3 py-3" colSpan={4}>
 												<div className="text-xs text-gray-600">
 													<div className="flex items-center gap-2 border-b border-gray-200 pb-2 mb-3">
 														<button

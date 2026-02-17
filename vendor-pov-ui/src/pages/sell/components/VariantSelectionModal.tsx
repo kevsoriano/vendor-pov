@@ -1,5 +1,5 @@
+import { useEffect, useState } from "react";
 import type { Product, ProductVariant } from "../../../types/models";
-import { useState } from "react";
 
 interface VariantSelectionModalProps {
 	product: Product;
@@ -14,9 +14,13 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 	onClose,
 	onSelectVariant,
 }) => {
-	const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-		null,
-	);
+	const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+
+	useEffect(() => {
+		if (isOpen) {
+			setSelectedVariant(null);
+		}
+	}, [isOpen]);
 
 	if (!isOpen) return null;
 
@@ -43,18 +47,18 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center">
 			{/* Backdrop */}
-			<div
-				className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
+			<button
+				type="button"
+				className="absolute inset-0 bg-opacity-20 transition-opacity"
 				onClick={handleClose}
+				aria-label="Close modal"
 			/>
 
 			{/* Modal */}
 			<div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
 				{/* Header */}
 				<div className="px-6 py-5 border-b border-gray-200">
-					<h2 className="text-xl font-semibold text-gray-900">
-						Select Product Variant
-					</h2>
+					<h2 className="text-xl font-semibold text-gray-900">Select Product Variant</h2>
 					<p className="text-sm text-gray-600 mt-1">{product.name}</p>
 				</div>
 
@@ -62,11 +66,18 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 				<div className="px-6 py-4 overflow-y-auto flex-grow">
 					<div className="space-y-3">
 						{product.productVariants?.map((variant) => (
-							<div
+							<button
 								key={variant.id}
+								type="button"
 								onClick={() => setSelectedVariant(variant)}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										setSelectedVariant(variant);
+									}
+								}}
 								className={`
-									p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
+									w-full text-left p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
 									${
 										selectedVariant?.id === variant.id
 											? "border-blue-600 bg-blue-50 shadow-sm"
@@ -103,12 +114,13 @@ const VariantSelectionModal: React.FC<VariantSelectionModalProps> = ({
 												viewBox="0 0 24 24"
 												stroke="currentColor"
 											>
+												<title>Selected</title>
 												<path d="M5 13l4 4L19 7" />
 											</svg>
 										)}
 									</div>
 								</div>
-							</div>
+							</button>
 						))}
 					</div>
 				</div>
