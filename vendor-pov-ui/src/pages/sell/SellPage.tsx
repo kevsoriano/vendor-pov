@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { Product, ProductVariant } from "../../types/models";
+import { OutletContext } from "../../context/OutletContext";
 import { getAll } from "../../utils/http";
 import Cart from "./components/Cart";
 import ProductCard from "./components/ProductCard";
@@ -12,6 +13,8 @@ interface CartItem {
 }
 
 export default function SellPage() {
+	const { selectedOutlet } = useContext(OutletContext);
+
 	const {
 		data: products = [],
 		isPending,
@@ -70,6 +73,25 @@ export default function SellPage() {
 	};
 
 	const handleCheckout = () => {
+		// Build payload of sale line items
+		const saleLineItems = cart.map((item) => ({
+			variantId: item.variant?.id || null,
+			variantSku: item.variant?.variantSku || null,
+			price: item.variant?.retailPrice || 0,
+			quantity: item.quantity,
+			lineTotal: (item.variant?.retailPrice || 0) * item.quantity,
+		}));
+			
+		const checkoutPayload = {
+			totalAmount: saleLineItems.reduce((sum, item) => sum + item.lineTotal, 0),
+			discountAmount: 0, // Placeholder for any discounts
+			saleLineItems,
+			outlet: selectedOutlet,
+			saleDate: new Date().toISOString(),
+		};
+
+		console.log("🛒 Checkout Payload:", checkoutPayload);
+
 		// Placeholder: Implement checkout logic (API call, etc.)
 		alert("Checkout successful! (Not implemented)");
 		setCart([]);

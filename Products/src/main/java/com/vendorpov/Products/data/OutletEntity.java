@@ -15,6 +15,8 @@ public class OutletEntity extends BaseEntity {
 	private String name;
 	@OneToMany(mappedBy = "outlet", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<InventoryEntity> inventories;
+	@OneToMany(mappedBy = "outlet", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SaleEntity> sales;
 
 	public String getName() {
 		return name;
@@ -30,6 +32,14 @@ public class OutletEntity extends BaseEntity {
 
 	public void setInventories(List<InventoryEntity> inventories) {
 		this.inventories = inventories;
+	}
+
+	public List<SaleEntity> getSales() {
+		return sales;
+	}
+
+	public void setSales(List<SaleEntity> sales) {
+		this.sales = sales;
 	}
 
 }

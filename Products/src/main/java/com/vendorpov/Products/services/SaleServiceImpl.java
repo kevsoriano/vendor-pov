@@ -45,7 +45,7 @@ public class SaleServiceImpl implements SaleService {
 				// distinction)
 				if (variant != null && variant.getId() != null) {
 					InventoryEntity inventory = inventoryRepository.findByProductVariantIdAndOutletId(variant.getId(),
-							null); // Update as needed for outlet
+							saleEntity.getOutlet().getId()); // Update as needed for outlet
 					if (inventory != null) {
 						int newQty = inventory.getQuantity() - (int) lineItem.getQuantity();
 						inventory.setQuantity(Math.max(newQty, 0));

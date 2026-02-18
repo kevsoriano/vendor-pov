@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import CustomersIcon from "../assets/customers.png";
 import HomeIcon from "../assets/home.png";
 import ProductIcon from "../assets/product.png";
@@ -8,6 +8,10 @@ import SellIcon from "../assets/sell.png";
 import SetupIcon from "../assets/setup.png";
 import "../App.css";
 import { Link } from "react-router-dom";
+import type { Outlet } from "../types/models";
+import { useQuery } from "@tanstack/react-query";
+import { getAll } from "../utils/http";
+import { OutletContext } from "../context/OutletContext";
 
 const initialNavigation = [
 	{
@@ -256,6 +260,16 @@ const initialNavigation = [
 export default function Sidebar() {
 	// const [sidebarOpen, setSidebarOpen] = useState(false)
 	const [navigation, setNavigation] = useState(initialNavigation);
+	const { selectedOutlet, setSelectedOutlet } = useContext(OutletContext);
+
+	const {
+		data: outlets = [],
+	} = useQuery<Outlet[]>({
+		queryKey: ["outlets"],
+		queryFn: () => getAll("outlets"),
+		staleTime: 0,
+		// gcTime: 30000,
+	});
 
 	const handleMenuClick = (index: number) => {
 		const updatedMenus = navigation.map((menu, idx) => {
@@ -339,6 +353,23 @@ export default function Sidebar() {
 					return (
 						<aside key={`${item.name}-active`} className={`aside show`}>
 							<ul>
+								{item.name === "Sell" && (
+									<li className="border-b p-3">
+										<label className="block text-xs font-semibold mb-2">Select Outlet</label>
+										<select
+											value={selectedOutlet}
+											onChange={(e) => setSelectedOutlet(e.target.value)}
+											className="w-full px-2 py-2 border rounded text-xs bg-white"
+										>
+											<option value="">Choose Outlet</option>
+											{outlets.map((outlet) => (
+												<option key={outlet.id} value={outlet.id}>
+													{outlet.name}
+												</option>
+											))}
+										</select>
+									</li>
+								)}
 								{item.children?.map((submenu, index) => (
 									<Link to={submenu.link} key={submenu.name}>
 										<li

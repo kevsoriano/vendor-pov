@@ -9,6 +9,7 @@ public class SaleDto extends BaseDto {
 	private double totalAmount;
 	private double discountAmount;
 	private List<SaleLineItemDto> saleLineItems;
+	private OutletDto outlet;
 	private Instant saleDate;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
@@ -35,6 +36,14 @@ public class SaleDto extends BaseDto {
 
 	public void setSaleLineItems(List<SaleLineItemDto> saleLineItems) {
 		this.saleLineItems = saleLineItems;
+	}
+
+	public OutletDto getOutlet() {
+		return outlet;
+	}
+
+	public void setOutlet(OutletDto outlet) {
+		this.outlet = outlet;
 	}
 
 	public Instant getCreatedOn() {

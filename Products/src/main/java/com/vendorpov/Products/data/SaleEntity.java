@@ -9,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity(name = "sales")
@@ -21,6 +23,10 @@ public class SaleEntity extends BaseEntity {
 	private double discountAmount;
 	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SaleLineItemEntity> saleLineItems;
+	@ManyToOne
+	@JoinColumn(name = "outlet_id")
+	private OutletEntity outlet;
+	@Column(name = "sale_date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
 	private Instant saleDate;
 	@CreationTimestamp
 	private Instant createdOn;
@@ -49,6 +55,14 @@ public class SaleEntity extends BaseEntity {
 
 	public void setSaleLineItems(List<SaleLineItemEntity> saleLineItems) {
 		this.saleLineItems = saleLineItems;
+	}
+
+	public OutletEntity getOutlet() {
+		return outlet;
+	}
+
+	public void setOutlet(OutletEntity outlet) {
+		this.outlet = outlet;
 	}
 
 	public Instant getSaleDate() {

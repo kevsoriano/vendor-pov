@@ -9,6 +9,7 @@ public class SaleRequestModel {
 	private double totalAmount;
 	private double discountAmount;
 	private List<SaleLineItemDto> saleLineItems;
+	private OutletRequestModel outlet;
 	private Instant saleDate;
 	private Instant createdOn;
 	private Instant lastUpdatedOn;
@@ -35,6 +36,14 @@ public class SaleRequestModel {
 
 	public void setSaleLineItems(List<SaleLineItemDto> saleLineItems) {
 		this.saleLineItems = saleLineItems;
+	}
+
+	public OutletRequestModel getOutlet() {
+		return outlet;
+	}
+
+	public void setOutlet(OutletRequestModel outlet) {
+		this.outlet = outlet;
 	}
 
 	public Instant getSaleDate() {
