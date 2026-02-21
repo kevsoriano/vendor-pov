@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
-import type { Product, ProductVariant } from "../../types/models";
 import { OutletContext } from "../../context/OutletContext";
+import type { Product, ProductVariant } from "../../types/models";
 import { getAll } from "../../utils/http";
 import Cart from "./components/Cart";
 import ProductCard from "./components/ProductCard";
@@ -54,7 +54,9 @@ export default function SellPage() {
 	const removeFromCart = (productId: string, variantId?: string) => {
 		setCart((prev) =>
 			prev.filter((item) => {
-				const itemKey = item.variant ? `${item.product.id}-${item.variant.id}` : item.product.id;
+				const itemKey = item.variant
+					? `${item.product.id}-${item.variant.id}`
+					: item.product.id;
 				const targetKey = variantId ? `${productId}-${variantId}` : productId;
 				return itemKey !== targetKey;
 			}),
@@ -65,7 +67,9 @@ export default function SellPage() {
 		if (quantity < 1) return;
 		setCart((prev) =>
 			prev.map((item) => {
-				const itemKey = item.variant ? `${item.product.id}-${item.variant.id}` : item.product.id;
+				const itemKey = item.variant
+					? `${item.product.id}-${item.variant.id}`
+					: item.product.id;
 				const targetKey = variantId ? `${productId}-${variantId}` : productId;
 				return itemKey === targetKey ? { ...item, quantity } : item;
 			}),
@@ -81,12 +85,14 @@ export default function SellPage() {
 			quantity: item.quantity,
 			lineTotal: (item.variant?.retailPrice || 0) * item.quantity,
 		}));
-			
+
 		const checkoutPayload = {
 			totalAmount: saleLineItems.reduce((sum, item) => sum + item.lineTotal, 0),
 			discountAmount: 0, // Placeholder for any discounts
 			saleLineItems,
-			outlet: selectedOutlet,
+			outlet: {
+				id: selectedOutlet,
+			},
 			saleDate: new Date().toISOString(),
 		};
 

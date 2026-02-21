@@ -1,5 +1,8 @@
 package com.vendorpov.Products.services;
 
+import com.vendorpov.Products.data.OutletRepository;
+import com.vendorpov.Products.data.OutletEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +29,8 @@ public class SaleServiceImpl implements SaleService {
 	@Autowired
 	SaleRepository saleRepository;
 	@Autowired
+	OutletRepository outletRepository;
+	@Autowired
 	private ModelMapper modelMapper;
 
 	@Autowired
@@ -35,6 +40,19 @@ public class SaleServiceImpl implements SaleService {
 	public SaleDto createSale(SaleDto saleDetails) {
 		SaleEntity saleEntity = modelMapper.map(saleDetails, SaleEntity.class);
 		saleEntity.setExternalId(UUID.randomUUID().toString());
+
+		// Ensure OutletEntity is persisted
+		OutletEntity outlet = saleEntity.getOutlet();
+		if (outlet != null && outlet.getId() == null) {
+			// Try to find existing outlet by unique property (e.g. name)
+			OutletEntity existingOutlet = outletRepository.findByExternalId(outlet.getExternalId());
+			if (existingOutlet != null) {
+				saleEntity.setOutlet(existingOutlet);
+			} else {
+				throw new IllegalArgumentException("Outlet does not exist: " + outlet.getName());
+			}
+		}
+
 		saleRepository.save(saleEntity);
 
 		// Update inventory for each sale line item
@@ -43,7 +61,8 @@ public class SaleServiceImpl implements SaleService {
 				ProductVariantEntity variant = lineItem.getProductVariant();
 				// For demo: assume only one inventory per variant (no outlet/supplier
 				// distinction)
-				if (variant != null && variant.getId() != null) {
+				if (variant != null && variant.getId() != null && saleEntity.getOutlet() != null
+						&& saleEntity.getOutlet().getId() != null) {
 					InventoryEntity inventory = inventoryRepository.findByProductVariantIdAndOutletId(variant.getId(),
 							saleEntity.getOutlet().getId()); // Update as needed for outlet
 					if (inventory != null) {
