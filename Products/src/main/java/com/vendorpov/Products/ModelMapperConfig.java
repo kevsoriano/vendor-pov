@@ -27,15 +27,14 @@ public class ModelMapperConfig {
 		ModelMapper modelMapper = new ModelMapper();
 
 		// 1. Set the Global Strategy to STRICT
-		modelMapper.getConfiguration()
-						.setMatchingStrategy(MatchingStrategies.STRICT);
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		// 2. Explicitly map the ID mismatch
 		// Configure bidirectional mapping for BaseEntity <-> BaseDto
 		// Entity (externalId) -> DTO (id)
 		modelMapper.typeMap(BaseEntity.class, BaseDto.class).addMappings(mapper -> {
-	        mapper.map(BaseEntity::getExternalId, BaseDto::setId);		
-	    });
+			mapper.map(BaseEntity::getExternalId, BaseDto::setId);
+		});
 
 		// DTO (id) -> Entity (externalId)
 		modelMapper.typeMap(BaseDto.class, BaseEntity.class).addMappings(mapper -> {
@@ -43,18 +42,17 @@ public class ModelMapperConfig {
 			mapper.skip(BaseEntity::setId); // Prevent String-to-Long mapping
 		});
 
-		// Configure bidirectional mapping for all subclasses using includeBase for deep recursion
+		// Configure bidirectional mapping for all subclasses using includeBase for deep
+		// recursion
 		// ProductEntity <-> ProductDto
-		modelMapper.typeMap(ProductEntity.class, ProductDto.class)
-		.includeBase(BaseEntity.class, BaseDto.class)
-		.addMappings(mapper -> mapper.map(ProductEntity::getExternalId, ProductDto::setId));
-	modelMapper.typeMap(ProductDto.class, ProductEntity.class)
-		.includeBase(BaseDto.class, BaseEntity.class)
-		.addMappings(mapper -> {
-			mapper.map(ProductDto::getId, ProductEntity::setExternalId);
-			mapper.skip(ProductEntity::setId); // Prevent String-to-Long mapping
-		});
-		// ProductTagEntity <-> ProductTagDto	
+		modelMapper.typeMap(ProductEntity.class, ProductDto.class).includeBase(BaseEntity.class, BaseDto.class)
+				.addMappings(mapper -> mapper.map(ProductEntity::getExternalId, ProductDto::setId));
+		modelMapper.typeMap(ProductDto.class, ProductEntity.class).includeBase(BaseDto.class, BaseEntity.class)
+				.addMappings(mapper -> {
+					mapper.map(ProductDto::getId, ProductEntity::setExternalId);
+					mapper.skip(ProductEntity::setId); // Prevent String-to-Long mapping
+				});
+		// ProductTagEntity <-> ProductTagDto
 		modelMapper.typeMap(ProductTagEntity.class, ProductTagDto.class).includeBase(BaseEntity.class, BaseDto.class)
 				.addMappings(mapper -> mapper.map(ProductTagEntity::getExternalId, ProductTagDto::setId));
 		modelMapper.typeMap(ProductTagDto.class, ProductTagEntity.class).includeBase(BaseDto.class, BaseEntity.class)
@@ -62,25 +60,27 @@ public class ModelMapperConfig {
 					mapper.map(ProductTagDto::getId, ProductTagEntity::setExternalId);
 					mapper.skip(ProductTagEntity::setId); // Prevent String-to-Long mapping
 				});
-		
-		// ProductAttributeEntity <-> ProductAttributeDto	
-		modelMapper.typeMap(ProductAttributeEntity.class, ProductAttributeDto.class).includeBase(BaseEntity.class, BaseDto.class)
+
+		// ProductAttributeEntity <-> ProductAttributeDto
+		modelMapper.typeMap(ProductAttributeEntity.class, ProductAttributeDto.class)
+				.includeBase(BaseEntity.class, BaseDto.class)
 				.addMappings(mapper -> mapper.map(ProductAttributeEntity::getExternalId, ProductAttributeDto::setId));
-		modelMapper.typeMap(ProductAttributeDto.class, ProductAttributeEntity.class).includeBase(BaseDto.class, BaseEntity.class)
-				.addMappings(mapper -> {
+		modelMapper.typeMap(ProductAttributeDto.class, ProductAttributeEntity.class)
+				.includeBase(BaseDto.class, BaseEntity.class).addMappings(mapper -> {
 					mapper.map(ProductAttributeDto::getId, ProductAttributeEntity::setExternalId);
 					mapper.skip(ProductAttributeEntity::setId); // Prevent String-to-Long mapping
 				});
-		
+
 //		// ProductVariantEntity <-> ProductVariantDto
-		modelMapper.typeMap(ProductVariantEntity.class, ProductVariantDto.class).includeBase(BaseEntity.class, BaseDto.class)
+		modelMapper.typeMap(ProductVariantEntity.class, ProductVariantDto.class)
+				.includeBase(BaseEntity.class, BaseDto.class)
 				.addMappings(mapper -> mapper.map(ProductVariantEntity::getExternalId, ProductVariantDto::setId));
-		modelMapper.typeMap(ProductVariantDto.class, ProductVariantEntity.class).includeBase(BaseDto.class, BaseEntity.class)
-				.addMappings(mapper -> {
+		modelMapper.typeMap(ProductVariantDto.class, ProductVariantEntity.class)
+				.includeBase(BaseDto.class, BaseEntity.class).addMappings(mapper -> {
 					mapper.map(ProductVariantDto::getId, ProductVariantEntity::setExternalId);
 					mapper.skip(ProductVariantEntity::setId);
 				});
-		
+
 		// BrandEntity <-> BrandDto
 //		modelMapper.typeMap(BrandEntity.class, BrandDto.class).includeBase(BaseEntity.class, BaseDto.class)
 //				.addMappings(mapper -> mapper.map(BrandEntity::getExternalId, BrandDto::setId));
@@ -108,8 +108,6 @@ public class ModelMapperConfig {
 					mapper.skip(OutletEntity::setId);
 				});
 
-
 		return modelMapper;
 	}
 }
-

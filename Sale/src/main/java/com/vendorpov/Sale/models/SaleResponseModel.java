@@ -1,16 +1,25 @@
-package com.vendorpov.Products.models;
+package com.vendorpov.Sale.models;
 
 import java.time.Instant;
 import java.util.List;
 
-import com.vendorpov.Products.shared.SaleLineItemDto;
+import com.vendorpov.Sale.shared.SaleLineItemDto;
 
-public class SaleRequestModel {
+public class SaleResponseModel {
+	private String id;
 	private double totalAmount;
 	private double discountAmount;
 	private List<SaleLineItemDto> saleLineItems;
-	private OutletRequestModel outlet;
+	private OutletResponseModel outlet;
 	private Instant saleDate;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public double getTotalAmount() {
 		return totalAmount;
@@ -36,11 +45,11 @@ public class SaleRequestModel {
 		this.saleLineItems = saleLineItems;
 	}
 
-	public OutletRequestModel getOutlet() {
+	public OutletResponseModel getOutlet() {
 		return outlet;
 	}
 
-	public void setOutlet(OutletRequestModel outlet) {
+	public void setOutlet(OutletResponseModel outlet) {
 		this.outlet = outlet;
 	}
 
