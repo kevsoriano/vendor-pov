@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.vendorpov.Sale.models.OutletResponseModel;
 
-@FeignClient(name="outlets")
+@FeignClient(name="StoreManagementService")
 public interface OutletsServiceClient {
 
 	@GetMapping("outlets")
