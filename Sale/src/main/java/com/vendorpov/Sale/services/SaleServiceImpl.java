@@ -34,6 +34,7 @@ public class SaleServiceImpl implements SaleService {
 		if (outletId != null) {
 			OutletResponseModel existingOutlet = outletsServiceClient.getOutlet(outletId);
 			if (existingOutlet != null) {
+				saleDetails.setOutletId(outletId);
 				saleDetails.setOutlet(existingOutlet);
 			} else {
 				throw new IllegalArgumentException("Outlet does not exist: " + outletId);
@@ -61,6 +62,7 @@ public class SaleServiceImpl implements SaleService {
 		
 		SaleEntity saleEntity = modelMapper.map(saleDetails, SaleEntity.class);
 		saleEntity.setExternalId(UUID.randomUUID().toString());
+		saleEntity.setOutletId(outletId);
 		saleRepository.save(saleEntity);
 
 		SaleDto returnValue = modelMapper.map(saleEntity, SaleDto.class);

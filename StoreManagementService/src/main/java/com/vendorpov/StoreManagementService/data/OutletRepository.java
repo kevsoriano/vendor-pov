@@ -1,0 +1,11 @@
+package com.vendorpov.StoreManagementService.data;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OutletRepository extends CrudRepository<OutletEntity, Long>, PagingAndSortingRepository<OutletEntity, Long> {
+	OutletEntity findByName(String name);
+	OutletEntity findByExternalId(String outletId);
+}

@@ -38,8 +38,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	ProductRepository productRepository;
-		@Autowired
-		ProductTagRepository productTagRepository;
+	@Autowired
+	ProductTagRepository productTagRepository;
 	@Autowired
 	SupplierRepository supplierRepository;
 	@Autowired
@@ -91,54 +91,54 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 
-		if(productEntity.getProductType().toString() == "STANDARD" && !(productEntity.getProductVariants().size() == 1)) {
-			throw new RuntimeException("Standard products must have exactly 1 product variant."); 
+		if (productEntity.getProductType().toString() == "STANDARD"
+				&& !(productEntity.getProductVariants().size() == 1)) {
+			throw new RuntimeException("Standard products must have exactly 1 product variant.");
 		}
-		
+
 		if (productEntity.getProductVariants() != null) {
 			for (ProductVariantEntity variant : productEntity.getProductVariants()) {
 				variant.setProduct(productEntity);
 				variant.setExternalId(UUID.randomUUID().toString());
-				
+
 				if (variant.getProductAttributes() != null) {
-	                Set<ProductAttributeEntity> linkedAttributes = new HashSet<>();
-	                for (ProductAttributeEntity attrProxy : variant.getProductAttributes()) {
-	                    // Find the actual attribute instance already attached to the product
-	                    ProductAttributeEntity realAttr = productEntity.getProductAttributes().stream()
-	                        .filter(a -> a.getAttributeKey().equalsIgnoreCase(attrProxy.getAttributeKey()) 
-	                                  && a.getAttributeValue().equalsIgnoreCase(attrProxy.getAttributeValue()))
-	                        .findFirst()
-	                        .orElseThrow(() -> new RuntimeException("Attribute not found"));
-	                    
-	                    linkedAttributes.add(realAttr);
-	                }
-	                variant.setProductAttributes(linkedAttributes);
-	            }
+					Set<ProductAttributeEntity> linkedAttributes = new HashSet<>();
+					for (ProductAttributeEntity attrProxy : variant.getProductAttributes()) {
+						// Find the actual attribute instance already attached to the product
+						ProductAttributeEntity realAttr = productEntity.getProductAttributes().stream()
+								.filter(a -> a.getAttributeKey().equalsIgnoreCase(attrProxy.getAttributeKey())
+										&& a.getAttributeValue().equalsIgnoreCase(attrProxy.getAttributeValue()))
+								.findFirst().orElseThrow(() -> new RuntimeException("Attribute not found"));
+
+						linkedAttributes.add(realAttr);
+					}
+					variant.setProductAttributes(linkedAttributes);
+				}
 
 				List<SupplierProductVariantEntity> newLinks = new ArrayList<>();
 				if (variant.getSupplierProductVariants() != null) {
-				    for (SupplierProductVariantEntity supplierProductVariant : variant.getSupplierProductVariants()) {
-				        SupplierEntity supplierEntity = supplierRepository
-				                .findByExternalId(supplierProductVariant.getSupplier().getExternalId());
-				        
-				        if (supplierEntity == null) {
-				            throw new RuntimeException("Supplier not found");
-				        }
+					for (SupplierProductVariantEntity supplierProductVariant : variant.getSupplierProductVariants()) {
+						SupplierEntity supplierEntity = supplierRepository
+								.findByExternalId(supplierProductVariant.getSupplier().getExternalId());
 
-				        SupplierProductVariantEntity link = new SupplierProductVariantEntity();
-				        
-				        // 1. MUST initialize the ID object first
-				        link.setId(new SupplierProductVariantCompositeKey()); 
-				        
-				        // 2. Set the entities. @MapsId tells Hibernate to extract the 
-				        // IDs from these objects and put them into the 'link.id'
-				        link.setProductVariant(variant);
-				        link.setSupplier(supplierEntity);
-				        
-				        link.setSupplierPrice(supplierProductVariant.getSupplierPrice());
-				        
-				        newLinks.add(link);
-				    }
+						if (supplierEntity == null) {
+							throw new RuntimeException("Supplier not found");
+						}
+
+						SupplierProductVariantEntity link = new SupplierProductVariantEntity();
+
+						// 1. MUST initialize the ID object first
+						link.setId(new SupplierProductVariantCompositeKey());
+
+						// 2. Set the entities. @MapsId tells Hibernate to extract the
+						// IDs from these objects and put them into the 'link.id'
+						link.setProductVariant(variant);
+						link.setSupplier(supplierEntity);
+
+						link.setSupplierPrice(supplierProductVariant.getSupplierPrice());
+
+						newLinks.add(link);
+					}
 				}
 				variant.setSupplierProductVariants(newLinks);
 
