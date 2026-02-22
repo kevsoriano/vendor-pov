@@ -3,6 +3,8 @@ package com.vendorpov.Sale.shared;
 import java.time.Instant;
 import java.util.List;
 
+import com.vendorpov.Sale.models.OutletResponseModel;
+
 public class SaleDto extends BaseDto {
 
 	private static final long serialVersionUID = 1988937725348721521L;
@@ -10,6 +12,7 @@ public class SaleDto extends BaseDto {
 	private double discountAmount;
 	private List<SaleLineItemDto> saleLineItems;
 	private String outletId;
+	private OutletResponseModel outlet;
 	private Instant saleDate;
 
 	public double getTotalAmount() {
@@ -42,6 +45,14 @@ public class SaleDto extends BaseDto {
 
 	public void setOutletId(String outletId) {
 		this.outletId = outletId;
+	}
+
+	public OutletResponseModel getOutlet() {
+		return outlet;
+	}
+
+	public void setOutlet(OutletResponseModel outlet) {
+		this.outlet = outlet;
 	}
 
 	public Instant getSaleDate() {

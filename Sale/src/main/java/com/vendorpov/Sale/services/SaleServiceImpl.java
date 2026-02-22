@@ -30,22 +30,15 @@ public class SaleServiceImpl implements SaleService {
 
 	@Override
 	public SaleDto createSale(SaleDto saleDetails) {
-		SaleEntity saleEntity = modelMapper.map(saleDetails, SaleEntity.class);
-		saleEntity.setExternalId(UUID.randomUUID().toString());
-
-		// Ensure OutletEntity is persisted
-		String outletId = saleEntity.getOutletId();
+		String outletId = saleDetails.getOutletId();
 		if (outletId != null) {
-			// Try to find existing outlet by unique property (e.g. name)
 			OutletResponseModel existingOutlet = outletsServiceClient.getOutlet(outletId);
 			if (existingOutlet != null) {
-				saleEntity.setOutletId(outletId);
+				saleDetails.setOutlet(existingOutlet);
 			} else {
 				throw new IllegalArgumentException("Outlet does not exist: " + outletId);
 			}
 		}
-
-		saleRepository.save(saleEntity);
 
 		// Update inventory for each sale line item
 //		if (saleDetails.getSaleLineItems() != null) {
@@ -65,6 +58,10 @@ public class SaleServiceImpl implements SaleService {
 //				}
 //			}
 //		}
+		
+		SaleEntity saleEntity = modelMapper.map(saleDetails, SaleEntity.class);
+		saleEntity.setExternalId(UUID.randomUUID().toString());
+		saleRepository.save(saleEntity);
 
 		SaleDto returnValue = modelMapper.map(saleEntity, SaleDto.class);
 		returnValue.setId(saleEntity.getExternalId());
