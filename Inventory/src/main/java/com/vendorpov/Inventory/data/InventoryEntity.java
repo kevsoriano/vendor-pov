@@ -1,4 +1,4 @@
-package com.vendorpov.Inventory;
+package com.vendorpov.Inventory.data;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -6,15 +6,10 @@ import java.time.Instant;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.vendorpov.Products.data.OutletEntity;
-import com.vendorpov.Products.data.ProductVariantEntity;
-import com.vendorpov.Products.data.SupplierEntity;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @Entity(name = "inventories")
 public class InventoryEntity implements Serializable {
@@ -26,15 +21,12 @@ public class InventoryEntity implements Serializable {
 	private int quantity;
 	private int reorderThreshold;
 	private int reorderQty;
-	@ManyToOne
-	@JoinColumn(name = "outlet_id")
-	private OutletEntity outlet;
-	@ManyToOne
-	@JoinColumn(name = "supplier_id")
-	private SupplierEntity supplier;
-	@ManyToOne
-	@JoinColumn(name = "product__variant_id")
-	private ProductVariantEntity productVariant;
+	@Column
+	private String outletId;
+	@Column
+	private String supplier;
+	@Column
+	private String productVariantId;
 	@CreationTimestamp
 	private Instant createdOn;
 	@UpdateTimestamp
@@ -72,28 +64,28 @@ public class InventoryEntity implements Serializable {
 		this.reorderQty = reorderQty;
 	}
 
-	public OutletEntity getOutlet() {
-		return outlet;
+	public String getOutletId() {
+		return outletId;
 	}
 
-	public void setOutlet(OutletEntity outlet) {
-		this.outlet = outlet;
+	public void setOutletId(String outletId) {
+		this.outletId = outletId;
 	}
 
-	public SupplierEntity getSupplier() {
+	public String getSupplier() {
 		return supplier;
 	}
 
-	public void setSupplier(SupplierEntity supplier) {
+	public void setSupplier(String supplier) {
 		this.supplier = supplier;
 	}
 
-	public ProductVariantEntity getProductVariant() {
-		return productVariant;
+	public String getProductVariantId() {
+		return productVariantId;
 	}
 
-	public void setProductVariant(ProductVariantEntity productVariant) {
-		this.productVariant = productVariant;
+	public void setProductVariantId(String productVariantId) {
+		this.productVariantId = productVariantId;
 	}
 
 	public Instant getCreatedOn() {
